@@ -117,6 +117,12 @@ Deno.serve(async (req) => {
       if (!id || !newStatus) return json({ error: "ID e status obrigatórios" }, 400);
       if (!["ativo", "desativado"].includes(newStatus)) return json({ error: "Status inválido" }, 400);
       
+      // Proteção para o usuário Master principal
+      const { data: targetUser } = await supabase.from("admin_users").select("email").eq("id", id).single();
+      if (targetUser?.email === "festanca.decoracoes@outlook.com" && newStatus === "desativado") {
+        return json({ error: "A conta Master principal não pode ser desativada." }, 403);
+      }
+
       const updates: Record<string, string | null> = { status: newStatus };
       // Clear session token when deactivating
       if (newStatus === "desativado") updates.session_token = null;
@@ -146,6 +152,13 @@ Deno.serve(async (req) => {
     // ── DELETE ──
     if (action === "delete") {
       if (!id) return json({ error: "ID obrigatório" }, 400);
+      
+      // Proteção para o usuário Master principal
+      const { data: targetUser } = await supabase.from("admin_users").select("email").eq("id", id).single();
+      if (targetUser?.email === "festanca.decoracoes@outlook.com") {
+        return json({ error: "A conta Master principal não pode ser excluída." }, 403);
+      }
+
       const { count } = await supabase.from("admin_users").select("id", { count: "exact", head: true });
       if ((count || 0) <= 1) return json({ error: "Não é possível remover o último administrador" }, 400);
 
