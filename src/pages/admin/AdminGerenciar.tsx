@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { UserPlus, Trash2, Users, Loader2, CheckCircle, XCircle, Pencil, ShieldCheck } from "lucide-react";
+import { UserPlus, Trash2, Users, Loader2, CheckCircle, XCircle, Pencil, ShieldCheck, Key } from "lucide-react";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +21,20 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
+
+interface Permissions {
+  users?: boolean;
+  products?: boolean;
+  categories?: boolean;
+  banners?: boolean;
+  settings?: boolean;
+  clients?: boolean;
+  storage?: boolean;
+}
 
 interface AdminUser {
   id: string;
@@ -29,35 +43,56 @@ interface AdminUser {
   created_at: string;
   status: string;
   role: string;
+  permissions: Permissions | null;
   last_access: string | null;
 }
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  ativo: { label: "Ativo", className: "bg-green-500/15 text-green-700 border-green-300" },
-  pendente: { label: "Pendente", className: "bg-yellow-500/15 text-yellow-700 border-yellow-300" },
-  desativado: { label: "Desativado", className: "bg-red-500/15 text-red-700 border-red-300" },
+  Ativo: { label: "Ativo", className: "bg-green-500/15 text-green-700 border-green-300" },
+  Inativo: { label: "Inativo", className: "bg-red-500/15 text-red-700 border-red-300" },
+};
+
+const defaultPermissions = {
+  users: false, products: false, categories: false, banners: false, settings: false, clients: false, storage: false
+};
+
+const PERMISSION_LABELS: Record<keyof Permissions, string> = {
+  users: "Usuários",
+  products: "Produtos",
+  categories: "Categorias",
+  banners: "Banners",
+  settings: "Configurações",
+  clients: "Clientes",
+  storage: "Storage",
 };
 
 const AdminGerenciar = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
   const [editAdmin, setEditAdmin] = useState<AdminUser | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  
+  // Password change
+  const [passwordChangeAdmin, setPasswordChangeAdmin] = useState<AdminUser | null>(null);
+  const [newPasswordOnly, setNewPasswordOnly] = useState("");
 
   // Create form
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [newRole, setNewRole] = useState("Viewer");
+  const [newPermissions, setNewPermissions] = useState<Permissions>({ ...defaultPermissions });
   const [creating, setCreating] = useState(false);
 
   // Edit form
   const [editName, setEditName] = useState("");
   const [editEmail, setEditEmail] = useState("");
+  const [editRole, setEditRole] = useState("");
+  const [editPermissions, setEditPermissions] = useState<Permissions>({ ...defaultPermissions });
 
-  const adminToken = localStorage.getItem("festiva_admin_token");
   const currentAdminId = localStorage.getItem("festiva_admin_id");
 
   const invoke = async (body: Record<string, unknown>) => {
@@ -74,7 +109,16 @@ const AdminGerenciar = () => {
     setLoading(true);
     try {
       const data = await invoke({ action: "list" });
-      if (data?.admins) setAdmins(data.admins);
+      if (data?.error) {
+        if (data.error.includes("privilégios")) {
+           toast({ title: "Acesso Negado", description: "Somente Master pode acessar esta tela.", variant: "destructive" });
+           navigate("/admin/dashboard");
+        } else {
+           toast({ title: data.error, variant: "destructive" });
+        }
+      } else if (data?.admins) {
+        setAdmins(data.admins);
+      }
     } catch {
       toast({ title: "Erro ao carregar administradores", variant: "destructive" });
     }
@@ -95,45 +139,37 @@ const AdminGerenciar = () => {
       toast({ title: "Senha deve ter no mínimo 6 caracteres", variant: "destructive" });
       return;
     }
-    if (newPassword !== confirmPassword) {
-      toast({ title: "As senhas não coincidem", variant: "destructive" });
-      return;
-    }
 
     setCreating(true);
     try {
-      const data = await invoke({ action: "create", email: trimmedEmail, password: newPassword, name: trimmedName || null });
+      const data = await invoke({ 
+        action: "create", 
+        email: trimmedEmail, 
+        password: newPassword, 
+        name: trimmedName || null,
+        role: newRole,
+        permissions: newRole === "Master" ? {users:true, products:true, categories:true, banners:true, settings:true, clients:true, storage:true} : newPermissions
+      });
       if (data?.error) {
         toast({ title: data.error, variant: "destructive" });
       } else {
-        toast({ title: "Administrador criado com sucesso! Status: Pendente" });
+        toast({ title: "Usuário criado com sucesso!" });
         setCreateOpen(false);
-        setNewEmail(""); setNewPassword(""); setConfirmPassword(""); setNewName("");
+        setNewEmail(""); setNewPassword(""); setNewName(""); setNewRole("Viewer"); setNewPermissions({...defaultPermissions});
         fetchAdmins();
       }
     } catch {
-      toast({ title: "Erro ao criar administrador", variant: "destructive" });
+      toast({ title: "Erro ao criar usuário", variant: "destructive" });
     }
     setCreating(false);
   };
 
-  const handleApprove = async (id: string) => {
-    try {
-      const data = await invoke({ action: "approve", id });
-      if (data?.error) { toast({ title: data.error, variant: "destructive" }); return; }
-      toast({ title: "Administrador aprovado como Master!" });
-      fetchAdmins();
-    } catch {
-      toast({ title: "Erro ao aprovar", variant: "destructive" });
-    }
-  };
-
   const handleToggleStatus = async (admin: AdminUser) => {
-    const newStatus = admin.status === "ativo" ? "desativado" : "ativo";
+    const newStatus = admin.status === "Ativo" ? "Inativo" : "Ativo";
     try {
       const data = await invoke({ action: "toggle_status", id: admin.id, status: newStatus });
       if (data?.error) { toast({ title: data.error, variant: "destructive" }); return; }
-      toast({ title: `Administrador ${newStatus === "ativo" ? "ativado" : "desativado"}!` });
+      toast({ title: `Administrador ${newStatus} com sucesso!` });
       fetchAdmins();
     } catch {
       toast({ title: "Erro ao alterar status", variant: "destructive" });
@@ -156,6 +192,8 @@ const AdminGerenciar = () => {
     setEditAdmin(admin);
     setEditName(admin.name || "");
     setEditEmail(admin.email);
+    setEditRole(admin.role);
+    setEditPermissions(admin.permissions || { ...defaultPermissions });
   };
 
   const handleEdit = async () => {
@@ -165,7 +203,9 @@ const AdminGerenciar = () => {
         action: "update",
         id: editAdmin.id,
         new_name: editName.trim(),
-        new_email: editEmail.trim(),
+        new_email: editEmail.trim() !== editAdmin.email ? editEmail.trim() : undefined,
+        role: editRole,
+        permissions: editRole === "Master" ? {users:true, products:true, categories:true, banners:true, settings:true, clients:true, storage:true} : editPermissions
       });
       if (data?.error) { toast({ title: data.error, variant: "destructive" }); return; }
       toast({ title: "Administrador atualizado!" });
@@ -176,8 +216,50 @@ const AdminGerenciar = () => {
     }
   };
 
+  const handleChangePassword = async () => {
+    if (!passwordChangeAdmin || newPasswordOnly.length < 6) {
+        toast({ title: "Senha inválida (min. 6 caracteres)", variant: "destructive" });
+        return;
+    }
+    try {
+      const data = await invoke({ action: "change_password", email: passwordChangeAdmin.email, password: newPasswordOnly });
+      if (data?.error) { toast({ title: data.error, variant: "destructive" }); return; }
+      toast({ title: "Senha alterada com sucesso!" });
+      setPasswordChangeAdmin(null);
+      setNewPasswordOnly("");
+    } catch {
+      toast({ title: "Erro ao alterar senha", variant: "destructive" });
+    }
+  }
+
   const formatDate = (d: string | null) => d ? new Date(d).toLocaleDateString("pt-BR") : "—";
-  const formatDateTime = (d: string | null) => d ? new Date(d).toLocaleString("pt-BR") : "Nunca";
+  
+  const handlePermChange = (perm: keyof Permissions, checked: boolean, isEdit: boolean) => {
+      if (isEdit) {
+          setEditPermissions(prev => ({ ...prev, [perm]: checked }));
+      } else {
+          setNewPermissions(prev => ({ ...prev, [perm]: checked }));
+      }
+  };
+
+  const renderPermissionsCheckboxes = (perms: Permissions, isEdit: boolean) => {
+      return (
+          <div className="grid grid-cols-2 gap-2 mt-2 p-3 border rounded-lg bg-muted/20">
+              {(Object.keys(PERMISSION_LABELS) as Array<keyof Permissions>).map(key => (
+                  <div key={key} className="flex items-center space-x-2">
+                      <Checkbox 
+                        id={`${isEdit?'edit':'new'}-${key}`} 
+                        checked={!!perms[key]}
+                        onCheckedChange={(c) => handlePermChange(key, c as boolean, isEdit)}
+                      />
+                      <Label htmlFor={`${isEdit?'edit':'new'}-${key}`} className="text-sm font-normal cursor-pointer">
+                          {PERMISSION_LABELS[key]}
+                      </Label>
+                  </div>
+              ))}
+          </div>
+      )
+  }
 
   return (
     <div className="min-h-screen bg-background font-body flex">
@@ -191,12 +273,12 @@ const AdminGerenciar = () => {
               Páginas / <span className="text-foreground">Gerenciar Admins</span>
             </p>
             <h1 className="text-xl font-heading font-bold text-foreground">
-              Gestão de Administradores
+              Gestão de Acessos
             </h1>
           </div>
           <Button onClick={() => setCreateOpen(true)} className="rounded-xl gap-2">
             <UserPlus size={16} />
-            Novo Admin
+            Novo Usuário
           </Button>
         </header>
 
@@ -204,7 +286,7 @@ const AdminGerenciar = () => {
           <div className="md:hidden mb-4">
             <Button onClick={() => setCreateOpen(true)} className="w-full rounded-xl gap-2">
               <UserPlus size={16} />
-              Novo Admin
+              Novo Usuário
             </Button>
           </div>
 
@@ -224,18 +306,17 @@ const AdminGerenciar = () => {
                 <Table className="min-w-[900px]">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="whitespace-nowrap">Nome</TableHead>
-                      <TableHead className="whitespace-nowrap">Email</TableHead>
-                      <TableHead className="whitespace-nowrap">Status</TableHead>
-                      <TableHead className="whitespace-nowrap">Role</TableHead>
-                      <TableHead className="whitespace-nowrap">Criado em</TableHead>
-                      <TableHead className="whitespace-nowrap">Último acesso</TableHead>
-                      <TableHead className="text-right whitespace-nowrap">Ações</TableHead>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Criado em</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {admins.map((admin) => {
-                      const sc = statusConfig[admin.status] || statusConfig.pendente;
+                      const sc = statusConfig[admin.status] || { label: admin.status, className: "bg-gray-100 text-gray-700" };
                       const isSelf = admin.id === currentAdminId;
                       return (
                         <TableRow key={admin.id}>
@@ -245,26 +326,23 @@ const AdminGerenciar = () => {
                             <Badge variant="outline" className={sc.className}>{sc.label}</Badge>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
-                            <span className="inline-flex items-center gap-1 text-sm">
-                              <ShieldCheck size={14} className="text-primary" />
-                              Master
+                            <span className="inline-flex items-center gap-1 text-sm font-medium">
+                              <ShieldCheck size={14} className={admin.role === 'Master' ? "text-primary" : "text-muted-foreground"} />
+                              {admin.role}
                             </span>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">{formatDate(admin.created_at)}</TableCell>
-                          <TableCell className="whitespace-nowrap">{formatDateTime(admin.last_access)}</TableCell>
                           <TableCell className="whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1">
+                              <Button variant="ghost" size="icon" onClick={() => setPasswordChangeAdmin(admin)} title="Alterar Senha">
+                                <Key size={15} />
+                              </Button>
                               <Button variant="ghost" size="icon" onClick={() => openEdit(admin)} title="Editar">
                                 <Pencil size={15} />
                               </Button>
-                              {admin.status === "pendente" && (
-                                <Button variant="ghost" size="icon" onClick={() => handleApprove(admin.id)} title="Aprovar" className="text-green-600 hover:text-green-700">
-                                  <CheckCircle size={15} />
-                                </Button>
-                              )}
-                              {!isSelf && admin.status !== "pendente" && (
-                                <Button variant="ghost" size="icon" onClick={() => handleToggleStatus(admin)} title={admin.status === "ativo" ? "Desativar" : "Ativar"} className={admin.status === "ativo" ? "text-red-500 hover:text-red-600" : "text-green-600 hover:text-green-700"}>
-                                  {admin.status === "ativo" ? <XCircle size={15} /> : <CheckCircle size={15} />}
+                              {!isSelf && (
+                                <Button variant="ghost" size="icon" onClick={() => handleToggleStatus(admin)} title={admin.status === "Ativo" ? "Desativar" : "Ativar"} className={admin.status === "Ativo" ? "text-red-500 hover:text-red-600" : "text-green-600 hover:text-green-700"}>
+                                  {admin.status === "Ativo" ? <XCircle size={15} /> : <CheckCircle size={15} />}
                                 </Button>
                               )}
                               {!isSelf && (
@@ -284,7 +362,7 @@ const AdminGerenciar = () => {
               {/* Mobile Cards */}
               <div className="md:hidden grid gap-4">
                 {admins.map((admin) => {
-                  const sc = statusConfig[admin.status] || statusConfig.pendente;
+                  const sc = statusConfig[admin.status] || { label: admin.status, className: "bg-gray-100 text-gray-700" };
                   const isSelf = admin.id === currentAdminId;
                   return (
                     <div key={admin.id} className="bg-card rounded-2xl border border-border p-4 space-y-3">
@@ -298,23 +376,19 @@ const AdminGerenciar = () => {
                         </div>
                         <Badge variant="outline" className={`ml-auto shrink-0 ${sc.className}`}>{sc.label}</Badge>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <ShieldCheck size={12} className="text-primary" /> Master
-                        <span className="mx-1">·</span>
-                        Criado: {formatDate(admin.created_at)}
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                        <ShieldCheck size={12} className={admin.role === 'Master' ? "text-primary" : ""} /> {admin.role}
                       </div>
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap pt-2">
                         <Button variant="outline" size="sm" onClick={() => openEdit(admin)} className="rounded-lg text-xs gap-1 h-8">
                           <Pencil size={12} /> Editar
                         </Button>
-                        {admin.status === "pendente" && (
-                          <Button variant="outline" size="sm" onClick={() => handleApprove(admin.id)} className="rounded-lg text-xs gap-1 h-8 text-green-600 border-green-300">
-                            <CheckCircle size={12} /> Aprovar
-                          </Button>
-                        )}
-                        {!isSelf && admin.status !== "pendente" && (
-                          <Button variant="outline" size="sm" onClick={() => handleToggleStatus(admin)} className={`rounded-lg text-xs gap-1 h-8 ${admin.status === "ativo" ? "text-red-500 border-red-300" : "text-green-600 border-green-300"}`}>
-                            {admin.status === "ativo" ? <><XCircle size={12} /> Desativar</> : <><CheckCircle size={12} /> Ativar</>}
+                        <Button variant="outline" size="sm" onClick={() => setPasswordChangeAdmin(admin)} className="rounded-lg text-xs gap-1 h-8">
+                          <Key size={12} /> Senha
+                        </Button>
+                        {!isSelf && (
+                          <Button variant="outline" size="sm" onClick={() => handleToggleStatus(admin)} className={`rounded-lg text-xs gap-1 h-8 ${admin.status === "Ativo" ? "text-red-500 border-red-300" : "text-green-600 border-green-300"}`}>
+                            {admin.status === "Ativo" ? <><XCircle size={12} /> Desativar</> : <><CheckCircle size={12} /> Ativar</>}
                           </Button>
                         )}
                         {!isSelf && (
@@ -334,14 +408,14 @@ const AdminGerenciar = () => {
 
       {/* Create Dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Novo Administrador</DialogTitle>
+            <DialogTitle>Novo Usuário</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-muted-foreground">Nome completo</label>
-              <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nome do administrador" />
+              <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nome" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-muted-foreground">Email *</label>
@@ -351,15 +425,31 @@ const AdminGerenciar = () => {
               <label className="text-sm font-medium text-muted-foreground">Senha *</label>
               <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Mínimo 6 caracteres" />
             </div>
+            
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-muted-foreground">Confirmar senha *</label>
-              <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repita a senha" />
+              <label className="text-sm font-medium text-muted-foreground">Função (Role)</label>
+              <Select value={newRole} onValueChange={setNewRole}>
+                  <SelectTrigger>
+                      <SelectValue placeholder="Selecione a função" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      <SelectItem value="Viewer">Viewer (Apenas Visualização)</SelectItem>
+                      <SelectItem value="Editor">Editor (Conteúdo)</SelectItem>
+                      <SelectItem value="Admin">Admin (Gestão Geral)</SelectItem>
+                      <SelectItem value="Master">Master (Acesso Total)</SelectItem>
+                  </SelectContent>
+              </Select>
             </div>
-            <p className="text-xs text-muted-foreground">
-              O novo administrador será criado com status <Badge variant="outline" className={statusConfig.pendente.className}>Pendente</Badge> até ser aprovado.
-            </p>
-            <Button onClick={handleCreate} disabled={creating} className="w-full rounded-xl">
-              {creating ? <><Loader2 size={16} className="animate-spin" /> Criando...</> : "Criar Administrador"}
+            
+            {newRole !== "Master" && (
+                <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-muted-foreground">Permissões Específicas</label>
+                    {renderPermissionsCheckboxes(newPermissions, false)}
+                </div>
+            )}
+
+            <Button onClick={handleCreate} disabled={creating} className="w-full rounded-xl mt-4">
+              {creating ? <><Loader2 size={16} className="animate-spin" /> Salvando...</> : "Criar Usuário"}
             </Button>
           </div>
         </DialogContent>
@@ -367,9 +457,9 @@ const AdminGerenciar = () => {
 
       {/* Edit Dialog */}
       <Dialog open={!!editAdmin} onOpenChange={() => setEditAdmin(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Editar Administrador</DialogTitle>
+            <DialogTitle>Editar Usuário</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
@@ -380,7 +470,44 @@ const AdminGerenciar = () => {
               <label className="text-sm font-medium text-muted-foreground">Email</label>
               <Input type="email" value={editEmail} onChange={(e) => setEditEmail(e.target.value)} placeholder="Email" />
             </div>
-            <Button onClick={handleEdit} className="w-full rounded-xl">Salvar Alterações</Button>
+            
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-muted-foreground">Função (Role)</label>
+              <Select value={editRole} onValueChange={setEditRole} disabled={editAdmin?.email === 'festanca.decoracoes@outlook.com'}>
+                  <SelectTrigger>
+                      <SelectValue placeholder="Selecione a função" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      <SelectItem value="Viewer">Viewer (Apenas Visualização)</SelectItem>
+                      <SelectItem value="Editor">Editor (Conteúdo)</SelectItem>
+                      <SelectItem value="Admin">Admin (Gestão Geral)</SelectItem>
+                      <SelectItem value="Master">Master (Acesso Total)</SelectItem>
+                  </SelectContent>
+              </Select>
+            </div>
+            
+            {editRole !== "Master" && (
+                <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-muted-foreground">Permissões Específicas</label>
+                    {renderPermissionsCheckboxes(editPermissions, true)}
+                </div>
+            )}
+
+            <Button onClick={handleEdit} className="w-full rounded-xl mt-4">Salvar Alterações</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Change Password Dialog */}
+      <Dialog open={!!passwordChangeAdmin} onOpenChange={() => setPasswordChangeAdmin(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Alterar Senha</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+             <p className="text-sm text-muted-foreground">Definir nova senha para <strong>{passwordChangeAdmin?.email}</strong></p>
+             <Input type="password" value={newPasswordOnly} onChange={e => setNewPasswordOnly(e.target.value)} placeholder="Nova senha (min. 6 char)" />
+             <Button onClick={handleChangePassword} className="w-full rounded-xl">Atualizar Senha</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -389,10 +516,10 @@ const AdminGerenciar = () => {
       <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Remover Administrador</DialogTitle>
+            <DialogTitle>Remover Usuário</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground py-2">
-            Tem certeza que deseja remover este administrador? Essa ação não pode ser desfeita.
+            Tem certeza que deseja remover este usuário permanentemente? Essa ação não pode ser desfeita.
           </p>
           <div className="flex gap-3">
             <Button variant="outline" onClick={() => setDeleteId(null)} className="flex-1 rounded-xl">

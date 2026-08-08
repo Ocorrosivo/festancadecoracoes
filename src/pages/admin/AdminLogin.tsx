@@ -56,6 +56,8 @@ const AdminLogin = () => {
         localStorage.setItem("festiva_admin_id", data.admin.id);
         localStorage.setItem("festiva_admin_email", data.admin.email);
         localStorage.setItem("festiva_admin_name", data.admin.name || "");
+        localStorage.setItem("festiva_admin_role", data.admin.role || "Viewer");
+        localStorage.setItem("festiva_admin_permissions", JSON.stringify(data.admin.permissions || {}));
         navigate("/admin/dashboard");
       }
     } catch (err: any) {

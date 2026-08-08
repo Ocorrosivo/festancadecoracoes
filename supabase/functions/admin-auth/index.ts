@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
     const body = await req.json();
-    const { action, email, password, name, admin_token, id, old_email, new_email, status: newStatus } = body;
+    const { action, email, password, name, role, permissions, admin_token, id, old_email, new_email, status: newStatus } = body;
 
     console.log(`[DEBUG] Recebida ação: ${action}`);
 
@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
       console.log("[DEBUG] Buscando dados do usuário na tabela profiles...");
       const { data: profile, error: profileError } = await supabaseAdmin
         .from("profiles")
-        .select("id, name, status, role, email")
+        .select("id, name, status, role, email, permissions")
         .eq("id", authData.user.id)
         .single();
 
@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
         return json({ error: "Conta pendente ou desativada. Contacte o administrador." }, 403);
       }
 
-      if (profile.role !== "Master" && profile.role !== "Admin") {
+      if (profile.role === "User") {
         console.log("[DEBUG] Retornando 403 - Role sem privilégios administrativos:", profile.role);
         return json({ error: "Acesso administrativo negado." }, 403);
       }
@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
       // Usar o access_token oficial do Supabase Auth como admin_token
       return json({ 
         success: true, 
-        admin: { id: profile.id, email: profile.email || authData.user.email, name: profile.name, role: profile.role, status: profile.status }, 
+        admin: { id: profile.id, email: profile.email || authData.user.email, name: profile.name, role: profile.role, status: profile.status, permissions: profile.permissions }, 
         token: authData.session.access_token 
       });
     }
@@ -93,9 +93,9 @@ Deno.serve(async (req) => {
     }
     const requestingUser = userVerification.user;
 
-    // Verificar se quem está requisitando tem privilégios
+    // Verificar se quem está requisitando tem privilégios para ações restritas (Master)
     const { data: requestingProfile } = await supabaseAdmin.from("profiles").select("role").eq("id", requestingUser.id).single();
-    if (!requestingProfile || (requestingProfile.role !== "Master" && requestingProfile.role !== "Admin")) {
+    if (!requestingProfile || requestingProfile.role !== "Master") {
         return json({ error: "Sem privilégios para esta ação" }, 403);
     }
 
@@ -103,8 +103,7 @@ Deno.serve(async (req) => {
     if (action === "list") {
       const { data: profiles, error } = await supabaseAdmin
         .from("profiles")
-        .select("id, name, role, status, email, created_at, updated_at")
-        .in("role", ["Master", "Admin"])
+        .select("id, name, role, status, email, created_at, updated_at, permissions")
         .order("created_at", { ascending: true });
         
       if (error) throw error;
@@ -119,7 +118,7 @@ Deno.serve(async (req) => {
         email: email.trim().toLowerCase(),
         password: password,
         email_confirm: true,
-        user_metadata: { name: name || "Admin", role: "Admin" }
+        user_metadata: { name: name || "Usuário", role: role || "Viewer", permissions: permissions || {} }
       });
 
       if (error) {
@@ -163,9 +162,21 @@ Deno.serve(async (req) => {
     if (action === "update") {
       if (!id) return json({ error: "ID obrigatório" }, 400);
       
-      if (body.new_name) {
-          await supabaseAdmin.from("profiles").update({ name: body.new_name }).eq("id", id);
+      const { data: targetProfile } = await supabaseAdmin.from("profiles").select("email").eq("id", id).single();
+      if (targetProfile?.email === "festanca.decoracoes@outlook.com" && body.role && body.role !== "Master") {
+          return json({ error: "Não é possível alterar a role do Master principal." }, 403);
       }
+
+      const updates: any = {};
+      if (body.new_name) updates.name = body.new_name;
+      if (body.role) updates.role = body.role;
+      if (body.permissions) updates.permissions = body.permissions;
+      
+      if (Object.keys(updates).length > 0) {
+          const { error: profileError } = await supabaseAdmin.from("profiles").update(updates).eq("id", id);
+          if (profileError) throw profileError;
+      }
+      
       if (body.new_email) {
           const { error } = await supabaseAdmin.auth.admin.updateUserById(id, { email: body.new_email.trim().toLowerCase() });
           if (error) {

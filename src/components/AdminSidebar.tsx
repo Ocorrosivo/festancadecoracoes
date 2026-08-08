@@ -12,17 +12,32 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-const mainLinks = [
-  { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/admin/produtos", label: "Produtos", icon: Package },
-  { to: "/admin/categorias", label: "Categorias", icon: Tags },
-  { to: "/admin/banner", label: "Banner Home", icon: ImageIcon },
-  { to: "/admin/configuracoes", label: "Configurações Site", icon: Settings },
-  { to: "/admin/clientes", label: "Clientes", icon: Users },
-  { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
-  { to: "/admin/marketing", label: "Marketing", icon: Megaphone },
-  { to: "/admin/gerenciar", label: "Gerenciar Admins", icon: ShieldCheck },
-];
+const getFilteredLinks = () => {
+  const role = localStorage.getItem("festiva_admin_role") || "Viewer";
+  let permissions: any = {};
+  try {
+    permissions = JSON.parse(localStorage.getItem("festiva_admin_permissions") || "{}");
+  } catch (e) {}
+
+  const allLinks = [
+    { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/admin/produtos", label: "Produtos", icon: Package, key: "products" },
+    { to: "/admin/categorias", label: "Categorias", icon: Tags, key: "categories" },
+    { to: "/admin/banner", label: "Banner Home", icon: ImageIcon, key: "banners" },
+    { to: "/admin/configuracoes", label: "Configurações Site", icon: Settings, key: "settings" },
+    { to: "/admin/clientes", label: "Clientes", icon: Users, key: "clients" },
+    { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
+    { to: "/admin/marketing", label: "Marketing", icon: Megaphone },
+    { to: "/admin/gerenciar", label: "Gestão de Acessos", icon: ShieldCheck, role: "Master" },
+  ];
+
+  return allLinks.filter(link => {
+    if (role === "Master") return true;
+    if (link.role && link.role !== role) return false;
+    if (link.key && !permissions[link.key]) return false;
+    return true;
+  });
+};
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
@@ -125,7 +140,7 @@ const AdminSidebar = () => {
         </div>
 
         <nav className="flex flex-col gap-1 px-4 flex-1">
-          {mainLinks.map((link) => (
+          {getFilteredLinks().map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
