@@ -1,0 +1,53 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependências
+node_modules/
+dist/
+dist-ssr/
+
+# Variáveis de ambiente sensíveis — NUNCA enviar ao Git
+.env
+.env.local
+.env.development
+.env.production
+.env*.local
+
+# Vercel
+.vercel/
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Coverage / testes
+coverage/
+
+# Scripts temporários de importação (contêm dados sensíveis)
+import_script.js
+direct_insert.js
+insert_products.js
+find_admin.js
+diag_admin.js
+check_admin.js
+test_auth.js
+test_insert.js
+test_upload.js
+convert_all.js
+gen_migration.cjs
+
+# Arquivos de sistema Windows
+Thumbs.db

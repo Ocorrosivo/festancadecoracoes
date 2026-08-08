@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://festancadecoracoes.com.br/sitemap.xml

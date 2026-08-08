@@ -1,0 +1,13 @@
+project_id = "qrtugogsnpblzgkmcgbp"
+
+[functions.admin-auth]
+verify_jwt = false
+
+[functions.newsletter-subscribe]
+verify_jwt = false
+
+[functions.upload-product-image]
+verify_jwt = false
+
+[functions.admin-data]
+verify_jwt = false

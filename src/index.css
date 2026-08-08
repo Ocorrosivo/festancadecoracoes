@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 23%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 23%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 23%;
+
+    --primary: 334 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 334 78% 59%;
+
+    --secondary: 344 82% 83%;
+    --secondary-foreground: 0 0% 23%;
+
+    --muted: 155 38% 86%;
+    --muted-foreground: 0 0% 48%;
+
+    --accent: 30 44% 94%;
+    --accent-foreground: 0 0% 23%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 344 30% 90%;
+    --input: 344 30% 90%;
+    --ring: 334 100% 65%;
+
+    --gold: 35 52% 65%;
+    --mint: 158 38% 73%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 334 100% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 334 100% 65%;
+
+    --footer-bg: 30 44% 94%;
+    --footer-text: 0 0% 23%;
+    --footer-link: 0 0% 48%;
+  }
+
+  .dark {
+    --background: 0 0% 8%;
+    --foreground: 355 86% 94%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 355 86% 94%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 355 86% 94%;
+
+    --primary: 334 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 334 78% 59%;
+
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 355 86% 94%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 334 100% 65%;
+
+    --gold: 35 52% 65%;
+    --mint: 158 38% 73%;
+
+    --footer-bg: 0 0% 6%;
+    --footer-text: 355 86% 94%;
+    --footer-link: 355 50% 85%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--accent));
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 10px;
+  }
+}
