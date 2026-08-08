@@ -58,8 +58,28 @@ const AdminLogin = () => {
         localStorage.setItem("festiva_admin_name", data.admin.name || "");
         navigate("/admin/dashboard");
       }
-    } catch {
-      toast({ title: "Erro ao fazer login", description: "Tente novamente mais tarde.", variant: "destructive" });
+    } catch (err: any) {
+      console.error("Erro detalhado no login:", err);
+      let errorMessage = "Erro ao conectar com o servidor. Tente novamente.";
+      
+      if (err?.context && typeof err.context.json === 'function') {
+        try {
+          const body = await err.context.json();
+          if (body && body.error) {
+            errorMessage = body.error;
+          }
+        } catch (e) {
+           // ignore parsing error
+        }
+      } else if (err?.message) {
+        if (err.message === "Edge Function returned a non-2xx status code") {
+          errorMessage = "Credenciais inválidas ou acesso negado.";
+        } else {
+          errorMessage = err.message;
+        }
+      }
+      
+      toast({ title: "Falha no Login", description: errorMessage, variant: "destructive" });
     }
     setLoading(false);
   };
