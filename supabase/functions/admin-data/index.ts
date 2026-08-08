@@ -22,13 +22,9 @@ const slugify = (name: string): string =>
 
 async function validateAdmin(supabase: any, token: string | null) {
   if (!token) return null;
-  const { data } = await supabase
-    .from("admin_users")
-    .select("id, status")
-    .eq("session_token", token)
-    .eq("status", "ativo")
-    .single();
-  return data;
+  const { data: userVerification, error: verifyError } = await supabase.auth.getUser(token);
+  if (verifyError || !userVerification?.user) return null;
+  return userVerification.user;
 }
 
 Deno.serve(async (req) => {

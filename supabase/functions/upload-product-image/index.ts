@@ -30,15 +30,11 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Validate admin token against database
-    const { data: adminUser } = await supabase
-      .from("admin_users")
-      .select("id")
-      .eq("session_token", adminToken)
-      .eq("status", "ativo")
-      .single();
-
-    if (!adminUser) return json({ error: "Sessão inválida ou expirada. Faça login novamente." }, 401);
+    // Validate admin token using native Auth
+    const { data: userVerification, error: verifyError } = await supabase.auth.getUser(adminToken);
+    if (verifyError || !userVerification.user) {
+      return json({ error: "Sessão inválida ou expirada. Faça login novamente." }, 401);
+    }
 
     // Upload using service role (bypasses RLS)
     const ext = file.name.split(".").pop() || "jpg";
