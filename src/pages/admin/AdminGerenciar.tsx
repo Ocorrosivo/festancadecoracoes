@@ -221,16 +221,16 @@ const AdminGerenciar = () => {
             <>
               {/* Desktop Table */}
               <div className="hidden md:block bg-card rounded-2xl border border-border overflow-hidden">
-                <Table>
+                <Table className="min-w-[900px]">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Criado em</TableHead>
-                      <TableHead>Último acesso</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
+                      <TableHead className="whitespace-nowrap">Nome</TableHead>
+                      <TableHead className="whitespace-nowrap">Email</TableHead>
+                      <TableHead className="whitespace-nowrap">Status</TableHead>
+                      <TableHead className="whitespace-nowrap">Role</TableHead>
+                      <TableHead className="whitespace-nowrap">Criado em</TableHead>
+                      <TableHead className="whitespace-nowrap">Último acesso</TableHead>
+                      <TableHead className="text-right whitespace-nowrap">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -239,20 +239,20 @@ const AdminGerenciar = () => {
                       const isSelf = admin.id === currentAdminId;
                       return (
                         <TableRow key={admin.id}>
-                          <TableCell className="font-medium">{admin.name || "Sem nome"}</TableCell>
-                          <TableCell>{admin.email}</TableCell>
-                          <TableCell>
+                          <TableCell className="font-medium whitespace-nowrap">{admin.name || "Sem nome"}</TableCell>
+                          <TableCell className="whitespace-nowrap">{admin.email}</TableCell>
+                          <TableCell className="whitespace-nowrap">
                             <Badge variant="outline" className={sc.className}>{sc.label}</Badge>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="whitespace-nowrap">
                             <span className="inline-flex items-center gap-1 text-sm">
                               <ShieldCheck size={14} className="text-primary" />
                               Master
                             </span>
                           </TableCell>
-                          <TableCell>{formatDate(admin.created_at)}</TableCell>
-                          <TableCell>{formatDateTime(admin.last_access)}</TableCell>
-                          <TableCell>
+                          <TableCell className="whitespace-nowrap">{formatDate(admin.created_at)}</TableCell>
+                          <TableCell className="whitespace-nowrap">{formatDateTime(admin.last_access)}</TableCell>
+                          <TableCell className="whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1">
                               <Button variant="ghost" size="icon" onClick={() => openEdit(admin)} title="Editar">
                                 <Pencil size={15} />
