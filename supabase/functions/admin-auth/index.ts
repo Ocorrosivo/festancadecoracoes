@@ -38,23 +38,42 @@ Deno.serve(async (req) => {
 
     // ── LOGIN ──
     if (action === "login") {
-      if (!email || !password) return json({ error: "Email e senha obrigatórios" }, 400);
+      console.log("[DEBUG] Ação de login iniciada para email:", email);
+      if (!email || !password) {
+        console.log("[DEBUG] Retornando 400 - Email ou senha ausentes");
+        return json({ error: "Email e senha obrigatórios" }, 400);
+      }
 
-      const { data: verified } = await supabase.rpc("verify_admin_password", {
+      console.log("[DEBUG] Chamando rpc verify_admin_password...");
+      const { data: verified, error: verifyError } = await supabase.rpc("verify_admin_password", {
         _email: email.trim().toLowerCase(),
         _password: password,
       });
 
-      if (!verified) return json({ error: "Credenciais inválidas" }, 401);
+      console.log("[DEBUG] Resultado do rpc verify_admin_password:", verified, "Erro:", verifyError);
 
-      const { data } = await supabase
+      if (!verified) {
+        console.log("[DEBUG] Retornando 401 - rpc verify_admin_password retornou false");
+        return json({ error: "Credenciais inválidas", debug: "rpc_failed" }, 401);
+      }
+
+      console.log("[DEBUG] Buscando dados do usuário na tabela admin_users...");
+      const { data, error: userError } = await supabase
         .from("admin_users")
         .select("id, email, name, status, role")
         .eq("email", email.trim().toLowerCase())
         .single();
 
-      if (!data) return json({ error: "Credenciais inválidas" }, 401);
-      if (data.status !== "ativo") return json({ error: "Conta pendente ou desativada. Contacte o administrador." }, 403);
+      console.log("[DEBUG] Resultado da busca em admin_users:", data, "Erro:", userError);
+
+      if (!data) {
+        console.log("[DEBUG] Retornando 401 - Usuário não encontrado na tabela admin_users após verificação de senha");
+        return json({ error: "Credenciais inválidas", debug: "user_not_found" }, 401);
+      }
+      if (data.status !== "ativo") {
+        console.log("[DEBUG] Retornando 403 - Status da conta é diferente de ativo:", data.status);
+        return json({ error: "Conta pendente ou desativada. Contacte o administrador." }, 403);
+      }
 
       // Generate and persist session token
       const token = crypto.randomUUID();
