@@ -3,16 +3,16 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 console.log("[Supabase Client] VITE_SUPABASE_URL:", supabaseUrl);
 
 if (!supabaseUrl) {
-  throw new Error("VITE_SUPABASE_URL não encontrada.");
+  throw new Error("VITE_SUPABASE_URL não encontrada. Configure corretamente as variáveis.");
 }
 
 if (!supabaseAnonKey) {
-  throw new Error("VITE_SUPABASE_ANON_KEY não encontrada.");
+  throw new Error("VITE_SUPABASE_ANON_KEY não encontrada. Configure corretamente as variáveis.");
 }
 
 // Import the supabase client like this:

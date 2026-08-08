@@ -27,7 +27,7 @@ const toProduct = (row: DbProduct): Product => ({
   description: row.description ?? undefined,
   dimensions: row.dimensions ?? undefined,
   trending: row.trending ?? false,
-  image: row.image || "/placeholder.svg",
+  image: row.image || "",
 });
 
 // ─── Admin token helper ────────────────────────────────────────────────────
@@ -54,23 +54,10 @@ export const useProducts = () => {
             .map((r) => toProduct(r as DbProduct));
         }
 
-        // Merge with static products — show DB products first, static as fallback
-        const existingSlugs = new Set(
-          dbProducts.map((p) => p.slug.toLowerCase())
-        );
-
-        const missingStatic = staticProducts.filter(
-          (sp) =>
-            sp &&
-            typeof sp.slug === "string" &&
-            !existingSlugs.has(sp.slug.toLowerCase())
-        );
-
-        return [...dbProducts, ...missingStatic];
+        return dbProducts;
       } catch (err) {
         console.error("[useProducts] Erro ao buscar produtos:", err);
-        // Graceful fallback to static products
-        return staticProducts;
+        return [];
       }
     },
     staleTime: 1000 * 60 * 5,   // 5 min cache

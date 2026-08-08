@@ -54,10 +54,27 @@ Deno.serve(async (req) => {
         const { data, error } = await supabase
           .from("clients")
           .select("*")
-          .eq("admin_id", admin.id)
           .order("nome", { ascending: true });
         if (error) throw error;
         return json({ data });
+      }
+      if (action === "get") {
+        if (!id) return json({ error: "ID obrigatório" }, 400);
+        const { data: client, error: errClient } = await supabase
+          .from("clients")
+          .select("*")
+          .eq("id", id)
+          .single();
+        if (errClient) throw errClient;
+
+        const { data: bookings, error: errBookings } = await supabase
+          .from("bookings")
+          .select("*")
+          .eq("client_id", id)
+          .order("date", { ascending: false });
+        if (errBookings) throw errBookings;
+
+        return json({ data: client, bookings: bookings || [] });
       }
       if (action === "create") {
         if (!payload?.nome || typeof payload.nome !== "string" || payload.nome.length > 200) {

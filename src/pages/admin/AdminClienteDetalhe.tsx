@@ -1,52 +1,84 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
-import { ArrowLeft, Mail, Phone, MapPin, Calendar, Package } from "lucide-react";
+import { ArrowLeft, Mail, Phone, MapPin, Calendar, Package, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getBookings } from "@/data/bookings";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-const mockClientes = [
-  { id: 1, nome: "Maria Silva", email: "maria@email.com", telefone: "(11) 99999-1234", cidade: "São Paulo", totalLocacoes: 5, ultimaLocacao: "2025-12-10" },
-  { id: 2, nome: "João Oliveira", email: "joao@email.com", telefone: "(21) 98888-5678", cidade: "Rio de Janeiro", totalLocacoes: 3, ultimaLocacao: "2025-11-22" },
-  { id: 3, nome: "Ana Costa", email: "ana@email.com", telefone: "(31) 97777-9012", cidade: "Belo Horizonte", totalLocacoes: 8, ultimaLocacao: "2026-01-05" },
-  { id: 4, nome: "Carlos Santos", email: "carlos@email.com", telefone: "(41) 96666-3456", cidade: "Curitiba", totalLocacoes: 2, ultimaLocacao: "2025-10-18" },
-  { id: 5, nome: "Fernanda Lima", email: "fernanda@email.com", telefone: "(51) 95555-7890", cidade: "Porto Alegre", totalLocacoes: 6, ultimaLocacao: "2026-02-01" },
-];
+interface Client {
+  id: string;
+  nome: string;
+  email: string | null;
+  telefone: string | null;
+  empresa: string | null;
+  status: string;
+  cidade: string | null;
+  total_locacoes: number;
+  ultima_locacao: string | null;
+  created_at: string;
+}
 
-// Mock booking history per client
-const mockBookingHistory = [
-  { clientId: 1, product: "Arco Floral Royal", date: "2025-12-10", price: "R$ 299,00", status: "Concluído" },
-  { clientId: 1, product: "Conjunto Sonho Pastel", date: "2025-10-05", price: "R$ 149,00", status: "Concluído" },
-  { clientId: 1, product: "Gala Ouro & Branco", date: "2025-08-20", price: "R$ 210,00", status: "Concluído" },
-  { clientId: 1, product: "Setup Piquenique Boho", date: "2025-06-15", price: "R$ 185,00", status: "Concluído" },
-  { clientId: 1, product: "Jardim Encantado", date: "2025-04-02", price: "R$ 345,00", status: "Concluído" },
-  { clientId: 2, product: "Baby Boy Voyage", date: "2025-11-22", price: "R$ 159,00", status: "Concluído" },
-  { clientId: 2, product: "Arco Floral Royal", date: "2025-09-10", price: "R$ 299,00", status: "Concluído" },
-  { clientId: 2, product: "Conjunto Sonho Pastel", date: "2025-07-01", price: "R$ 149,00", status: "Concluído" },
-  { clientId: 3, product: "Jardim Encantado", date: "2026-01-05", price: "R$ 345,00", status: "Agendado" },
-  { clientId: 3, product: "Gala Ouro & Branco", date: "2025-12-20", price: "R$ 210,00", status: "Concluído" },
-  { clientId: 3, product: "Arco Floral Royal", date: "2025-11-15", price: "R$ 299,00", status: "Concluído" },
-  { clientId: 4, product: "Setup Piquenique Boho", date: "2025-10-18", price: "R$ 185,00", status: "Concluído" },
-  { clientId: 4, product: "Baby Boy Voyage", date: "2025-08-05", price: "R$ 159,00", status: "Concluído" },
-  { clientId: 5, product: "Arco Floral Royal", date: "2026-02-01", price: "R$ 299,00", status: "Agendado" },
-  { clientId: 5, product: "Jardim Encantado", date: "2025-12-28", price: "R$ 345,00", status: "Concluído" },
-  { clientId: 5, product: "Gala Ouro & Branco", date: "2025-11-10", price: "R$ 210,00", status: "Concluído" },
-  { clientId: 5, product: "Conjunto Sonho Pastel", date: "2025-09-22", price: "R$ 149,00", status: "Concluído" },
-  { clientId: 5, product: "Setup Piquenique Boho", date: "2025-07-14", price: "R$ 185,00", status: "Concluído" },
-  { clientId: 5, product: "Baby Boy Voyage", date: "2025-05-30", price: "R$ 159,00", status: "Concluído" },
-];
+interface Booking {
+  id: string;
+  product: string;
+  date: string;
+  price: number;
+  status: string;
+}
 
 const AdminClienteDetalhe = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { toast } = useToast();
+  
+  const [cliente, setCliente] = useState<Client | null>(null);
+  const [historico, setHistorico] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (localStorage.getItem("festiva_admin") !== "true") navigate("/admin");
-  }, [navigate]);
+    if (localStorage.getItem("festiva_admin") !== "true") {
+      navigate("/admin");
+      return;
+    }
+    if (id) {
+      fetchClientDetails();
+    }
+  }, [id, navigate]);
 
-  const cliente = mockClientes.find((c) => c.id === Number(id));
-  const historico = mockBookingHistory.filter((b) => b.clientId === Number(id));
+  const fetchClientDetails = async () => {
+    try {
+      setLoading(true);
+      const admin_token = localStorage.getItem("festiva_admin_token");
+      const { data, error } = await supabase.functions.invoke("admin-data", {
+        body: { resource: "clients", action: "get", admin_token, id },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      
+      setCliente(data?.data);
+      setHistorico(data?.bookings || []);
+    } catch (err: any) {
+      toast({ title: "Erro ao buscar detalhes", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background font-body flex">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col min-w-0 md:ml-72">
+          <AdminMobileHeader />
+          <main className="flex-1 p-6 lg:p-8 flex items-center justify-center">
+             <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   if (!cliente) {
     return (

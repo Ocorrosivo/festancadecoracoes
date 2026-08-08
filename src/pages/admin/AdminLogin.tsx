@@ -75,8 +75,8 @@ const AdminLogin = () => {
         if (err.message === "Edge Function returned a non-2xx status code") {
           errorMessage = "Credenciais inválidas ou acesso negado.";
         } else if (err.message === "Failed to send a request to the Edge Function") {
-          const url = import.meta.env.VITE_SUPABASE_URL || "VAZIO (Usando Placeholder)";
-          errorMessage = `Erro de Conexão. O navegador bloqueou a requisição ou a URL configurada está incorreta. URL Atual: ${url}`;
+          const url = import.meta.env.VITE_SUPABASE_URL || "não configurada";
+          errorMessage = `Erro de Conexão. O navegador bloqueou a requisição ou a URL está incorreta. URL Atual: ${url}`;
         } else {
           errorMessage = err.message;
         }

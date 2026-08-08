@@ -136,7 +136,7 @@ const ProductDetail = () => {
   };
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
 
-  const productImage = product.image || "/placeholder.svg";
+  const productImage = product.image || "";
   const productName = product.name || "Decoração de Festa";
   const productPrice = product.price || "Sob consulta";
   const productCategory = product.category || "Geral";
@@ -376,12 +376,16 @@ const ProductDetail = () => {
                   className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-lg transition-all"
                 >
                   <div className="h-44 overflow-hidden bg-muted">
-                    <img
-                      src={p.image || "/placeholder.svg"}
-                      alt={p.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
+                    {p.image ? (
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs font-medium">Sem Imagem</div>
+                    )}
                   </div>
                   <div className="p-4">
                     <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">{p.category}</p>
