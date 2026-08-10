@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ImagePlus, Plus, X, Loader2 } from "lucide-react";
@@ -35,7 +36,7 @@ const AdminProductDialog = ({ open, onOpenChange, product, onSave }: Props) => {
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [newCategory, setNewCategory] = useState("");
 
-  const categoriesList = dbCategories.map((c) => c.name);
+  const categoriesList = useMemo(() => dbCategories.map((c) => c.name), [dbCategories]);
 
   useEffect(() => {
     if (open) {
@@ -50,7 +51,7 @@ const AdminProductDialog = ({ open, onOpenChange, product, onSave }: Props) => {
       setShowNewCategory(false);
       setNewCategory("");
     }
-  }, [open, product]);
+  }, [open, product, categoriesList]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -172,7 +173,13 @@ const AdminProductDialog = ({ open, onOpenChange, product, onSave }: Props) => {
           {/* Price */}
           <div>
             <Label htmlFor="prod-price">Preço *</Label>
-            <Input id="prod-price" placeholder="R$ 0,00" value={price} onChange={(e) => setPrice(e.target.value)} required />
+            <CurrencyInput 
+              id="prod-price" 
+              placeholder="R$ 0,00" 
+              value={price} 
+              onValueChange={(_val, formatted) => setPrice(formatted)} 
+              required 
+            />
           </div>
 
           {/* Description */}

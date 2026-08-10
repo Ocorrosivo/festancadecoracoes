@@ -1,7 +1,7 @@
 import { Menu } from "lucide-react";
 import logoFestancaDefault from "@/assets/logo-festanca.webp";
 import { NavLink } from "@/components/NavLink";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
@@ -21,13 +21,22 @@ const Navbar = () => {
   const { data: siteSettings } = useSiteSettings();
   const logo = siteSettings?.logo_url || logoFestancaDefault;
   const siteName = siteSettings?.site_name || "Festança Decorações";
+  const location = useLocation();
+
+  const handleHomeClick = (e: React.MouseEvent) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.location.reload();
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-40 bg-background/90 backdrop-blur-xl border-b border-border/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20 md:h-24">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5">
+          <Link to="/" onClick={handleHomeClick} className="flex items-center gap-2.5">
             <img src={logo} alt={siteName} className="h-10 md:h-[55px] w-auto object-contain transition-all" />
           </Link>
 
@@ -38,6 +47,7 @@ const Navbar = () => {
                 key={item.to}
                 to={item.to}
                 end={item.to === "/"}
+                onClick={item.to === "/" ? handleHomeClick : undefined}
                 className="text-sm font-medium text-foreground hover:text-primary transition-colors duration-300"
                 activeClassName="text-primary font-bold"
               >
@@ -64,6 +74,7 @@ const Navbar = () => {
                       <NavLink
                         to={item.to}
                         end={item.to === "/"}
+                        onClick={item.to === "/" ? handleHomeClick : undefined}
                         className="text-base font-medium py-3 px-4 rounded-lg hover:bg-accent transition-colors"
                         activeClassName="bg-accent text-primary font-bold"
                       >

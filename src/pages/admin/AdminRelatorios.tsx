@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { BarChart3, TrendingUp, DollarSign, ShoppingBag } from "lucide-react";
@@ -41,12 +39,6 @@ const categoryData = [
 const COLORS = ["hsl(334, 100%, 65%)", "hsl(334, 100%, 78%)", "hsl(334, 60%, 85%)", "hsl(30, 44%, 80%)"];
 
 const AdminRelatorios = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (localStorage.getItem("festiva_admin") !== "true") navigate("/admin");
-  }, [navigate]);
-
   return (
     <div className="min-h-screen bg-background font-body flex">
       <AdminSidebar />

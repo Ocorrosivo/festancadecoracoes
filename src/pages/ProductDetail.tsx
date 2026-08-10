@@ -1,13 +1,16 @@
 import { useParams, Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Star, Info, CalendarDays, CheckCircle, Maximize2, AlertCircle, ShoppingBag } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { useProducts } from "@/hooks/useProducts";
+import { useProductImages } from "@/hooks/useProductImages";
+import { getEffectivePrice, getVariationName, type ProductImage } from "@/utils/productImagePrice";
 import BookingConfirmationDialog from "@/components/BookingConfirmationDialog";
 import ImageModal from "@/components/ImageModal";
+import { MaskedInput } from "@/components/ui/MaskedInput";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -17,7 +20,18 @@ const ProductDetail = () => {
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [showBooking, setShowBooking] = useState(false);
   const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [clientCity, setClientCity] = useState("");
+  const [bookingTime, setBookingTime] = useState("");
+  const [bookingNotes, setBookingNotes] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Índice da variação de imagem selecionada. Fonte única da verdade da galeria.
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const galleryProductId = useRef<string | null>(null);
 
   // Normalize slug matching safely
   const decodedSlug = useMemo(() => {
@@ -46,6 +60,11 @@ const ProductDetail = () => {
     setSelectedDate(null);
     setShowBooking(false);
     setClientName("");
+    setClientPhone("");
+    setClientEmail("");
+    setClientCity("");
+    setBookingTime("");
+    setBookingNotes("");
     setCurrentMonth(new Date());
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [slug]);
@@ -54,6 +73,65 @@ const ProductDetail = () => {
     if (!product) return products.slice(0, 4);
     return products.filter((p) => p && p.slug !== product.slug).slice(0, 4);
   }, [products, product]);
+
+  // Variações de imagem do produto (leitura pública).
+  const { data: dbImages = [] } = useProductImages(product?.id);
+
+  // Galeria efetiva: usa product_images quando existirem, senão fallback para product.image.
+  const galleryImages = useMemo<ProductImage[]>(() => {
+    if (dbImages.length > 0) return dbImages;
+    if (product?.image) {
+      return [{ image_url: product.image, is_primary: true, ordem: 0, custom_price: null, nome_opcional: null }];
+    }
+    return [];
+  }, [dbImages, product?.image]);
+
+  // Reseta seleção apenas ao trocar de produto; atualizações da galeria preservam seleção válida.
+  useEffect(() => {
+    if (galleryProductId.current === product?.id) {
+      setSelectedImageIndex((currentIdx) =>
+        galleryImages.length === 0 ? 0 : Math.min(currentIdx, galleryImages.length - 1)
+      );
+      return;
+    }
+    galleryProductId.current = product?.id ?? null;
+    const primaryIdx = galleryImages.findIndex((img) => img.is_primary);
+    const startIdx = galleryImages.length === 0 ? 0 : (primaryIdx >= 0 ? primaryIdx : 0);
+    setSelectedImageIndex(startIdx);
+    setSelectedImageId(galleryImages[startIdx]?.id ?? null);
+  }, [product?.id, galleryImages]);
+
+  const selectImage = useCallback((idx: number) => {
+    if (idx < 0 || idx >= galleryImages.length) return;
+    setSelectedImageIndex(idx);
+    setSelectedImageId(galleryImages[idx]?.id ?? null);
+  }, [galleryImages]);
+
+  const goPrev = useCallback(() => {
+    if (galleryImages.length === 0) return;
+    const next = (selectedImageIndex - 1 + galleryImages.length) % galleryImages.length;
+    setSelectedImageIndex(next);
+    setSelectedImageId(galleryImages[next]?.id ?? null);
+  }, [galleryImages, selectedImageIndex]);
+
+  const goNext = useCallback(() => {
+    if (galleryImages.length === 0) return;
+    const next = (selectedImageIndex + 1) % galleryImages.length;
+    setSelectedImageIndex(next);
+    setSelectedImageId(galleryImages[next]?.id ?? null);
+  }, [galleryImages, selectedImageIndex]);
+
+  // Teclado quando a galeria tem foco/mais de uma imagem.
+  useEffect(() => {
+    if (galleryImages.length <= 1) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (modalOpen) return; // ImageModal trata seu próprio teclado
+      if (e.key === "ArrowLeft") goPrev();
+      else if (e.key === "ArrowRight") goNext();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [galleryImages.length, goPrev, goNext, modalOpen]);
 
   const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
   const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
@@ -136,12 +214,21 @@ const ProductDetail = () => {
   };
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
 
-  const productImage = product.image || "";
   const productName = product.name || "Decoração de Festa";
   const productPrice = product.price || "Sob consulta";
   const productCategory = product.category || "Geral";
   const productDescription = product.description || "Decoração completa planejada para tornar sua festa única e inesquecível.";
   const productDimensions = product.dimensions || "Sob consulta";
+
+  // Seleção efetiva: prioriza o id selecionado (estável entre refetches), com fallback no índice.
+  const idIndex = selectedImageId ? galleryImages.findIndex((img) => img.id === selectedImageId) : -1;
+  const safeIndex = idIndex >= 0
+    ? idIndex
+    : Math.min(selectedImageIndex, Math.max(galleryImages.length - 1, 0));
+  const selectedImage = galleryImages[safeIndex] ?? null;
+  const productImage = selectedImage?.image_url || product.image || "";
+  const selectedPrice = getEffectivePrice(selectedImage, productPrice);
+  const selectedVariationName = getVariationName(selectedImage);
 
   return (
     <div className="min-h-screen bg-background font-display flex flex-col">
@@ -178,20 +265,54 @@ const ProductDetail = () => {
             <div
               className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-muted cursor-pointer group shadow-sm border border-border"
               onClick={() => setModalOpen(true)}
+              onTouchStart={(e) => { touchStartX.current = e.touches[0]?.clientX ?? null; }}
+              onTouchEnd={(e) => {
+                if (touchStartX.current === null) return;
+                const delta = e.changedTouches[0]?.clientX - touchStartX.current;
+                if (Math.abs(delta) > 40) (delta > 0 ? goPrev : goNext)();
+                touchStartX.current = null;
+              }}
               title="Clique para ampliar a imagem"
             >
               <img
                 src={productImage}
-                alt={productName}
+                alt={selectedVariationName ? `${productName} — ${selectedVariationName}` : productName}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="eager"
               />
-              <div className="absolute inset-0 bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              {galleryImages.length > 1 && (
+                <>
+                  <button type="button" aria-label="Imagem anterior" onClick={(e) => { e.stopPropagation(); goPrev(); }} className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-card/85 p-2 text-foreground shadow hover:bg-card">
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button type="button" aria-label="Próxima imagem" onClick={(e) => { e.stopPropagation(); goNext(); }} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-card/85 p-2 text-foreground shadow hover:bg-card">
+                    <ChevronRight size={20} />
+                  </button>
+                </>
+              )}
+              <div className="absolute inset-0 bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                 <span className="bg-card text-primary px-4 py-2 rounded-xl font-bold text-xs md:text-sm shadow-xl flex items-center gap-1.5">
                   <Maximize2 size={16} /> Ver em Tela Cheia
                 </span>
               </div>
             </div>
+            {selectedVariationName && <p className="text-sm font-semibold text-primary">Variação: {selectedVariationName}</p>}
+            {galleryImages.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Variações do produto">
+                {galleryImages.map((img, idx) => (
+                  <button
+                    type="button"
+                    key={img.id ?? `${img.image_url}-${idx}`}
+                    aria-label={`Selecionar imagem ${idx + 1}`}
+                    aria-pressed={idx === safeIndex}
+                    onClick={() => selectImage(idx)}
+                    className={`shrink-0 h-20 w-20 rounded-lg overflow-hidden border-2 transition-colors ${idx === safeIndex ? "border-primary ring-2 ring-primary/20" : "border-border"}`}
+                  >
+                    <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Right Column: Details & Booking Calendar */}
@@ -216,7 +337,7 @@ const ProductDetail = () => {
               {/* Price */}
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Valor da Locação</p>
-                <p className="text-4xl font-bold text-primary">{productPrice}</p>
+                <p className="text-4xl font-bold text-primary">{selectedPrice}</p>
               </div>
 
               {/* Ver Disponibilidade Badge */}
@@ -293,9 +414,9 @@ const ProductDetail = () => {
               </p>
 
               {selectedDate && (
-                <div className="space-y-3 pt-2">
+                <div className="space-y-4 pt-2">
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-muted-foreground">Nome completo do cliente *</label>
+                    <label className="text-sm font-medium text-muted-foreground">Nome completo *</label>
                     <input
                       type="text"
                       value={clientName}
@@ -304,12 +425,65 @@ const ProductDetail = () => {
                       className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
                     />
                   </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-medium text-muted-foreground">WhatsApp / Telefone *</label>
+                      <MaskedInput
+                        mask="(00) 00000-0000"
+                        value={clientPhone}
+                        onAccept={(val: string) => setClientPhone(val)}
+                        placeholder="(11) 99999-9999"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-medium text-muted-foreground">E-mail (Opcional)</label>
+                      <input
+                        type="email"
+                        value={clientEmail}
+                        onChange={(e) => setClientEmail(e.target.value)}
+                        placeholder="seu@email.com"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-medium text-muted-foreground">Cidade / Bairro</label>
+                      <input
+                        type="text"
+                        value={clientCity}
+                        onChange={(e) => setClientCity(e.target.value)}
+                        placeholder="Ex: São Paulo / Tatuapé"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-medium text-muted-foreground">Horário do Evento</label>
+                      <input
+                        type="time"
+                        value={bookingTime}
+                        onChange={(e) => setBookingTime(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-muted-foreground">Observações (Opcional)</label>
+                    <textarea
+                      value={bookingNotes}
+                      onChange={(e) => setBookingNotes(e.target.value)}
+                      placeholder="Detalhes adicionais sobre o local ou evento"
+                      rows={2}
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm resize-none"
+                    />
+                  </div>
                 </div>
               )}
 
               <button
                 type="button"
-                disabled={!selectedDate || !clientName.trim()}
+                disabled={!selectedDate || !clientName.trim() || !clientPhone.trim()}
                 onClick={() => setShowBooking(true)}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-4 rounded-xl font-bold transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mt-2"
               >
@@ -322,8 +496,14 @@ const ProductDetail = () => {
               onOpenChange={setShowBooking}
               productName={productName}
               date={`${selectedDate} de ${monthName}`}
-              price={productPrice}
+              price={selectedPrice}
+              variationName={selectedVariationName}
               clientName={clientName.trim()}
+              clientPhone={clientPhone.trim()}
+              clientEmail={clientEmail.trim()}
+              clientCity={clientCity.trim()}
+              bookingTime={bookingTime}
+              bookingNotes={bookingNotes.trim()}
             />
           </motion.div>
         </div>
@@ -404,7 +584,7 @@ const ProductDetail = () => {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         src={productImage}
-        alt={productName}
+        alt={selectedVariationName ? `${productName} — ${selectedVariationName}` : productName}
       />
 
       <Footer />

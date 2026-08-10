@@ -1,8 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
-import AdminProductDialog from "@/components/AdminProductDialog";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -14,11 +13,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Pencil, Trash2, Search, Download, Upload } from "lucide-react";
-import { useProducts, useAddProduct, useUpdateProduct, useDeleteProduct } from "@/hooks/useProducts";
+import { Plus, Pencil, Trash2, Search, Download, Upload, Package } from "lucide-react";
+import { useProducts, useAddProduct, useDeleteProduct } from "@/hooks/useProducts";
+import { useCategories } from "@/hooks/useCategories";
 import type { Product } from "@/data/products";
 import { exportToCSV } from "@/utils/exportUtils";
 import { toast } from "sonner";
+
+const normalize = (s: string) =>
+  s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 
 const parseCSV = (text: string): Record<string, string>[] => {
   const rows: string[][] = [];
@@ -53,16 +56,40 @@ const parseCSV = (text: string): Record<string, string>[] => {
 const AdminProducts = () => {
   const navigate = useNavigate();
   const { data: products = [], isLoading } = useProducts();
+  const { data: categories = [] } = useCategories(false);
   const addProduct = useAddProduct();
-  const updateProduct = useUpdateProduct();
   const deleteProductMutation = useDeleteProduct();
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteSlug, setDeleteSlug] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Debounce 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const filtered = useMemo(() => {
+    const term = normalize(debouncedSearch.trim());
+    if (term.length < 3) return products;
+
+    const startsWithTerm: Product[] = [];
+    const containsTerm: Product[] = [];
+
+    for (const p of products) {
+      const normalizedName = normalize(p.name);
+      if (normalizedName.startsWith(term)) {
+        startsWithTerm.push(p);
+      } else if (normalizedName.includes(term)) {
+        containsTerm.push(p);
+      }
+    }
+
+    return [...startsWithTerm, ...containsTerm];
+  }, [products, debouncedSearch]);
 
   const handleExport = () => {
     if (products.length === 0) {
@@ -96,7 +123,7 @@ const AdminProducts = () => {
         return;
       }
       const existingSlugs = new Set(products.map((p) => p.slug));
-      const slugify = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const slugify = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
       let ok = 0, skip = 0, fail = 0;
       for (const r of rows) {
         const name = r.name?.trim();
@@ -130,21 +157,6 @@ const AdminProducts = () => {
     }
   };
 
-
-  const handleSave = (data: Omit<Product, "slug">) => {
-    if (editingProduct) {
-      updateProduct.mutate(
-        { slug: editingProduct.slug, data },
-        { onSuccess: () => toast.success("Produto atualizado!") }
-      );
-    } else {
-      addProduct.mutate(data, {
-        onSuccess: () => toast.success("Produto cadastrado!"),
-      });
-    }
-    setEditingProduct(null);
-  };
-
   const handleDelete = () => {
     if (deleteSlug) {
       deleteProductMutation.mutate(deleteSlug, {
@@ -154,18 +166,13 @@ const AdminProducts = () => {
     }
   };
 
-  const filtered = products.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.category.toLowerCase().includes(search.toLowerCase())
-  );
-
   return (
     <div className="min-h-screen bg-background font-body flex">
       <AdminSidebar />
       <div className="flex-1 flex flex-col min-w-0 md:ml-72">
         <AdminMobileHeader />
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <h1 className="text-2xl font-heading font-bold text-foreground">Gestão de Produtos</h1>
             <div className="flex flex-wrap items-center gap-2">
@@ -177,107 +184,114 @@ const AdminProducts = () => {
                 onChange={handleImportFile}
               />
               <Button variant="outline" onClick={handleImportClick} disabled={importing} className="gap-2">
-                <Upload size={16} /> {importing ? "Importando..." : "Importar CSV"}
+                <Upload size={16} /> <span className="hidden sm:inline">{importing ? "Importando..." : "Importar CSV"}</span>
               </Button>
               <Button variant="outline" onClick={handleExport} className="gap-2">
-                <Download size={16} /> Exportar CSV
+                <Download size={16} /> <span className="hidden sm:inline">Exportar CSV</span>
               </Button>
-              <Button
-                onClick={() => { setEditingProduct(null); setDialogOpen(true); }}
-                className="gap-2"
-              >
+              <Button onClick={() => navigate("/admin/produtos/novo")} className="gap-2">
                 <Plus size={16} /> Novo Produto
               </Button>
             </div>
           </div>
 
-
-          <div className="flex items-center gap-2 bg-card rounded-xl px-3 py-2 border border-border mb-6 max-w-sm">
-            <Search size={16} className="text-muted-foreground" />
+          {/* Search */}
+          <div className="flex items-center gap-2 bg-card rounded-xl px-3 py-2 border border-border mb-6 max-w-md">
+            <Search size={16} className="text-muted-foreground shrink-0" />
             <input
-              placeholder="Buscar produto..."
+              placeholder="Buscar produto (min. 3 letras)..."
               className="bg-transparent text-sm focus:outline-none w-full"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+            {search && (
+              <button onClick={() => setSearch("")} className="text-muted-foreground hover:text-foreground text-xs shrink-0">
+                &times;
+              </button>
+            )}
           </div>
 
-          <div className="bg-card rounded-2xl border border-border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-accent/50 text-muted-foreground">
-                    <th className="text-left py-3 px-4">Imagem</th>
-                    <th className="text-left py-3 px-4">Nome</th>
-                    <th className="text-left py-3 px-4 hidden sm:table-cell">Categoria</th>
-                    <th className="text-left py-3 px-4">Preço</th>
-                    <th className="text-left py-3 px-4 hidden md:table-cell">Dimensões</th>
-                    <th className="text-right py-3 px-4">Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {isLoading ? (
-                    <tr>
-                      <td colSpan={6} className="py-12 text-center text-muted-foreground">
-                        Carregando...
-                      </td>
-                    </tr>
-                  ) : filtered.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-12 text-center text-muted-foreground">
-                        Nenhum produto encontrado.
-                      </td>
-                    </tr>
-                  ) : (
-                    filtered.map((p) => (
-                      <tr key={p.slug} className="border-b border-border/50 hover:bg-accent/30 transition-colors">
-                        <td className="py-3 px-4">
-                          <img src={p.image} alt={p.name} className="w-12 h-12 rounded-lg object-cover" loading="lazy" />
-                        </td>
-                        <td className="py-3 px-4">
-                          <p className="font-medium text-foreground">{p.name}</p>
-                          {p.trending && (
-                            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Em alta</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 text-muted-foreground hidden sm:table-cell">{p.category}</td>
-                        <td className="py-3 px-4 text-primary font-bold">{p.price}</td>
-                        <td className="py-3 px-4 text-muted-foreground hidden md:table-cell">{p.dimensions || "—"}</td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => { setEditingProduct(p); setDialogOpen(true); }}
-                            >
-                              <Pencil size={16} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-destructive hover:text-destructive"
-                              onClick={() => setDeleteSlug(p.slug)}
-                            >
-                              <Trash2 size={16} />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+          {/* Grid */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
-          </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-20 text-muted-foreground">
+              <Package size={48} className="mx-auto mb-4 opacity-30" />
+              <p className="text-lg font-medium">Nenhum produto encontrado</p>
+              {debouncedSearch.length >= 3 && (
+                <p className="text-sm mt-1">Tente buscar com outros termos</p>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {filtered.map((p) => (
+                <div
+                  key={p.slug}
+                  className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group"
+                >
+                  {/* Image */}
+                  <div className="aspect-[4/3] bg-muted overflow-hidden relative">
+                    {p.image ? (
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                        <Package size={40} className="opacity-30" />
+                      </div>
+                    )}
+                    {p.trending && (
+                      <span className="absolute top-2 left-2 text-xs bg-primary text-primary-foreground px-2.5 py-0.5 rounded-full font-bold">
+                        Em alta
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Info */}
+                  <div className="p-4 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider truncate">
+                          {p.category}
+                        </p>
+                        <h3 className="font-bold text-foreground truncate mt-0.5">{p.name}</h3>
+                      </div>
+                      <span className="text-primary font-bold text-sm whitespace-nowrap shrink-0">
+                        {p.price}
+                      </span>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 gap-1.5 h-8 text-xs rounded-lg"
+                        onClick={() => navigate(`/admin/produtos/${p.id}/editar`)}
+                      >
+                        <Pencil size={13} /> Editar
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs rounded-lg text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+                        onClick={() => setDeleteSlug(p.slug)}
+                      >
+                        <Trash2 size={13} />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </main>
       </div>
-
-      <AdminProductDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        product={editingProduct}
-        onSave={handleSave}
-      />
 
       <AlertDialog open={!!deleteSlug} onOpenChange={() => setDeleteSlug(null)}>
         <AlertDialogContent>

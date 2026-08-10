@@ -1,20 +1,33 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = [
+  "https://festancadecoracoes.com.br",
+  "https://www.festancadecoracoes.com.br",
+  "https://gray-echidna-179762.hostingersite.com",
+  "http://localhost:5173",
+  "http://localhost:8080",
+];
 
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+function corsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get("origin") || "";
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowed,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Vary": "Origin",
+  };
 }
 
 Deno.serve(async (req) => {
+  const cors = corsHeaders(req);
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...cors, "Content-Type": "application/json" },
+    });
+
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: cors });
   }
 
   try {
@@ -30,57 +43,45 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { action, email, password, name, role, permissions, admin_token, id, old_email, new_email, status: newStatus } = body;
 
-    console.log(`[DEBUG] Recebida ação: ${action}`);
-
     // ── LOGIN ──
     if (action === "login") {
-      console.log("[DEBUG] Ação de login iniciada para email:", email);
       if (!email || !password) {
-        console.log("[DEBUG] Retornando 400 - Email ou senha ausentes");
         return json({ error: "Email e senha obrigatórios" }, 400);
       }
 
-      console.log("[DEBUG] Chamando signInWithPassword nativo...");
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
         password: password,
       });
 
       if (authError || !authData.user) {
-        console.log("[DEBUG] Retornando 401 - signInWithPassword falhou:", authError?.message);
-        return json({ error: "Credenciais inválidas", debug: authError?.message }, 401);
+        return json({ error: "Credenciais inválidas" }, 401);
       }
 
-      console.log("[DEBUG] Buscando dados do usuário na tabela profiles...");
-      const { data: profile, error: profileError } = await supabaseAdmin
+      const { data: profile } = await supabaseAdmin
         .from("profiles")
         .select("id, name, status, role, email, permissions")
         .eq("id", authData.user.id)
         .single();
 
-      console.log("[DEBUG] Resultado da busca em profiles:", profile, "Erro:", profileError);
-
       if (!profile) {
-        console.log("[DEBUG] Retornando 401 - Usuário não encontrado em profiles");
-        return json({ error: "Perfil não encontrado", debug: "profile_not_found" }, 401);
+        return json({ error: "Perfil não encontrado" }, 401);
       }
 
       if (profile.status !== "Ativo") {
-        console.log("[DEBUG] Retornando 403 - Status da conta é diferente de Ativo:", profile.status);
         return json({ error: "Conta pendente ou desativada. Contacte o administrador." }, 403);
       }
 
       if (profile.role === "User") {
-        console.log("[DEBUG] Retornando 403 - Role sem privilégios administrativos:", profile.role);
         return json({ error: "Acesso administrativo negado." }, 403);
       }
 
-      console.log("[DEBUG] Login bem-sucedido. Retornando 200.");
       // Usar o access_token oficial do Supabase Auth como admin_token
-      return json({ 
-        success: true, 
-        admin: { id: profile.id, email: profile.email || authData.user.email, name: profile.name, role: profile.role, status: profile.status, permissions: profile.permissions }, 
-        token: authData.session.access_token 
+      return json({
+        success: true,
+        admin: { id: profile.id, email: profile.email || authData.user.email, name: profile.name, role: profile.role, status: profile.status, permissions: profile.permissions },
+        token: authData.session.access_token,
+        refresh_token: authData.session.refresh_token
       });
     }
 
@@ -234,7 +235,7 @@ Deno.serve(async (req) => {
 
     return json({ error: "Ação inválida" }, 400);
   } catch (err) {
-    console.error("[DEBUG] Erro interno:", err);
+    console.error("admin-auth internal error:", err);
     return json({ error: "Erro interno do servidor" }, 500);
   }
 });

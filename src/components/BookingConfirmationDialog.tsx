@@ -8,35 +8,65 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { buildWhatsAppUrl } from "@/config/constants";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BookingConfirmationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   productName: string;
+  variationName?: string | null;
   date: string;
   price: string;
   clientName?: string;
-  address?: string;
-  neighborhood?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
+  clientPhone?: string;
+  clientEmail?: string;
+  clientCity?: string;
+  bookingTime?: string;
+  bookingNotes?: string;
 }
 
 const BookingConfirmationDialog = ({
   open,
   onOpenChange,
   productName,
+  variationName,
   date,
   price,
   clientName,
-  address,
-  neighborhood,
-  city,
-  state,
-  zipCode,
+  clientPhone,
+  clientEmail,
+  clientCity,
+  bookingTime,
+  bookingNotes,
 }: BookingConfirmationDialogProps) => {
   const [countdown, setCountdown] = useState(3);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      setSaved(false);
+      return;
+    }
+
+    if (!saved) {
+      // Persiste o produto junto da variação selecionada (quando houver),
+      // e sempre o preço efetivo já resolvido pela página.
+      const productLabel = variationName ? `${productName} — ${variationName}` : productName;
+      supabase.functions.invoke("create-booking", {
+        body: {
+          client_name: clientName || "",
+          client_phone: clientPhone || "",
+          client_email: clientEmail || "",
+          client_city: clientCity || "",
+          booking_time: bookingTime || "",
+          booking_notes: bookingNotes || "",
+          product: productLabel,
+          date,
+          price,
+        },
+      }).then(() => setSaved(true)).catch(() => setSaved(true));
+    }
+  }, [open, saved, clientName, clientPhone, clientEmail, clientCity, bookingTime, bookingNotes, productName, variationName, date, price]);
 
   useEffect(() => {
     if (!open) {
@@ -48,7 +78,8 @@ const BookingConfirmationDialog = ({
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          const message = `Olá! Gostaria de reservar:\n\n👤 Cliente: ${clientName || ""}\n📦 Produto: ${productName}\n📅 Data: ${date}\n💰 Valor: ${price}\n\nPodemos confirmar a disponibilidade?`;
+          const productLabel = variationName ? `${productName} — ${variationName}` : productName;
+          const message = `Olá! Gostaria de reservar:\n\n👤 Cliente: ${clientName || ""}\n📦 Produto: ${productLabel}\n📅 Data: ${date}\n💰 Valor: ${price}\n\nPodemos confirmar a disponibilidade?`;
           window.open(buildWhatsAppUrl(message), "_blank");
           onOpenChange(false);
           return 0;
@@ -58,7 +89,7 @@ const BookingConfirmationDialog = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [open, productName, date, price, onOpenChange]);
+  }, [open, productName, variationName, date, price, clientName, onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -128,7 +159,7 @@ const BookingConfirmationDialog = ({
                   <div className="flex items-center gap-3 text-sm">
                     <Tag size={16} className="text-primary shrink-0" />
                     <span className="text-muted-foreground">Produto</span>
-                    <span className="font-bold ml-auto">{productName}</span>
+                    <span className="font-bold ml-auto">{variationName ? `${productName} — ${variationName}` : productName}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Calendar size={16} className="text-primary shrink-0" />

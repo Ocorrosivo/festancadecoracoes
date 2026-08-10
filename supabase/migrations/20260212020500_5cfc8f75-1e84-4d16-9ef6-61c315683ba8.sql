@@ -18,9 +18,9 @@ ON public.admin_users
 FOR ALL
 USING (false);
 
--- Create extension for password hashing
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- Create extension for password hashing (Supabase instala no schema extensions)
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
 
 -- Insert the initial admin user with hashed password
 INSERT INTO public.admin_users (email, password_hash, name)
-VALUES ('suprememidias.ok@gmail.com', crypt('123', gen_salt('bf')), 'Admin Principal');
+VALUES ('suprememidias.ok@gmail.com', extensions.crypt('123', extensions.gen_salt('bf')), 'Admin Principal');

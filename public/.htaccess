@@ -1,8 +1,17 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Não redirecionar diretórios para /dir/ (evita colisão com rotas do SPA, ex: /produtos)
+  DirectorySlash Off
+
+  # index.html é servido diretamente
   RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # Arquivos reais (imagens, assets, etc.) são servidos como estão
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # Qualquer outra rota (incluindo diretórios que batem com rotas do React) -> SPA
   RewriteRule . /index.html [L]
 </IfModule>

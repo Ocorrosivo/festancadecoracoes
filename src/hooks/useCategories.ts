@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { invokeAdminData } from "@/utils/adminApi";
 
 export interface CategoryItem {
   id: string;
@@ -56,21 +57,15 @@ export const useCategories = (onlyActive: boolean = false) => {
   });
 };
 
+const callAdminData = async (body: Record<string, unknown>) =>
+  invokeAdminData<{ data?: unknown }>({ ...body, resource: "categories" });
+
 export const useAddCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ name, icon }: { name: string; icon?: string }) => {
-      const slug = slugify(name);
-      const payload = {
-        name,
-        slug,
-        icon: icon || null,
-        display_order: 99,
-        is_active: true,
-      };
-      const { data, error } = await supabase.from("categories").insert([payload]).select().single();
-      if (error) throw error;
-      return data;
+      const res = await callAdminData({ action: "create", payload: { name, icon: icon || null } });
+      return res?.data;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"] }),
   });
@@ -80,13 +75,8 @@ export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<CategoryItem> }) => {
-      const payload = { ...data, updated_at: new Date().toISOString() };
-      if (data.name) {
-        payload.slug = slugify(data.name);
-      }
-      const { data: updated, error } = await supabase.from("categories").update(payload).eq("id", id).select().single();
-      if (error) throw error;
-      return updated;
+      const res = await callAdminData({ action: "update", id, payload: data });
+      return res?.data;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"] }),
   });
@@ -96,8 +86,7 @@ export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("categories").delete().eq("id", id);
-      if (error) throw error;
+      await callAdminData({ action: "delete", id });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"] }),
   });

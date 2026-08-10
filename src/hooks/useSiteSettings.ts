@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { invokeAdminData } from "@/utils/adminApi";
 
 export interface SiteSettings {
   id: string;
@@ -80,19 +81,12 @@ export const useUpdateSiteSettings = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (settings: Partial<SiteSettings>) => {
-      const payload = {
-        ...settings,
-        id: "default",
-        updated_at: new Date().toISOString(),
-      };
-      const { data, error } = await supabase
-        .from("site_settings")
-        .upsert(payload, { onConflict: "id" })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      const data = await invokeAdminData<{ data?: SiteSettings }>({
+        resource: "site_settings",
+        action: "upsert",
+        payload: settings,
+      });
+      return data?.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["site_settings"] });

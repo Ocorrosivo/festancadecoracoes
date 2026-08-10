@@ -18,6 +18,7 @@ const Contato = lazy(() => import("./pages/Contato"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
+const AdminProductForm = lazy(() => import("./pages/admin/AdminProductForm"));
 const AdminClientes = lazy(() => import("./pages/admin/AdminClientes"));
 const AdminRelatorios = lazy(() => import("./pages/admin/AdminRelatorios"));
 const AdminClienteDetalhe = lazy(() => import("./pages/admin/AdminClienteDetalhe"));
@@ -70,6 +71,8 @@ const App = () => (
               <Route path="/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="/admin/produtos" element={<ProtectedRoute><AdminProducts /></ProtectedRoute>} />
+              <Route path="/admin/produtos/novo" element={<ProtectedRoute><AdminProductForm /></ProtectedRoute>} />
+              <Route path="/admin/produtos/:id/editar" element={<ProtectedRoute><AdminProductForm /></ProtectedRoute>} />
               <Route path="/admin/categorias" element={<ProtectedRoute><AdminCategories /></ProtectedRoute>} />
               <Route path="/admin/banner" element={<ProtectedRoute><AdminBanner /></ProtectedRoute>} />
               <Route path="/admin/configuracoes" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />

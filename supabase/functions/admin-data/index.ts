@@ -1,15 +1,21 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = [
+  "https://festancadecoracoes.com.br",
+  "https://www.festancadecoracoes.com.br",
+  "https://gray-echidna-179762.hostingersite.com",
+  "http://localhost:5173",
+  "http://localhost:8080",
+];
 
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+function corsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get("origin") || "";
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowed,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Vary": "Origin",
+  };
 }
 
 const slugify = (name: string): string =>
@@ -28,8 +34,15 @@ async function validateAdmin(supabase: any, token: string | null) {
 }
 
 Deno.serve(async (req) => {
+  const cors = corsHeaders(req);
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...cors, "Content-Type": "application/json" },
+    });
+
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: cors });
   }
 
   try {
@@ -147,6 +160,160 @@ Deno.serve(async (req) => {
         const { error } = await supabase.from("products").delete().eq("slug", slug);
         if (error) throw error;
         return json({ success: true });
+      }
+    }
+
+    // ── CATEGORIES ──
+    if (resource === "categories") {
+      if (action === "create") {
+        if (!payload?.name || typeof payload.name !== "string" || payload.name.length > 200) {
+          return json({ error: "Nome inválido" }, 400);
+        }
+        const { data, error } = await supabase.from("categories").insert({
+          name: payload.name,
+          slug: slugify(payload.name),
+          icon: payload.icon ?? null,
+          display_order: payload.display_order ?? 99,
+          is_active: payload.is_active ?? true,
+        }).select().single();
+        if (error) throw error;
+        return json({ data });
+      }
+      if (action === "update") {
+        if (!id) return json({ error: "ID obrigatório" }, 400);
+        const update: Record<string, unknown> = {};
+        ["name", "icon", "display_order", "is_active"].forEach((k) => {
+          if (payload?.[k] !== undefined) update[k] = payload[k];
+        });
+        if (payload?.name) update.slug = slugify(payload.name);
+        const { data, error } = await supabase.from("categories").update(update).eq("id", id).select().single();
+        if (error) throw error;
+        return json({ data });
+      }
+      if (action === "delete") {
+        if (!id) return json({ error: "ID obrigatório" }, 400);
+        const { error } = await supabase.from("categories").delete().eq("id", id);
+        if (error) throw error;
+        return json({ success: true });
+      }
+    }
+
+    // ── BOOKINGS ──
+    if (resource === "bookings") {
+      if (action === "list") {
+        const { data, error } = await supabase
+          .from("bookings")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        return json({ data });
+      }
+      if (action === "delete") {
+        if (!id) return json({ error: "ID obrigatório" }, 400);
+        const { error } = await supabase.from("bookings").delete().eq("id", id);
+        if (error) throw error;
+        return json({ success: true });
+      }
+    }
+
+    // ── PRODUCT IMAGES ──
+    if (resource === "product_images") {
+      if (action === "list") {
+        if (!id) return json({ error: "product_id obrigatório" }, 400);
+        const { data, error } = await supabase
+          .from("product_images")
+          .select("*")
+          .eq("product_id", id)
+          .order("ordem", { ascending: true });
+        if (error) throw error;
+        return json({ data });
+      }
+      if (action === "upsert_all") {
+        if (!id || !Array.isArray(payload?.images)) {
+          return json({ error: "product_id e images obrigatórios" }, 400);
+        }
+
+        type ImagePayload = {
+          image_url?: unknown;
+          custom_price?: unknown;
+          nome_opcional?: unknown;
+          is_primary?: unknown;
+        };
+
+        const input = payload.images as ImagePayload[];
+        if (input.some((image) => typeof image.image_url !== "string" || !image.image_url.trim())) {
+          return json({ error: "Todas imagens devem ter URL válida" }, 400);
+        }
+
+        const primaryIndex = input.findIndex((image) => image.is_primary === true);
+        const images = input.map((image, idx) => {
+          const rawPrice = image.custom_price;
+          const customPrice = rawPrice === "" || rawPrice === null || rawPrice === undefined
+            ? null
+            : Number(rawPrice);
+          if (customPrice !== null && (!Number.isFinite(customPrice) || customPrice < 0)) {
+            throw new Error("Preço de imagem inválido");
+          }
+          const variationName = typeof image.nome_opcional === "string"
+            ? image.nome_opcional.trim() || null
+            : null;
+          return {
+            product_id: id,
+            image_url: image.image_url!.trim(),
+            custom_price: customPrice,
+            nome_opcional: variationName,
+            is_primary: input.length > 0 && (primaryIndex < 0 ? idx === 0 : idx === primaryIndex),
+            ordem: idx,
+            // Legacy fields remain synchronized while older clients are retired.
+            price: customPrice,
+            sort_order: idx,
+          };
+        });
+
+        const { error: deleteError } = await supabase
+          .from("product_images")
+          .delete()
+          .eq("product_id", id);
+        if (deleteError) throw deleteError;
+
+        if (images.length > 0) {
+          const { error } = await supabase.from("product_images").insert(images);
+          if (error) throw error;
+        }
+        return json({ success: true, data: images });
+      }
+      if (action === "delete") {
+        if (!id) return json({ error: "ID obrigatório" }, 400);
+        const { error } = await supabase.from("product_images").delete().eq("id", id);
+        if (error) throw error;
+        return json({ success: true });
+      }
+    }
+
+    // ── HERO BANNERS ──
+    if (resource === "hero_banners") {
+      if (action === "upsert") {
+        const p = payload || {};
+        if (p.id) {
+          const update = { ...p };
+          delete update.id;
+          const { data, error } = await supabase.from("hero_banners").update(update).eq("id", p.id).select().single();
+          if (error) throw error;
+          return json({ data });
+        }
+        const { data, error } = await supabase.from("hero_banners").insert(p).select().single();
+        if (error) throw error;
+        return json({ data });
+      }
+    }
+
+    // ── SITE SETTINGS ──
+    if (resource === "site_settings") {
+      if (action === "upsert") {
+        const p = { ...(payload || {}), id: "default" };
+        const { data, error } = await supabase.from("site_settings").upsert(p, { onConflict: "id" }).select().single();
+        if (error) throw error;
+        return json({ data });
       }
     }
 

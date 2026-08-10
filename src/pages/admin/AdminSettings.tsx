@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { MaskedInput } from "@/components/ui/MaskedInput";
 
 const AdminSettings = () => {
   const { data: settings, isLoading } = useSiteSettings();
@@ -263,19 +264,21 @@ const AdminSettings = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium text-muted-foreground">WhatsApp (Número com DDD)</label>
-                    <Input
+                    <MaskedInput
+                      mask="(00) 00000-0000"
                       value={form.whatsapp}
-                      onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
+                      onAccept={(val: string) => setForm({ ...form, whatsapp: val })}
                       placeholder="5511999999999"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium text-muted-foreground">Telefone Visível</label>
-                    <Input
+                    <MaskedInput
+                      mask="(00) 0000-0000"
                       value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      placeholder="(11) 99999-9999"
+                      onAccept={(val: string) => setForm({ ...form, phone: val })}
+                      placeholder="(11) 9999-9999"
                     />
                   </div>
 

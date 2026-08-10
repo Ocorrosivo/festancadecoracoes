@@ -1,4 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
+import {
+  getAccessToken,
+  refreshAccessToken,
+  handleExpiredSession,
+  SessionExpiredError,
+} from "@/utils/adminSession";
 
 export type StorageFolder =
   | "banners"
@@ -8,41 +14,67 @@ export type StorageFolder =
   | "categorias"
   | "configuracoes";
 
+/** Bucket único da aplicação. Deve casar com ALLOWED_BUCKETS da Edge Function. */
+const BUCKET = "festanca-storage";
+
+const isUnauthorized = (error: unknown, data: unknown): boolean => {
+  const status = (error as { context?: { status?: number } } | null)?.context?.status;
+  if (status === 401) return true;
+  const message = (data as { error?: string } | null)?.error ?? "";
+  return /sessão inválida|sessão expirada|não autorizado/i.test(message);
+};
+
 /**
- * Uploads a file to Supabase storage under a specific folder.
- * Returns the public URL of the uploaded file.
+ * Envia um arquivo para o Storage via Edge Function e devolve a URL pública.
+ *
+ * O access_token é obtido imediatamente antes de cada tentativa. Em caso de
+ * 401, renova a sessão e repete o upload UMA única vez; se falhar de novo,
+ * encerra a sessão e volta ao login.
  */
 export const uploadStorageFile = async (
   file: File,
   folder: StorageFolder
 ): Promise<string> => {
-  const fileExt = file.name.split(".").pop() || "png";
-  const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+  const run = async (token: string) => {
+    // FormData precisa ser recriado por tentativa: o stream é consumido no envio.
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("admin_token", token);
+    formData.append("bucket", BUCKET);
+    formData.append("folder", folder);
 
-  // Upload to festanca-storage bucket
-  const { data, error } = await supabase.storage
-    .from("festanca-storage")
-    .upload(fileName, file, {
-      cacheControl: "3600",
-      upsert: true,
-    });
+    return supabase.functions.invoke("upload-product-image", { body: formData });
+  };
 
-  if (error) {
-    // If festanca-storage bucket is not found or fails, fallback to edge function or data URL
-    console.warn("Direct storage upload warning:", error.message);
-    
-    // Fallback: Convert file to Base64 Data URL if bucket isn't setup on server yet
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (err) => reject(err);
-      reader.readAsDataURL(file);
-    });
+  let token: string;
+  try {
+    token = await getAccessToken();
+  } catch {
+    await handleExpiredSession();
+    throw new SessionExpiredError();
   }
 
-  const { data: publicData } = supabase.storage
-    .from("festanca-storage")
-    .getPublicUrl(data.path);
+  let { data, error } = await run(token);
 
-  return publicData.publicUrl;
+  if (isUnauthorized(error, data)) {
+    const refreshed = await refreshAccessToken();
+    if (!refreshed) {
+      await handleExpiredSession();
+      throw new SessionExpiredError();
+    }
+    ({ data, error } = await run(refreshed));
+
+    if (isUnauthorized(error, data)) {
+      await handleExpiredSession();
+      throw new SessionExpiredError();
+    }
+  }
+
+  if (error) throw error;
+
+  const result = data as { error?: string; url?: string } | null;
+  if (result?.error) throw new Error(result.error);
+  if (!result?.url) throw new Error("Falha no upload da imagem.");
+
+  return result.url;
 };

@@ -5,6 +5,7 @@ import logoFestanca from "@/assets/logo-festanca.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { hasValidSession, setAdminProfile } from "@/utils/adminSession";
 import {
   Dialog,
   DialogContent,
@@ -23,9 +24,13 @@ const AdminLogin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (localStorage.getItem("festiva_admin") === "true") {
-      navigate("/admin/dashboard", { replace: true });
-    }
+    let active = true;
+    hasValidSession().then((valid) => {
+      if (active && valid) navigate("/admin/dashboard", { replace: true });
+    });
+    return () => {
+      active = false;
+    };
   }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -51,19 +56,27 @@ const AdminLogin = () => {
       if (data?.error) {
         toast({ title: data.error, description: "Verifique suas credenciais e tente novamente.", variant: "destructive" });
       } else if (data?.success) {
-        localStorage.setItem("festiva_admin", "true");
-        localStorage.setItem("festiva_admin_token", data.token);
-        localStorage.setItem("festiva_admin_id", data.admin.id);
-        localStorage.setItem("festiva_admin_email", data.admin.email);
-        localStorage.setItem("festiva_admin_name", data.admin.name || "");
-        localStorage.setItem("festiva_admin_role", data.admin.role || "Viewer");
-        localStorage.setItem("festiva_admin_permissions", JSON.stringify(data.admin.permissions || {}));
+        // Sessão nativa do Supabase Auth: única fonte do access_token.
+        // persistSession + autoRefreshToken cuidam da renovação automática.
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.token,
+          refresh_token: data.refresh_token,
+        });
+        if (sessionError) throw sessionError;
+
+        setAdminProfile({
+          id: data.admin.id,
+          email: data.admin.email,
+          name: data.admin.name || "",
+          role: data.admin.role || "Viewer",
+          permissions: data.admin.permissions || {},
+        });
         navigate("/admin/dashboard");
       }
-    } catch (err: any) {
-      console.error("Erro detalhado no login:", err);
+    } catch (rawErr: unknown) {
+      const err = rawErr as { context?: { json?: () => Promise<{ error?: string }> }; message?: string };
       let errorMessage = "Erro ao conectar com o servidor. Tente novamente.";
-      
+
       if (err?.context && typeof err.context.json === 'function') {
         try {
           const body = await err.context.json();

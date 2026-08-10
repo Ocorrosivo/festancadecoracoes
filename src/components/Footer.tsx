@@ -98,7 +98,19 @@ const Footer = () => {
           </div>
         </div>
         <div className="pt-8 border-t border-footer-text/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-footer-link">
-          <p>{footerText}</p>
+          <p>
+            {footerText}{" "}
+            <span className="hidden sm:inline">·</span>{" "}
+            Desenvolvido por{" "}
+            <a
+              href="https://brainstors.com.br/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gold transition-colors duration-300 font-medium"
+            >
+              Agencia Brainstors
+            </a>
+          </p>
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-2">
             <Link className="hover:text-gold transition-colors duration-300" to="/politica-de-privacidade">Política de Privacidade</Link>
             <Link className="hover:text-gold transition-colors duration-300" to="/politica-de-reembolso">Política de Reembolso</Link>

@@ -1,16 +1,8 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { getBookings } from "@/data/bookings";
 
 const AdminBookings = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (localStorage.getItem("festiva_admin") !== "true") navigate("/admin");
-  }, [navigate]);
-
   const bookings = getBookings();
 
   return (

@@ -10,56 +10,114 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.15"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
-      admin_users: {
+      bookings: {
         Row: {
+          client_id: string | null
+          client_name: string | null
           created_at: string
-          created_by: string | null
-          email: string
+          date: string
+          horario: string | null
           id: string
-          last_access: string | null
-          name: string | null
-          password_hash: string
-          role: string
-          session_token: string | null
+          observacoes: string | null
+          price: string | null
+          product: string
           status: string
         }
         Insert: {
+          client_id?: string | null
+          client_name?: string | null
           created_at?: string
-          created_by?: string | null
-          email: string
+          date?: string
+          horario?: string | null
           id?: string
-          last_access?: string | null
-          name?: string | null
-          password_hash: string
-          role?: string
-          session_token?: string | null
+          observacoes?: string | null
+          price?: string | null
+          product: string
           status?: string
         }
         Update: {
+          client_id?: string | null
+          client_name?: string | null
           created_at?: string
-          created_by?: string | null
-          email?: string
+          date?: string
+          horario?: string | null
           id?: string
-          last_access?: string | null
-          name?: string | null
-          password_hash?: string
-          role?: string
-          session_token?: string | null
+          observacoes?: string | null
+          price?: string | null
+          product?: string
           status?: string
         }
         Relationships: [
           {
-            foreignKeyName: "admin_users_created_by_fkey"
-            columns: ["created_by"]
+            foreignKeyName: "bookings_client_id_fkey"
+            columns: ["client_id"]
             isOneToOne: false
-            referencedRelation: "admin_users"
+            referencedRelation: "clients"
             referencedColumns: ["id"]
           },
         ]
+      }
+      categories: {
+        Row: {
+          created_at: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          slug: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          slug: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          slug?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       clients: {
         Row: {
@@ -70,6 +128,8 @@ export type Database = {
           empresa: string | null
           id: string
           nome: string
+          observacoes: string | null
+          origem: string | null
           status: string | null
           telefone: string | null
           total_locacoes: number | null
@@ -84,6 +144,8 @@ export type Database = {
           empresa?: string | null
           id?: string
           nome: string
+          observacoes?: string | null
+          origem?: string | null
           status?: string | null
           telefone?: string | null
           total_locacoes?: number | null
@@ -98,6 +160,8 @@ export type Database = {
           empresa?: string | null
           id?: string
           nome?: string
+          observacoes?: string | null
+          origem?: string | null
           status?: string | null
           telefone?: string | null
           total_locacoes?: number | null
@@ -109,10 +173,64 @@ export type Database = {
             foreignKeyName: "clients_admin_id_fkey"
             columns: ["admin_id"]
             isOneToOne: false
-            referencedRelation: "admin_users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
+      }
+      hero_banners: {
+        Row: {
+          badge_text: string | null
+          button_link: string | null
+          button_text: string | null
+          created_at: string | null
+          description: string | null
+          desktop_image_url: string | null
+          id: string
+          is_active: boolean | null
+          mobile_image_url: string | null
+          secondary_button_link: string | null
+          secondary_button_text: string | null
+          subtitle: string | null
+          tablet_image_url: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          badge_text?: string | null
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          desktop_image_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          mobile_image_url?: string | null
+          secondary_button_link?: string | null
+          secondary_button_text?: string | null
+          subtitle?: string | null
+          tablet_image_url?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          badge_text?: string | null
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          desktop_image_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          mobile_image_url?: string | null
+          secondary_button_link?: string | null
+          secondary_button_text?: string | null
+          subtitle?: string | null
+          tablet_image_url?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       newsletter_subscribers: {
         Row: {
@@ -131,6 +249,53 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      product_images: {
+        Row: {
+          created_at: string
+          custom_price: number | null
+          id: string
+          image_url: string
+          is_primary: boolean
+          nome_opcional: string | null
+          ordem: number
+          price: number | null
+          product_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          custom_price?: number | null
+          id?: string
+          image_url: string
+          is_primary?: boolean
+          nome_opcional?: string | null
+          ordem?: number
+          price?: number | null
+          product_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          custom_price?: number | null
+          id?: string
+          image_url?: string
+          is_primary?: boolean
+          nome_opcional?: string | null
+          ordem?: number
+          price?: number | null
+          product_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_images_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
@@ -174,80 +339,35 @@ export type Database = {
         }
         Relationships: []
       }
-      categories: {
+      profiles: {
         Row: {
           created_at: string
-          display_order: number
-          icon: string | null
+          email: string | null
           id: string
-          is_active: boolean
-          name: string
-          slug: string
+          name: string | null
+          permissions: Json | null
+          role: string
+          status: string
           updated_at: string
         }
         Insert: {
           created_at?: string
-          display_order?: number
-          icon?: string | null
-          id?: string
-          is_active?: boolean
-          name: string
-          slug: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          display_order?: number
-          icon?: string | null
-          id?: string
-          is_active?: boolean
-          name?: string
-          slug?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      hero_banners: {
-        Row: {
-          badge_text: string | null
-          button_link: string | null
-          button_text: string | null
-          created_at: string
-          description: string | null
-          desktop_image_url: string | null
+          email?: string | null
           id: string
-          is_active: boolean
-          mobile_image_url: string | null
-          subtitle: string | null
-          title: string | null
-          updated_at: string
-        }
-        Insert: {
-          badge_text?: string | null
-          button_link?: string | null
-          button_text?: string | null
-          created_at?: string
-          description?: string | null
-          desktop_image_url?: string | null
-          id?: string
-          is_active?: boolean
-          mobile_image_url?: string | null
-          subtitle?: string | null
-          title?: string | null
+          name?: string | null
+          permissions?: Json | null
+          role?: string
+          status?: string
           updated_at?: string
         }
         Update: {
-          badge_text?: string | null
-          button_link?: string | null
-          button_text?: string | null
           created_at?: string
-          description?: string | null
-          desktop_image_url?: string | null
+          email?: string | null
           id?: string
-          is_active?: boolean
-          mobile_image_url?: string | null
-          subtitle?: string | null
-          title?: string | null
+          name?: string | null
+          permissions?: Json | null
+          role?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []
@@ -266,7 +386,7 @@ export type Database = {
           primary_color: string | null
           secondary_color: string | null
           site_name: string | null
-          updated_at: string
+          updated_at: string | null
           whatsapp: string | null
         }
         Insert: {
@@ -282,7 +402,7 @@ export type Database = {
           primary_color?: string | null
           secondary_color?: string | null
           site_name?: string | null
-          updated_at?: string
+          updated_at?: string | null
           whatsapp?: string | null
         }
         Update: {
@@ -298,7 +418,7 @@ export type Database = {
           primary_color?: string | null
           secondary_color?: string | null
           site_name?: string | null
-          updated_at?: string
+          updated_at?: string | null
           whatsapp?: string | null
         }
         Relationships: []
@@ -308,17 +428,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_admin_user: {
-        Args: { _email: string; _name?: string; _password: string }
-        Returns: undefined
-      }
       update_admin_password: {
         Args: { _email: string; _password: string }
         Returns: undefined
-      }
-      verify_admin_password: {
-        Args: { _email: string; _password: string }
-        Returns: boolean
       }
     }
     Enums: {
@@ -448,6 +560,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

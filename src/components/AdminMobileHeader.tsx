@@ -3,18 +3,32 @@ import { Menu, X, LayoutDashboard, Package, Users, BarChart3, LogOut, Bell, Mega
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import logoFestanca from "@/assets/logo-festanca.png";
+import { getAdminProfile, adminLogout } from "@/utils/adminSession";
 
-const links = [
-  { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/admin/produtos", label: "Produtos", icon: Package },
-  { to: "/admin/categorias", label: "Categorias", icon: Tags },
-  { to: "/admin/banner", label: "Banner Home", icon: ImageIcon },
-  { to: "/admin/configuracoes", label: "Configurações Site", icon: Settings },
-  { to: "/admin/clientes", label: "Clientes", icon: Users },
-  { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
-  { to: "/admin/marketing", label: "Marketing", icon: Megaphone },
-  { to: "/admin/gerenciar", label: "Gerenciar Admins", icon: ShieldCheck },
-];
+const getFilteredLinks = () => {
+  const profile = getAdminProfile();
+  const role = profile?.role || "Viewer";
+  const permissions: Record<string, boolean> = profile?.permissions || {};
+
+  const allLinks = [
+    { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/admin/produtos", label: "Produtos", icon: Package, key: "products" },
+    { to: "/admin/categorias", label: "Categorias", icon: Tags, key: "categories" },
+    { to: "/admin/banner", label: "Banner Home", icon: ImageIcon, key: "banners" },
+    { to: "/admin/configuracoes", label: "Configurações Site", icon: Settings, key: "settings" },
+    { to: "/admin/clientes", label: "Clientes", icon: Users, key: "clients" },
+    { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
+    { to: "/admin/marketing", label: "Marketing", icon: Megaphone },
+    { to: "/admin/gerenciar", label: "Gestão de Acessos", icon: ShieldCheck, role: "Master" },
+  ];
+
+  return allLinks.filter((link) => {
+    if (role === "Master") return true;
+    if (link.role && link.role !== role) return false;
+    if (link.key && !permissions[link.key]) return false;
+    return true;
+  });
+};
 
 const AdminMobileHeader = () => {
   const [open, setOpen] = useState(false);
@@ -26,12 +40,8 @@ const AdminMobileHeader = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("festiva_admin");
-    localStorage.removeItem("festiva_admin_token");
-    localStorage.removeItem("festiva_admin_id");
-    localStorage.removeItem("festiva_admin_email");
-    localStorage.removeItem("festiva_admin_name");
+  const handleLogout = async () => {
+    await adminLogout();
     navigate("/admin");
   };
 
@@ -76,7 +86,7 @@ const AdminMobileHeader = () => {
 
             {/* Nav */}
             <nav className="flex-1 flex flex-col gap-1 px-4 py-4">
-              {links.map((link) => (
+              {getFilteredLinks().map((link) => (
                 <NavLink
                   key={link.to}
                   to={link.to}

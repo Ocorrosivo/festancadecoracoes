@@ -26,6 +26,13 @@ export default tseslint.config(
       "@typescript-eslint/no-require-imports": ["error", { allow: ["tailwindcss-animate"] }],
     },
   },
+  // shadcn/ui files intentionally export component helpers alongside components.
+  {
+    files: ["src/components/ui/**/*.{ts,tsx}"],
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
+  },
   // Config files: allow require() imports (CommonJS context)
   {
     files: ["tailwind.config.ts", "postcss.config.js", "vite.config.ts"],

@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
-import { UserPlus, Trash2, Users, Loader2, CheckCircle, XCircle, Pencil, ShieldCheck, Key } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { UserPlus, Trash2, Users, Loader2, CheckCircle, XCircle, Pencil, ShieldCheck, Key, Mail } from "lucide-react";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeAdminFunction } from "@/utils/adminApi";
+import { getAdminProfile } from "@/utils/adminSession";
 import {
   Dialog,
   DialogContent,
@@ -79,6 +80,10 @@ const AdminGerenciar = () => {
   const [passwordChangeAdmin, setPasswordChangeAdmin] = useState<AdminUser | null>(null);
   const [newPasswordOnly, setNewPasswordOnly] = useState("");
 
+  // Email change
+  const [emailChangeAdmin, setEmailChangeAdmin] = useState<AdminUser | null>(null);
+  const [newEmailOnly, setNewEmailOnly] = useState("");
+
   // Create form
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
@@ -93,19 +98,18 @@ const AdminGerenciar = () => {
   const [editRole, setEditRole] = useState("");
   const [editPermissions, setEditPermissions] = useState<Permissions>({ ...defaultPermissions });
 
-  const currentAdminId = localStorage.getItem("festiva_admin_id");
+  const currentAdminId = getAdminProfile()?.id;
 
-  const invoke = async (body: Record<string, unknown>) => {
-    const token = localStorage.getItem("festiva_admin_token");
-    if (!token) return { error: "Não autorizado" };
-    const { data, error } = await supabase.functions.invoke("admin-auth", {
-      body: { ...body, admin_token: token },
-    });
-    if (error) throw error;
-    return data;
-  };
+  const invoke = useCallback(
+    (body: Record<string, unknown>) =>
+      invokeAdminFunction<{
+        error?: string | null;
+        admins?: AdminUser[];
+      }>("admin-auth", body, { throwOnPayloadError: false }),
+    []
+  );
 
-  const fetchAdmins = async () => {
+  const fetchAdmins = useCallback(async () => {
     setLoading(true);
     try {
       const data = await invoke({ action: "list" });
@@ -123,9 +127,9 @@ const AdminGerenciar = () => {
       toast({ title: "Erro ao carregar administradores", variant: "destructive" });
     }
     setLoading(false);
-  };
+  }, [invoke, toast, navigate]);
 
-  useEffect(() => { fetchAdmins(); }, []);
+  useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
 
   const handleCreate = async () => {
     const trimmedEmail = newEmail.trim();
@@ -232,6 +236,23 @@ const AdminGerenciar = () => {
     }
   }
 
+  const handleChangeEmail = async () => {
+    if (!emailChangeAdmin || !newEmailOnly.trim() || !newEmailOnly.includes("@")) {
+      toast({ title: "Email inválido", variant: "destructive" });
+      return;
+    }
+    try {
+      const data = await invoke({ action: "change_email", old_email: emailChangeAdmin.email, new_email: newEmailOnly.trim() });
+      if (data?.error) { toast({ title: data.error, variant: "destructive" }); return; }
+      toast({ title: "Email alterado com sucesso!" });
+      setEmailChangeAdmin(null);
+      setNewEmailOnly("");
+      fetchAdmins();
+    } catch {
+      toast({ title: "Erro ao alterar email", variant: "destructive" });
+    }
+  }
+
   const formatDate = (d: string | null) => d ? new Date(d).toLocaleDateString("pt-BR") : "—";
   
   const handlePermChange = (perm: keyof Permissions, checked: boolean, isEdit: boolean) => {
@@ -334,6 +355,9 @@ const AdminGerenciar = () => {
                           <TableCell className="whitespace-nowrap">{formatDate(admin.created_at)}</TableCell>
                           <TableCell className="whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1">
+                              <Button variant="ghost" size="icon" onClick={() => { setEmailChangeAdmin(admin); setNewEmailOnly(""); }} title="Alterar Email">
+                                <Mail size={15} />
+                              </Button>
                               <Button variant="ghost" size="icon" onClick={() => setPasswordChangeAdmin(admin)} title="Alterar Senha">
                                 <Key size={15} />
                               </Button>
@@ -382,6 +406,9 @@ const AdminGerenciar = () => {
                       <div className="flex items-center gap-2 flex-wrap pt-2">
                         <Button variant="outline" size="sm" onClick={() => openEdit(admin)} className="rounded-lg text-xs gap-1 h-8">
                           <Pencil size={12} /> Editar
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => { setEmailChangeAdmin(admin); setNewEmailOnly(""); }} className="rounded-lg text-xs gap-1 h-8">
+                          <Mail size={12} /> Email
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => setPasswordChangeAdmin(admin)} className="rounded-lg text-xs gap-1 h-8">
                           <Key size={12} /> Senha
@@ -508,6 +535,20 @@ const AdminGerenciar = () => {
              <p className="text-sm text-muted-foreground">Definir nova senha para <strong>{passwordChangeAdmin?.email}</strong></p>
              <Input type="password" value={newPasswordOnly} onChange={e => setNewPasswordOnly(e.target.value)} placeholder="Nova senha (min. 6 char)" />
              <Button onClick={handleChangePassword} className="w-full rounded-xl">Atualizar Senha</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Email Dialog */}
+      <Dialog open={!!emailChangeAdmin} onOpenChange={() => setEmailChangeAdmin(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Alterar Email</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+             <p className="text-sm text-muted-foreground">Email atual: <strong>{emailChangeAdmin?.email}</strong></p>
+             <Input type="email" value={newEmailOnly} onChange={e => setNewEmailOnly(e.target.value)} placeholder="Novo email" />
+             <Button onClick={handleChangeEmail} className="w-full rounded-xl">Atualizar Email</Button>
           </div>
         </DialogContent>
       </Dialog>

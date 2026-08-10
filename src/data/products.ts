@@ -1,5 +1,6 @@
 // Catálogo Completo de Produtos (100% Imagens WebP Otimizadas)
 export interface Product {
+  id?: string;
   image: string;
   category: string;
   name: string;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Package,
   CalendarDays,
@@ -15,7 +15,7 @@ import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
-import { getBookings } from "@/data/bookings";
+import { invokeAdminData } from "@/utils/adminApi";
 import {
   BarChart,
   Bar,
@@ -61,36 +61,51 @@ const recentRentals = [
   { name: "Varal de Luzes Vintage", order: "#8488", time: "2 dias atrás", price: "R$ 45" },
 ];
 
+interface DashboardBooking {
+  id: string;
+  product: string | null;
+  client_name: string | null;
+  price: string | null;
+  created_at: string;
+}
+
 const AdminDashboard = () => {
-  const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [bookings, setBookings] = useState<DashboardBooking[]>([]);
 
   const { data: productsList = [] } = useProducts();
   const { data: categoriesList = [] } = useCategories(true);
-
-  useEffect(() => {
-    if (localStorage.getItem("festiva_admin") !== "true") {
-      navigate("/admin");
-    }
-  }, [navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const bookings = getBookings();
+  useEffect(() => {
+    invokeAdminData<{ data?: DashboardBooking[] }>({
+      resource: "bookings",
+      action: "list",
+    })
+      .then((data) => {
+        if (data?.data) setBookings(data.data);
+      })
+      .catch(() => {
+        // Dashboard relatório falha silenciosamente; nada bloqueado.
+      });
+  }, []);
+
   const currentMonth = new Date().getMonth();
   const monthBookings = bookings.filter(
-    (b) => new Date(b.createdAt).getMonth() === currentMonth
+    (b) => new Date(b.created_at).getMonth() === currentMonth
   );
 
   const parseMoney = (s: string) => {
+    if (!s) return 0;
     const num = s.replace(/[^\d,]/g, "").replace(",", ".");
     return parseFloat(num) || 0;
   };
 
-  const monthRevenue = monthBookings.reduce((acc, b) => acc + parseMoney(b.price), 0);
+  const monthRevenue = monthBookings.reduce((acc, b) => acc + parseMoney(b.price || ""), 0);
 
   // 4 Indicators: Receita Mensal | Pedidos | Clientes | Produtos
   const stats = [
@@ -280,22 +295,33 @@ const AdminDashboard = () => {
               </div>
 
               <div className="space-y-3">
-                {recentRentals.map((rental, i) => (
+                {(bookings.length > 0
+                  ? bookings.slice(0, 5).map((b) => ({
+                      key: b.id,
+                      name: b.product || "Locação",
+                      sub: (b.client_name || "Cliente") + " • " + new Date(b.created_at).toLocaleDateString("pt-BR"),
+                      price: b.price || "—",
+                    }))
+                  : recentRentals.map((r) => ({
+                      key: r.order,
+                      name: r.name,
+                      sub: r.order + " • " + r.time,
+                      price: r.price,
+                    }))
+                ).map((item) => (
                   <div
-                    key={i}
+                    key={item.key}
                     className="flex items-center gap-3 py-2.5 border-b border-border/60 last:border-0"
                   >
                     <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                       <Package size={16} className="text-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-foreground truncate">{rental.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {rental.order} • {rental.time}
-                      </p>
+                      <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                      <p className="text-xs text-muted-foreground">{item.sub}</p>
                     </div>
                     <span className="text-sm font-bold text-primary ml-2 whitespace-nowrap">
-                      {rental.price}
+                      {item.price}
                     </span>
                   </div>
                 ))}

@@ -9,9 +9,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MaskedInput } from "@/components/ui/MaskedInput";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeAdminData } from "@/utils/adminApi";
 import { Loader2 } from "lucide-react";
 
 interface Client {
@@ -70,21 +71,13 @@ const AdminClientDialog = ({ open, onOpenChange, client, onSuccess }: AdminClien
     setLoading(true);
 
     try {
-      const admin_token = localStorage.getItem("festiva_admin_token");
-      if (!admin_token) throw new Error("Usuário não autenticado");
-
       const action = client?.id ? "update" : "create";
-      const { data, error } = await supabase.functions.invoke("admin-data", {
-        body: {
-          resource: "clients",
-          action,
-          admin_token,
-          id: client?.id,
-          payload: formData,
-        },
+      await invokeAdminData({
+        resource: "clients",
+        action,
+        id: client?.id,
+        payload: formData,
       });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
 
       toast({ title: client?.id ? "Cliente atualizado com sucesso" : "Cliente cadastrado com sucesso" });
 
@@ -133,10 +126,11 @@ const AdminClientDialog = ({ open, onOpenChange, client, onSuccess }: AdminClien
             </div>
             <div className="space-y-2">
               <Label htmlFor="telefone">Telefone</Label>
-              <Input
+              <MaskedInput
                 id="telefone"
+                mask="(00) 00000-0000"
                 value={formData.telefone || ""}
-                onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                onAccept={(val: string) => setFormData({ ...formData, telefone: val })}
                 placeholder="(11) 99999-9999"
               />
             </div>

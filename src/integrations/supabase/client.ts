@@ -5,8 +5,6 @@ import type { Database } from './types';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-console.log("[Supabase Client] VITE_SUPABASE_URL:", supabaseUrl);
-
 if (!supabaseUrl) {
   throw new Error("VITE_SUPABASE_URL não encontrada. Configure corretamente as variáveis.");
 }
@@ -23,5 +21,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: false,
   }
 });

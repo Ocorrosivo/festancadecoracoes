@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { ArrowLeft, Mail, Phone, MapPin, Calendar, Package, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeAdminData } from "@/utils/adminApi";
 import { useToast } from "@/hooks/use-toast";
 
 interface Client {
@@ -37,34 +37,30 @@ const AdminClienteDetalhe = () => {
   const [historico, setHistorico] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (localStorage.getItem("festiva_admin") !== "true") {
-      navigate("/admin");
-      return;
-    }
-    if (id) {
-      fetchClientDetails();
-    }
-  }, [id, navigate]);
-
-  const fetchClientDetails = async () => {
+  const fetchClientDetails = useCallback(async () => {
     try {
       setLoading(true);
-      const admin_token = localStorage.getItem("festiva_admin_token");
-      const { data, error } = await supabase.functions.invoke("admin-data", {
-        body: { resource: "clients", action: "get", admin_token, id },
+      const data = await invokeAdminData<{ data?: Client; bookings?: Booking[] }>({
+        resource: "clients",
+        action: "get",
+        id,
       });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      
+
       setCliente(data?.data);
       setHistorico(data?.bookings || []);
-    } catch (err: any) {
-      toast({ title: "Erro ao buscar detalhes", description: err.message, variant: "destructive" });
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : "Erro desconhecido";
+      toast({ title: "Erro ao buscar detalhes", description: errMsg, variant: "destructive" });
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, toast]);
+
+  useEffect(() => {
+    if (id) {
+      fetchClientDetails();
+    }
+  }, [id, fetchClientDetails]);
 
   if (loading) {
     return (

@@ -1,5 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { 
@@ -17,7 +16,7 @@ import {
   UserCheck,
   UserPlus
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeAdminData } from "@/utils/adminApi";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -54,7 +53,6 @@ interface Client {
 }
 
 const AdminClientes = () => {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [clientes, setClientes] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,23 +64,13 @@ const AdminClientes = () => {
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
-  useEffect(() => {
-    if (localStorage.getItem("festiva_admin") !== "true") {
-      navigate("/admin");
-      return;
-    }
-    fetchClientes();
-  }, [navigate]);
-
-  const fetchClientes = async () => {
+  const fetchClientes = useCallback(async () => {
     setLoading(true);
     try {
-      const admin_token = localStorage.getItem("festiva_admin_token");
-      const { data, error } = await supabase.functions.invoke("admin-data", {
-        body: { resource: "clients", action: "list", admin_token },
+      const data = await invokeAdminData<{ data?: Client[] }>({
+        resource: "clients",
+        action: "list",
       });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
       setClientes(data?.data || []);
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : "Erro desconhecido";
@@ -94,18 +82,21 @@ const AdminClientes = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchClientes();
+  }, [fetchClientes]);
 
   const handleDelete = async () => {
     if (!deletingClient) return;
 
     try {
-      const admin_token = localStorage.getItem("festiva_admin_token");
-      const { data, error } = await supabase.functions.invoke("admin-data", {
-        body: { resource: "clients", action: "delete", admin_token, id: deletingClient.id },
+      await invokeAdminData({
+        resource: "clients",
+        action: "delete",
+        id: deletingClient.id,
       });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
 
       toast({ title: "Cliente excluído com sucesso" });
       setClientes(clientes.filter(c => c.id !== deletingClient.id));

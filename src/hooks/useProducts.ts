@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { products as staticProducts, type Product } from "@/data/products";
 import { slugify } from "./useCategories";
+import { invokeAdminData } from "@/utils/adminApi";
 
 // ─── DB Row → Product mapping ──────────────────────────────────────────────
 
@@ -20,6 +21,7 @@ interface DbProduct {
 }
 
 const toProduct = (row: DbProduct): Product => ({
+  id: row.id,
   name: row.name || "Decoração de Festa",
   slug: row.slug || slugify(row.name || "decoracao"),
   category: row.category || "Geral",
@@ -29,11 +31,6 @@ const toProduct = (row: DbProduct): Product => ({
   trending: row.trending ?? false,
   image: row.image || "",
 });
-
-// ─── Admin token helper ────────────────────────────────────────────────────
-
-const getAdminToken = (): string | null =>
-  localStorage.getItem("festiva_admin_token");
 
 // ─── READ: public query via Supabase directly ──────────────────────────────
 
@@ -68,18 +65,8 @@ export const useProducts = () => {
 
 // ─── WRITE: via Edge Function (uses service_role — bypasses RLS auth.uid()) ─
 
-const callAdminData = async (body: Record<string, unknown>) => {
-  const admin_token = getAdminToken();
-  if (!admin_token) {
-    throw new Error("Sessão expirada. Faça login novamente.");
-  }
-  const { data, error } = await supabase.functions.invoke("admin-data", {
-    body: { ...body, admin_token, resource: "products" },
-  });
-  if (error) throw error;
-  if (data?.error) throw new Error(data.error);
-  return data;
-};
+const callAdminData = async (body: Record<string, unknown>) =>
+  invokeAdminData<{ data?: unknown }>({ ...body, resource: "products" });
 
 export const useAddProduct = () => {
   const qc = useQueryClient();

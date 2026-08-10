@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { invokeAdminData } from "@/utils/adminApi";
 
 export interface HeroBanner {
   id?: string;
@@ -76,29 +77,12 @@ export const useUpdateHeroBanner = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (banner: HeroBanner) => {
-      const payload = {
-        ...banner,
-        updated_at: new Date().toISOString(),
-      };
-
-      if (banner.id) {
-        const { data, error } = await supabase
-          .from("hero_banners")
-          .update(payload as Record<string, unknown>)
-          .eq("id", banner.id)
-          .select()
-          .single();
-        if (error) throw error;
-        return data;
-      } else {
-        const { data, error } = await supabase
-          .from("hero_banners")
-          .insert([payload as Record<string, unknown>])
-          .select()
-          .single();
-        if (error) throw error;
-        return data;
-      }
+      const data = await invokeAdminData<{ data?: HeroBanner }>({
+        resource: "hero_banners",
+        action: "upsert",
+        payload: banner,
+      });
+      return data?.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["hero_banner"] });

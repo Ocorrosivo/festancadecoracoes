@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { Megaphone, Globe, Save, CheckCircle2, ExternalLink, Code2 } from "lucide-react";
@@ -10,18 +9,16 @@ const FacebookIcon = ({ size = 24, className = "" }: { size?: number; className?
   </svg>
 );
 import { useToast } from "@/hooks/use-toast";
-import { getTrackingConfig, saveTrackingConfig, type TrackingConfig } from "@/components/TrackingScripts";
+import { getTrackingConfig, saveTrackingConfig, type TrackingConfig } from "@/utils/trackingConfig";
 
 const AdminMarketing = () => {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [config, setConfig] = useState<TrackingConfig>({ facebookPixelId: "", googleTagId: "" });
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem("festiva_admin") !== "true") navigate("/admin");
     setConfig(getTrackingConfig());
-  }, [navigate]);
+  }, []);
 
   const handleSave = () => {
     saveTrackingConfig(config);

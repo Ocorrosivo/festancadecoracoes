@@ -22,6 +22,15 @@ dist-ssr/
 # Vercel
 .vercel/
 
+# Supabase CLI — contém senha do banco (pooler-url) e link do projeto
+supabase/.temp/
+
+# Configuração local do Claude — pode conter tokens/credenciais em comandos
+.claude/settings.local.json
+
+# Artefatos de build/deploy
+*.zip
+
 # Editores
 .vscode/*
 !.vscode/extensions.json
