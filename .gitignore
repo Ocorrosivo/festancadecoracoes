@@ -21,6 +21,7 @@ dist-ssr/
 
 # Vercel
 .vercel/
+.vercel-token.env
 
 # Supabase CLI — contém senha do banco (pooler-url) e link do projeto
 supabase/.temp/
