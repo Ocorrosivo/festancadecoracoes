@@ -10,10 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import { useProducts, useAddProduct, useUpdateProduct } from "@/hooks/useProducts";
+import { useProducts, useAddProduct, useUpdateProduct, type CreatedProduct } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { uploadStorageFile } from "@/utils/supabaseStorage";
-import { supabase } from "@/integrations/supabase/client";
 import { invokeAdminData } from "@/utils/adminApi";
 import { toNumberOrNull, type ProductImage } from "@/utils/productImagePrice";
 import { toast } from "sonner";
@@ -205,22 +204,15 @@ const AdminProductForm = () => {
         });
         toast.success("Produto atualizado!");
       } else {
-        await new Promise<void>((resolve, reject) => {
+        // A Edge Function devolve o id do produto criado. Buscar depois por
+        // nome era ambíguo: o catálogo tem nomes repetidos e as imagens podiam
+        // acabar anexadas ao produto errado.
+        const createdProduct = await new Promise<CreatedProduct | null>((resolve, reject) => {
           addProduct.mutate(productData, {
-            onSuccess: () => resolve(),
+            onSuccess: (created) => resolve(created),
             onError: (err) => reject(err),
           });
         });
-        // For new products, fetch created product ID before saving images
-        const { data: productsData, error: productsError } = await supabase
-          .from("products")
-          .select("id, name")
-          .eq("name", name)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (productsError) throw productsError;
-        const createdProduct = productsData;
         if (createdProduct?.id) {
           await invokeAdminData({
             resource: "product_images",

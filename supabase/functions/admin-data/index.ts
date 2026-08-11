@@ -9,6 +9,40 @@ const slugify = (name: string): string =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
+/**
+ * Slug livre para o produto.
+ *
+ * O catálogo tem nomes repetidos de propósito (ex.: "Tema Cinderela"), e
+ * `products.slug` é único. Sem sufixo, o segundo produto com o mesmo nome
+ * estourava a unique constraint `products_slug_key` (23505) e a função
+ * devolvia 500. `keepSlug` permite que o update mantenha o próprio slug.
+ */
+async function uniqueSlug(
+  supabase: any,
+  name: string,
+  keepSlug?: string
+): Promise<string> {
+  const base = slugify(name) || "produto";
+  const { data, error } = await supabase
+    .from("products")
+    .select("slug")
+    .like("slug", `${base}%`);
+  if (error) throw error;
+
+  const taken = new Set<string>(
+    (data ?? [])
+      .map((row: { slug: string | null }) => row.slug)
+      .filter((slug: string | null): slug is string => !!slug && slug !== keepSlug)
+  );
+
+  if (!taken.has(base)) return base;
+  for (let i = 2; i < 1000; i++) {
+    const candidate = `${base}-${i}`;
+    if (!taken.has(candidate)) return candidate;
+  }
+  return `${base}-${Date.now()}`;
+}
+
 async function validateAdmin(supabase: any, token: string | null) {
   if (!token) return null;
   const { data: userVerification, error: verifyError } = await supabase.auth.getUser(token);
@@ -116,24 +150,26 @@ Deno.serve(async (req) => {
         if (!payload?.name || typeof payload.name !== "string" || payload.name.length > 200) {
           return json({ error: "Nome inválido" }, 400);
         }
-        const { error } = await supabase.from("products").insert({
+        const { data, error } = await supabase.from("products").insert({
           name: payload.name,
-          slug: slugify(payload.name),
+          slug: await uniqueSlug(supabase, payload.name),
           category: payload.category,
           price: payload.price,
           description: payload.description ?? null,
           dimensions: payload.dimensions ?? null,
           trending: !!payload.trending,
           image: payload.image ?? null,
-        });
+        }).select("id, slug").single();
         if (error) throw error;
-        return json({ success: true });
+        // Devolve id/slug para o cliente anexar as imagens ao produto certo
+        // (buscar depois por nome é ambíguo quando há nomes repetidos).
+        return json({ success: true, data });
       }
       if (action === "update") {
         if (!slug) return json({ error: "Slug obrigatório" }, 400);
         const update: Record<string, unknown> = { ...(payload || {}) };
         delete update.slug;
-        if (payload?.name) update.slug = slugify(payload.name);
+        if (payload?.name) update.slug = await uniqueSlug(supabase, payload.name, slug);
         const { error } = await supabase.from("products").update(update).eq("slug", slug);
         if (error) throw error;
         return json({ success: true });

@@ -68,11 +68,22 @@ export const useProducts = () => {
 const callAdminData = async (body: Record<string, unknown>) =>
   invokeAdminData<{ data?: unknown }>({ ...body, resource: "products" });
 
+/** Produto recém-criado, devolvido pela Edge Function. */
+export interface CreatedProduct {
+  id: string;
+  slug: string;
+}
+
 export const useAddProduct = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (product: Omit<Product, "slug">) => {
-      await callAdminData({ action: "create", payload: product });
+    mutationFn: async (product: Omit<Product, "slug">): Promise<CreatedProduct | null> => {
+      const result = await invokeAdminData<{ data?: CreatedProduct }>({
+        resource: "products",
+        action: "create",
+        payload: product,
+      });
+      return result?.data ?? null;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
     onError: (err: Error) => {
