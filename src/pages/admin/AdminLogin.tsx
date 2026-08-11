@@ -75,7 +75,7 @@ const AdminLogin = () => {
       }
     } catch (rawErr: unknown) {
       const err = rawErr as { context?: { json?: () => Promise<{ error?: string }> }; message?: string };
-      let errorMessage = "Erro ao conectar com o servidor. Tente novamente.";
+      let errorMessage = "Não foi possível conectar ao servidor. Tente novamente.";
 
       if (err?.context && typeof err.context.json === 'function') {
         try {
@@ -83,20 +83,24 @@ const AdminLogin = () => {
           if (body && body.error) {
             errorMessage = body.error;
           }
-        } catch (e) {
-           // ignore parsing error
+        } catch {
+          // corpo não é JSON: mantém a mensagem genérica de conexão
         }
       } else if (err?.message) {
         if (err.message === "Edge Function returned a non-2xx status code") {
-          errorMessage = "Credenciais inválidas ou acesso negado.";
+          errorMessage = "Email ou senha incorretos.";
         } else if (err.message === "Failed to send a request to the Edge Function") {
-          const url = import.meta.env.VITE_SUPABASE_URL || "não configurada";
-          errorMessage = `Erro de Conexão. O navegador bloqueou a requisição ou a URL está incorreta. URL Atual: ${url}`;
+          // Rede, CORS ou variáveis de ambiente ausentes no build. O detalhe
+          // técnico vai só para o console — nunca expor a URL interna ao usuário.
+          console.error("Falha ao invocar a Edge Function admin-auth:", rawErr);
+          errorMessage = import.meta.env.VITE_SUPABASE_URL
+            ? "Não foi possível conectar ao servidor. Tente novamente."
+            : "Erro de configuração do sistema. Entre em contato com o administrador.";
         } else {
           errorMessage = err.message;
         }
       }
-      
+
       toast({ title: "Falha no Login", description: errorMessage, variant: "destructive" });
     }
     setLoading(false);
