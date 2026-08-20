@@ -386,6 +386,7 @@ export type Database = {
           primary_color: string | null
           secondary_color: string | null
           site_name: string | null
+          tiktok: string | null
           updated_at: string | null
           whatsapp: string | null
         }

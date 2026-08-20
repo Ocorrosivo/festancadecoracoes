@@ -62,6 +62,10 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: cors });
   }
 
+  // Hoisted para o catch conseguir registrar qual operação falhou.
+  let resource: unknown;
+  let action: unknown;
+
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -69,7 +73,8 @@ Deno.serve(async (req) => {
     );
 
     const body = await req.json();
-    const { resource, action, admin_token, payload, id, slug } = body ?? {};
+    let admin_token: unknown, payload: any, id: unknown, slug: unknown;
+    ({ resource, action, admin_token, payload, id, slug } = body ?? {});
 
     const admin = await validateAdmin(supabase, admin_token);
     if (!admin) return json({ error: "Sessão inválida ou expirada." }, 401);
@@ -124,22 +129,32 @@ Deno.serve(async (req) => {
         ["nome", "email", "telefone", "empresa", "status", "cidade"].forEach((k) => {
           if (payload?.[k] !== undefined) updates[k] = payload[k] || null;
         });
-        const { error } = await supabase
+        // Painel compartilhado: qualquer admin gerencia todos os clientes.
+        // Filtrar por admin_id fazia o update casar 0 linhas (sem erro) nos
+        // clientes vindos de reservas do site, que nascem com admin_id NULL —
+        // o front mostrava "salvo" mas nada era gravado.
+        const { data, error } = await supabase
           .from("clients")
           .update(updates)
           .eq("id", id)
-          .eq("admin_id", admin.id);
+          .select("id");
         if (error) throw error;
+        if (!data || data.length === 0) {
+          return json({ error: "Cliente não encontrado" }, 404);
+        }
         return json({ success: true });
       }
       if (action === "delete") {
         if (!id) return json({ error: "ID obrigatório" }, 400);
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("clients")
           .delete()
           .eq("id", id)
-          .eq("admin_id", admin.id);
+          .select("id");
         if (error) throw error;
+        if (!data || data.length === 0) {
+          return json({ error: "Cliente não encontrado" }, 404);
+        }
         return json({ success: true });
       }
     }
@@ -338,7 +353,22 @@ Deno.serve(async (req) => {
 
     return json({ error: "Ação inválida" }, 400);
   } catch (err) {
-    console.error(err);
-    return json({ error: "Erro interno do servidor" }, 500);
+    // Log estruturado para diagnóstico via Management API (function_logs).
+    // Erros do PostgREST/Postgres trazem code/details/hint úteis (ex.: 42703
+    // "column does not exist") que o log genérico anterior descartava.
+    const e = err as { message?: string; code?: string; details?: string; hint?: string };
+    console.error(
+      JSON.stringify({
+        resource,
+        action,
+        message: e?.message ?? String(err),
+        code: e?.code,
+        details: e?.details,
+        hint: e?.hint,
+      })
+    );
+    // Devolve a mensagem real do banco ao admin autenticado (não contém
+    // segredos, só o motivo da rejeição) para não haver "sucesso falso".
+    return json({ error: e?.message ?? "Erro interno do servidor", code: e?.code }, 500);
   }
 });

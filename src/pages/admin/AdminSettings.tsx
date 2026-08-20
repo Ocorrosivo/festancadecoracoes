@@ -92,8 +92,19 @@ const AdminSettings = () => {
       onSuccess: () => {
         toast.success("Configurações salvas no Supabase!");
       },
-      onError: () => {
-        toast.error("Erro ao salvar configurações.");
+      onError: (error) => {
+        // Toast amigável para o usuário, causa real no console: a mensagem
+        // genérica escondia erros de schema (ex.: coluna inexistente) e o
+        // diagnóstico exigia ler os logs da Edge Function.
+        const err = error as { message?: string; status?: number; context?: { status?: number } };
+        console.error("[site_settings.upsert] falha ao salvar", {
+          resource: "site_settings",
+          action: "upsert",
+          status: err?.status ?? err?.context?.status,
+          message: err?.message,
+          campos: Object.keys(form),
+        });
+        toast.error(err?.message || "Erro ao salvar configurações.");
       },
     });
   };
