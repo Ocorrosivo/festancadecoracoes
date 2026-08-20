@@ -128,7 +128,7 @@ const AdminClientDialog = ({ open, onOpenChange, client, onSuccess }: AdminClien
               <Label htmlFor="telefone">Telefone</Label>
               <MaskedInput
                 id="telefone"
-                mask="(00) 00000-0000"
+                mask="phone"
                 value={formData.telefone || ""}
                 onAccept={(val: string) => setFormData({ ...formData, telefone: val })}
                 placeholder="(11) 99999-9999"

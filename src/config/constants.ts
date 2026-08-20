@@ -1,3 +1,5 @@
+import { formatWhatsAppUrlNumber } from "@/utils/phoneMask";
+
 export const WHATSAPP_NUMBER = "5551991205664";
 
 export const COMPANY = {
@@ -13,6 +15,6 @@ export const COMPANY = {
 };
 
 export function buildWhatsAppUrl(message: string, customNumber?: string): string {
-  const num = customNumber ? customNumber.replace(/\D/g, "") : WHATSAPP_NUMBER;
+  const num = formatWhatsAppUrlNumber(customNumber, WHATSAPP_NUMBER);
   return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
 }

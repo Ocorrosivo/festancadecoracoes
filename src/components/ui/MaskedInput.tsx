@@ -1,27 +1,47 @@
-import { IMaskInput, type IMaskInputProps } from "react-imask";
-import { Input } from "./input";
 import * as React from "react";
+import { Input } from "./input";
 import { cn } from "@/lib/utils";
+import { formatBrazilianPhone } from "@/utils/phoneMask";
 
-type IMaskProps = IMaskInputProps<HTMLInputElement>;
-
-interface MaskedInputProps extends React.ComponentProps<typeof Input> {
-  mask: IMaskProps["mask"];
+export interface MaskedInputProps
+  extends Omit<React.ComponentProps<typeof Input>, "onChange"> {
+  mask?: string | string[] | unknown;
   value?: string;
-  onAccept?: IMaskProps["onAccept"];
+  onAccept?: (value: string) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   unmask?: boolean;
 }
 
 export const MaskedInput = React.forwardRef<HTMLInputElement, MaskedInputProps>(
-  ({ mask, onAccept, unmask = false, className, ...props }, ref) => {
+  ({ mask, value = "", onAccept, onChange, className, ...props }, ref) => {
+    const isPhoneMask =
+      mask === "phone" ||
+      mask === "(00) 00000-0000" ||
+      mask === "(00) 0000-0000" ||
+      (Array.isArray(mask) &&
+        mask.some((m) => typeof m === "string" && m.includes("(00)")));
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let val = e.target.value;
+
+      if (isPhoneMask) {
+        val = formatBrazilianPhone(val);
+        e.target.value = val;
+      }
+
+      onAccept?.(val);
+      onChange?.(e);
+    };
+
+    // Formata o valor exibido caso seja máscara de telefone
+    const displayValue = isPhoneMask ? formatBrazilianPhone(value) : value;
+
     return (
-      <IMaskInput
+      <Input
         {...props}
-        mask={mask}
-        unmask={unmask}
-        onAccept={onAccept}
-        inputRef={ref}
-        component={Input}
+        ref={ref}
+        value={displayValue}
+        onChange={handleChange}
         className={cn(className)}
       />
     );

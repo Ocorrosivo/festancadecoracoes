@@ -4,12 +4,19 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { COMPANY, buildWhatsAppUrl } from "@/config/constants";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { MaskedInput } from "@/components/ui/MaskedInput";
 import SEO from "@/components/SEO";
-
 
 const Contato = () => {
   const { toast } = useToast();
+  const { data: siteSettings } = useSiteSettings();
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
+
+  const phone = siteSettings?.phone || COMPANY.phone;
+  const whatsapp = siteSettings?.whatsapp || COMPANY.phone;
+  const address = siteSettings?.address || COMPANY.address;
+  const siteName = siteSettings?.site_name || COMPANY.name;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,10 +37,10 @@ const Contato = () => {
     setForm({ name: "", phone: "", message: "" });
   };
 
-    const info = [
-    { icon: Phone, label: "Telefone", value: COMPANY.phone },
+  const info = [
+    { icon: Phone, label: "Telefone", value: phone },
     { icon: Mail, label: "E-mail", value: COMPANY.email },
-    { icon: MapPin, label: "Endereço", value: COMPANY.address, link: COMPANY.maps },
+    { icon: MapPin, label: "Endereço", value: address, link: COMPANY.maps },
   ];
 
   return (
@@ -67,13 +74,12 @@ const Contato = () => {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Telefone</label>
-              <input
-                type="tel"
+              <MaskedInput
+                mask="phone"
                 value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                maxLength={20}
-                className="w-full px-4 py-3 rounded-xl border border-primary/10 bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
+                onAccept={(val) => setForm((prev) => ({ ...prev, phone: val }))}
                 placeholder="(11) 99999-9999"
+                className="w-full px-4 py-3 rounded-xl border border-primary/10 bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
               />
             </div>
             <div>
@@ -116,7 +122,7 @@ const Contato = () => {
             ))}
 
             <a
-              href={buildWhatsAppUrl("Olá! Gostaria de saber mais sobre os serviços da Festança.")}
+              href={buildWhatsAppUrl(`Olá! Gostaria de saber mais sobre os serviços da ${siteName}.`, whatsapp)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-bold transition-all"

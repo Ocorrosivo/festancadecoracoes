@@ -276,20 +276,20 @@ const AdminSettings = () => {
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium text-muted-foreground">WhatsApp (Número com DDD)</label>
                     <MaskedInput
-                      mask="(00) 00000-0000"
+                      mask="phone"
                       value={form.whatsapp}
                       onAccept={(val: string) => setForm({ ...form, whatsapp: val })}
-                      placeholder="5511999999999"
+                      placeholder="(41) 98402-7094"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium text-muted-foreground">Telefone Visível</label>
                     <MaskedInput
-                      mask="(00) 0000-0000"
+                      mask="phone"
                       value={form.phone}
                       onAccept={(val: string) => setForm({ ...form, phone: val })}
-                      placeholder="(11) 9999-9999"
+                      placeholder="(41) 3333-4444 ou (41) 98402-7094"
                     />
                   </div>
 

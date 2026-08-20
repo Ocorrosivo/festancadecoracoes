@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { invokeAdminData } from "@/utils/adminApi";
+import { applyDynamicTheme } from "@/utils/themeUtils";
+import { useEffect } from "react";
 
 export interface SiteSettings {
   id: string;
@@ -28,17 +30,17 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   description: "Decorações completas para festas infantis, 15 anos, casamentos e eventos especiais.",
   primary_color: "#ff4f9a",
   secondary_color: "#111827",
-  whatsapp: "5511999999999",
-  phone: "(11) 99999-9999",
-  instagram: "https://instagram.com",
-  facebook: "https://facebook.com",
-  tiktok: "https://tiktok.com",
-  address: "São Paulo - SP",
+  whatsapp: "(51) 99120-5664",
+  phone: "(51) 99120-5664",
+  instagram: "https://www.instagram.com/festanca.decoracoes",
+  facebook: "https://www.facebook.com/share/1C2VPeVVFx/",
+  tiktok: "https://www.tiktok.com/@festanca.decoracoes",
+  address: "Av. Frederico Dihl, 3408 – Alvorada/RS | Bairro: Aparecida – CEP: 94853-250",
   footer_text: "Festança Decorações. Todos os direitos reservados.",
 };
 
 export const useSiteSettings = () => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["site_settings"],
     queryFn: async (): Promise<SiteSettings> => {
       try {
@@ -49,10 +51,11 @@ export const useSiteSettings = () => {
           .maybeSingle();
 
         if (error || !data) {
+          applyDynamicTheme(DEFAULT_SITE_SETTINGS.primary_color, DEFAULT_SITE_SETTINGS.secondary_color);
           return DEFAULT_SITE_SETTINGS;
         }
 
-        return {
+        const settings: SiteSettings = {
           id: data.id,
           logo_url: data.logo_url,
           favicon_url: data.favicon_url,
@@ -69,12 +72,24 @@ export const useSiteSettings = () => {
           footer_text: data.footer_text || DEFAULT_SITE_SETTINGS.footer_text,
           updated_at: data.updated_at,
         };
+
+        applyDynamicTheme(settings.primary_color, settings.secondary_color);
+        return settings;
       } catch {
+        applyDynamicTheme(DEFAULT_SITE_SETTINGS.primary_color, DEFAULT_SITE_SETTINGS.secondary_color);
         return DEFAULT_SITE_SETTINGS;
       }
     },
     staleTime: 1000 * 60 * 10,
   });
+
+  useEffect(() => {
+    if (query.data) {
+      applyDynamicTheme(query.data.primary_color, query.data.secondary_color);
+    }
+  }, [query.data]);
+
+  return query;
 };
 
 export const useUpdateSiteSettings = () => {
@@ -88,7 +103,10 @@ export const useUpdateSiteSettings = () => {
       });
       return data?.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data) {
+        applyDynamicTheme(data.primary_color, data.secondary_color);
+      }
       queryClient.invalidateQueries({ queryKey: ["site_settings"] });
     },
   });

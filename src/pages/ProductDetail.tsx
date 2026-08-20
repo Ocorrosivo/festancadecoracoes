@@ -429,7 +429,7 @@ const ProductDetail = () => {
                     <div className="space-y-1.5">
                       <label className="text-sm font-medium text-muted-foreground">WhatsApp / Telefone *</label>
                       <MaskedInput
-                        mask="(00) 00000-0000"
+                        mask="phone"
                         value={clientPhone}
                         onAccept={(val: string) => setClientPhone(val)}
                         placeholder="(11) 99999-9999"
