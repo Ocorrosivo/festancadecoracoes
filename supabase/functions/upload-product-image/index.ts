@@ -14,30 +14,49 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const ALLOWED_BUCKETS = ["product-images", "festanca-storage"];
+    const ALLOWED_BUCKETS = ["festanca-storage"];
     const ALLOWED_FOLDERS = ["banners", "logos", "favicon", "produtos", "categorias", "configuracoes"];
 
-    const formData = await req.formData();
+    let formData: FormData;
+    try {
+      formData = await req.formData();
+    } catch (e) {
+      console.error("FormData parse error:", e);
+      return json({ success: false, error: "Não foi possível processar os dados do upload." }, 400);
+    }
+
     const file = formData.get("file") as File | null;
     const adminToken = formData.get("admin_token") as string | null;
-    const bucketInput = (formData.get("bucket") as string | null) || "product-images";
+    const authHeader = req.headers.get("Authorization");
+    const token = adminToken || (authHeader ? authHeader.replace("Bearer ", "") : null);
+
+    const bucketInput = (formData.get("bucket") as string | null) || "festanca-storage";
     const folderInput = formData.get("folder") as string | null;
 
-    if (!adminToken) return json({ error: "Não autorizado" }, 401);
-    if (!file) return json({ error: "Nenhum arquivo enviado" }, 400);
+    if (!token) {
+      console.error("Missing authorization token.");
+      return json({ success: false, error: "Não autorizado" }, 401);
+    }
+    if (!file) {
+      console.error("No file provided in FormData.");
+      return json({ success: false, error: "Nenhum arquivo enviado" }, 400);
+    }
 
-    const bucket = ALLOWED_BUCKETS.includes(bucketInput) ? bucketInput : "product-images";
+    const bucket = ALLOWED_BUCKETS.includes(bucketInput) ? bucketInput : "festanca-storage";
     const folder = folderInput && ALLOWED_FOLDERS.includes(folderInput) ? folderInput : null;
+
+    console.log(`Starting upload. File: ${file.name}, Size: ${file.size}, Bucket: ${bucket}, Folder: ${folder}`);
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Validate admin token using native Auth
-    const { data: userVerification, error: verifyError } = await supabase.auth.getUser(adminToken);
+    // Validate token using native Auth
+    const { data: userVerification, error: verifyError } = await supabase.auth.getUser(token);
     if (verifyError || !userVerification.user) {
-      return json({ error: "Sessão inválida ou expirada. Faça login novamente." }, 401);
+      console.error("Invalid token verification:", verifyError);
+      return json({ success: false, error: "Sessão inválida ou expirada. Faça login novamente." }, 401);
     }
 
     // Upload using service role (bypasses RLS)

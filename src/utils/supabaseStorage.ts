@@ -36,14 +36,45 @@ export const uploadStorageFile = async (
   folder: StorageFolder
 ): Promise<string> => {
   const run = async (token: string) => {
-    // FormData precisa ser recriado por tentativa: o stream é consumido no envio.
     const formData = new FormData();
     formData.append("file", file);
     formData.append("admin_token", token);
     formData.append("bucket", BUCKET);
     formData.append("folder", folder);
 
-    return supabase.functions.invoke("upload-product-image", { body: formData });
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const functionUrl = `${supabaseUrl}/functions/v1/upload-product-image`;
+
+    try {
+      const response = await fetch(functionUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const contentType = response.headers.get("content-type");
+      let data: any = null;
+      let errorText = "";
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        errorText = await response.text();
+      }
+
+      if (!response.ok) {
+        const message = data?.error || errorText || `HTTP status ${response.status}`;
+        const err = new Error(message);
+        (err as any).context = { status: response.status };
+        return { data: null, error: err };
+      }
+
+      return { data, error: null };
+    } catch (e: any) {
+      return { data: null, error: e };
+    }
   };
 
   let token: string;
@@ -70,11 +101,19 @@ export const uploadStorageFile = async (
     }
   }
 
-  if (error) throw error;
+  if (error) {
+    const status = (error as any).context?.status || 500;
+    const errorMsg = error.message || "Erro desconhecido";
+    throw new Error(`Erro ao enviar imagem: ${errorMsg}`);
+  }
 
-  const result = data as { error?: string; url?: string } | null;
-  if (result?.error) throw new Error(result.error);
-  if (!result?.url) throw new Error("Falha no upload da imagem.");
+  const result = data as { error?: string; url?: string; success?: boolean } | null;
+  if (result?.error || result?.success === false) {
+    throw new Error(`Erro ao enviar imagem: ${result?.error || "Desconhecido"}`);
+  }
+  if (!result?.url) {
+    throw new Error("Erro ao enviar imagem: Falha ao obter a URL da imagem.");
+  }
 
   return result.url;
 };
