@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
 
   try {
     const ALLOWED_BUCKETS = ["festanca-storage"];
-    const ALLOWED_FOLDERS = ["banners", "logos", "favicon", "produtos", "categorias", "configuracoes"];
+    const ALLOWED_FOLDERS = ["banners", "logos", "favicon", "products", "produtos", "categorias", "configuracoes"];
 
     let formData: FormData;
     try {
@@ -49,7 +49,13 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        }
+      }
     );
 
     // Validate token using native Auth
@@ -64,10 +70,9 @@ Deno.serve(async (req) => {
     const base = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const fileName = folder ? `${folder}/${base}` : base;
 
-    const arrayBuffer = await file.arrayBuffer();
     const { error: uploadError } = await supabase.storage
       .from(bucket)
-      .upload(fileName, arrayBuffer, {
+      .upload(fileName, file, {
         contentType: file.type,
         upsert: true,
       });

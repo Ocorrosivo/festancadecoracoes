@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { Save, Upload, Loader2, Globe, Palette, Phone } from "lucide-react";
+import { Save, Upload, Loader2, Globe, Palette, Phone, HelpCircle, Plus, Trash2, Image as ImageIcon } from "lucide-react";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/useSiteSettings";
+import { useFaqs, useUpdateFaqs, type FaqItem } from "@/hooks/useFaqs";
+import { useGallery, useUpdateGallery, type GallerySettings } from "@/hooks/useGallery";
 import { uploadStorageFile } from "@/utils/supabaseStorage";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -13,6 +15,10 @@ import { MaskedInput } from "@/components/ui/MaskedInput";
 const AdminSettings = () => {
   const { data: settings, isLoading } = useSiteSettings();
   const updateSettings = useUpdateSiteSettings();
+  const { data: faqsData, isLoading: isLoadingFaqs } = useFaqs();
+  const updateFaqs = useUpdateFaqs();
+  const { data: galleryData, isLoading: isLoadingGallery } = useGallery();
+  const updateGallery = useUpdateGallery();
 
   const logoInputRef = useRef<HTMLInputElement>(null);
   const faviconInputRef = useRef<HTMLInputElement>(null);
@@ -32,6 +38,10 @@ const AdminSettings = () => {
     address: "",
     footer_text: "",
   });
+  
+  const [faqList, setFaqList] = useState<FaqItem[]>([]);
+  const [galleryForm, setGalleryForm] = useState<GallerySettings>({ title: "", quote: "", images: [] });
+  const [uploadingGalleryIdx, setUploadingGalleryIdx] = useState<number | null>(null);
 
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingFavicon, setUploadingFavicon] = useState(false);
@@ -54,7 +64,13 @@ const AdminSettings = () => {
         footer_text: settings.footer_text || "",
       });
     }
-  }, [settings]);
+    if (faqsData) {
+      setFaqList(faqsData);
+    }
+    if (galleryData) {
+      setGalleryForm(galleryData);
+    }
+  }, [settings, faqsData, galleryData]);
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,6 +123,32 @@ const AdminSettings = () => {
         toast.error(err?.message || "Erro ao salvar configurações.");
       },
     });
+    
+    // Salva FAQs
+    updateFaqs.mutate(faqList);
+    // Salva Galeria
+    updateGallery.mutate(galleryForm);
+  };
+  
+  const handleGalleryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingGalleryIdx(index);
+    try {
+      const url = await uploadStorageFile(file, "banners");
+      const newImages = [...galleryForm.images];
+      if (newImages[index]) {
+        newImages[index].src = url;
+      } else {
+        newImages[index] = { src: url, alt: "Imagem da galeria" };
+      }
+      setGalleryForm({ ...galleryForm, images: newImages });
+      toast.success("Imagem enviada com sucesso!");
+    } catch {
+      toast.error("Erro ao enviar imagem da galeria.");
+    } finally {
+      setUploadingGalleryIdx(null);
+    }
   };
 
   return (
@@ -131,7 +173,7 @@ const AdminSettings = () => {
         </header>
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-4xl">
-          {isLoading ? (
+          {isLoading || isLoadingFaqs ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 size={24} className="animate-spin text-primary" />
             </div>
@@ -340,9 +382,145 @@ const AdminSettings = () => {
                 </div>
               </div>
 
-              <div className="pt-4">
-                <Button type="submit" disabled={updateSettings.isPending} className="w-full sm:w-auto px-8 rounded-xl gap-2 py-6 text-base font-bold shadow-lg">
-                  {updateSettings.isPending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+              {/* Perguntas Frequentes (FAQs) */}
+              <div className="bg-card rounded-2xl border border-border p-6 space-y-6 shadow-sm">
+                <div className="flex items-center gap-2 border-b border-border pb-3">
+                  <HelpCircle size={20} className="text-primary" />
+                  <h2 className="font-bold text-lg">Perguntas Frequentes (FAQ)</h2>
+                </div>
+                
+                <div className="space-y-4">
+                  {faqList.map((faq, index) => (
+                    <div key={index} className="flex flex-col sm:flex-row gap-4 border border-border p-4 rounded-xl bg-background">
+                      <div className="flex-1 space-y-3">
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground block mb-1">Pergunta</label>
+                          <Input 
+                            value={faq.question}
+                            onChange={(e) => {
+                              const newList = [...faqList];
+                              newList[index].question = e.target.value;
+                              setFaqList(newList);
+                            }}
+                            placeholder="Ex: Como funciona o aluguel?"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground block mb-1">Resposta</label>
+                          <Textarea 
+                            rows={2}
+                            value={faq.answer}
+                            onChange={(e) => {
+                              const newList = [...faqList];
+                              newList[index].answer = e.target.value;
+                              setFaqList(newList);
+                            }}
+                            placeholder="Resposta para a pergunta acima..."
+                          />
+                        </div>
+                      </div>
+                      <div className="flex sm:flex-col justify-end items-end pb-1">
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="icon" 
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => setFaqList(faqList.filter((_, i) => i !== index))}
+                        >
+                          <Trash2 size={18} />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="w-full gap-2 border-dashed border-2 py-6 rounded-xl"
+                    onClick={() => setFaqList([...faqList, { question: "", answer: "" }])}
+                  >
+                    <Plus size={16} /> Adicionar Pergunta
+                  </Button>
+                </div>
+              </div>
+
+              {/* Galeria da Home */}
+              <div className="bg-card rounded-2xl border border-border p-6 space-y-6 shadow-sm">
+                <div className="flex items-center gap-2 border-b border-border pb-3">
+                  <ImageIcon size={20} className="text-primary" />
+                  <h2 className="font-bold text-lg">Seção: Arte em Detalhes</h2>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-muted-foreground">Título Principal</label>
+                    <Input
+                      value={galleryForm.title}
+                      onChange={(e) => setGalleryForm({ ...galleryForm, title: e.target.value })}
+                      placeholder="Use asteriscos para destacar. Ex: Nossa *Arte em Detalhes*"
+                    />
+                    <p className="text-xs text-muted-foreground">Use *asteriscos* para a parte rosa e em itálico.</p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-muted-foreground">Citação / Subtítulo</label>
+                    <Textarea
+                      rows={2}
+                      value={galleryForm.quote}
+                      onChange={(e) => setGalleryForm({ ...galleryForm, quote: e.target.value })}
+                      placeholder="Transformamos espaços em experiências inesquecíveis..."
+                    />
+                  </div>
+
+                  <div className="space-y-3 pt-4 border-t border-border">
+                    <label className="text-sm font-medium text-muted-foreground block">Imagens da Galeria</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {[0, 1, 2, 3].map((idx) => {
+                        const img = galleryForm.images[idx];
+                        const isUploading = uploadingGalleryIdx === idx;
+                        return (
+                          <div key={idx} className="space-y-2">
+                            <div className="aspect-square border-2 border-dashed border-border rounded-xl p-2 flex flex-col items-center justify-center bg-background relative overflow-hidden group">
+                              {img?.src ? (
+                                <img src={img.src} alt={img.alt} className="w-full h-full object-cover rounded-lg" />
+                              ) : (
+                                <p className="text-xs text-muted-foreground text-center px-2">Nenhuma imagem</p>
+                              )}
+                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <label className="cursor-pointer text-white bg-black/50 p-2 rounded-full hover:bg-black/70">
+                                  {isUploading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
+                                  <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    className="hidden" 
+                                    onChange={(e) => handleGalleryImageUpload(e, idx)}
+                                    disabled={isUploading}
+                                  />
+                                </label>
+                              </div>
+                            </div>
+                            <Input 
+                              placeholder="Texto Alternativo (Alt)" 
+                              className="text-xs h-8"
+                              value={img?.alt || ""}
+                              onChange={(e) => {
+                                const newImages = [...galleryForm.images];
+                                if (!newImages[idx]) newImages[idx] = { src: "", alt: "" };
+                                newImages[idx].alt = e.target.value;
+                                setGalleryForm({ ...galleryForm, images: newImages });
+                              }}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 pb-12">
+                <Button type="submit" disabled={updateSettings.isPending || updateFaqs.isPending || updateGallery.isPending} className="w-full sm:w-auto px-8 rounded-xl gap-2 py-6 text-base font-bold shadow-lg">
+                  {updateSettings.isPending || updateFaqs.isPending || updateGallery.isPending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                   Salvar Configurações
                 </Button>
               </div>

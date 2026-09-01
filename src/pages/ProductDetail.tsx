@@ -518,22 +518,14 @@ const ProductDetail = () => {
           <h3 className="text-xl font-bold flex items-center gap-2">
             <Info size={20} className="text-primary" /> Detalhes da Decoração
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+          <div className="grid grid-cols-2 gap-6 text-sm">
             <div>
               <p className="text-muted-foreground mb-1">Categoria</p>
               <p className="font-medium">{productCategory}</p>
             </div>
             <div>
-              <p className="text-muted-foreground mb-1">Dimensões</p>
-              <p className="font-medium">{productDimensions}</p>
-            </div>
-            <div>
               <p className="text-muted-foreground mb-1">Disponibilidade</p>
               <p className="font-medium text-green-600">Pronta Entrega</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground mb-1">Serviço</p>
-              <p className="font-medium">Montagem e Desmontagem</p>
             </div>
           </div>
           <div>

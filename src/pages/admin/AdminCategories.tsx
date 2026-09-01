@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, CheckCircle, XCircle, Loader2, Tags } from "lucide-react";
+import { useState, useRef } from "react";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, CheckCircle, XCircle, Loader2, Tags, ImagePlus } from "lucide-react";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import {
@@ -9,6 +9,7 @@ import {
   useDeleteCategory,
   type CategoryItem,
 } from "@/hooks/useCategories";
+import { uploadStorageFile } from "@/utils/supabaseStorage";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,15 +33,40 @@ const AdminCategories = () => {
   const [editName, setEditName] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  const fileRefNew = useRef<HTMLInputElement>(null);
+  const fileRefEdit = useRef<HTMLInputElement>(null);
+  const [newCatIcon, setNewCatIcon] = useState("");
+  const [editIcon, setEditIcon] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  const handleUpload = async (file: File | null, isEdit: boolean) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadStorageFile(file, "categorias");
+      if (isEdit) setEditIcon(url);
+      else setNewCatIcon(url);
+      toast.success("Imagem enviada!");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Tente novamente";
+      toast.error("Erro ao enviar imagem: " + msg);
+    } finally {
+      setUploading(false);
+      if (isEdit && fileRefEdit.current) fileRefEdit.current.value = "";
+      if (!isEdit && fileRefNew.current) fileRefNew.current.value = "";
+    }
+  };
+
   const handleCreate = () => {
     if (!newCatName.trim()) return;
     addCategory.mutate(
-      { name: newCatName.trim() },
+      { name: newCatName.trim(), icon: newCatIcon },
       {
         onSuccess: () => {
           toast.success("Categoria criada no Supabase!");
           setCreateOpen(false);
           setNewCatName("");
+          setNewCatIcon("");
         },
         onError: (err: Error) => {
           toast.error(err?.message || "Erro ao criar categoria.");
@@ -52,11 +78,12 @@ const AdminCategories = () => {
   const handleEdit = () => {
     if (!editingCategory || !editName.trim()) return;
     updateCategory.mutate(
-      { id: editingCategory.id, data: { name: editName.trim() } },
+      { id: editingCategory.id, data: { name: editName.trim(), icon: editIcon } },
       {
         onSuccess: () => {
           toast.success("Categoria atualizada!");
           setEditingCategory(null);
+          setEditIcon("");
         },
         onError: () => {
           toast.error("Erro ao atualizar.");
@@ -196,7 +223,7 @@ const AdminCategories = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => { setEditingCategory(cat); setEditName(cat.name); }}
+                            onClick={() => { setEditingCategory(cat); setEditName(cat.name); setEditIcon(cat.icon || ""); }}
                             title="Editar"
                           >
                             <Pencil size={15} />
@@ -247,7 +274,34 @@ const AdminCategories = () => {
                 autoFocus
               />
             </div>
-            <Button onClick={handleCreate} disabled={addCategory.isPending} className="w-full rounded-xl">
+            
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-muted-foreground">Imagem da Categoria (Opcional)</label>
+              <div
+                className="border-2 border-dashed border-border rounded-xl p-4 text-center cursor-pointer hover:border-primary/50 transition-colors relative flex flex-col items-center justify-center min-h-[120px]"
+                onClick={() => fileRefNew.current?.click()}
+              >
+                {uploading ? (
+                  <Loader2 size={24} className="animate-spin text-primary" />
+                ) : newCatIcon ? (
+                  <img src={newCatIcon} alt="Preview" className="h-20 w-auto rounded object-cover" />
+                ) : (
+                  <>
+                    <ImagePlus size={24} className="text-muted-foreground mb-2" />
+                    <span className="text-xs text-muted-foreground">Clique para enviar imagem</span>
+                  </>
+                )}
+              </div>
+              <input
+                ref={fileRefNew}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleUpload(e.target.files?.[0] || null, false)}
+              />
+            </div>
+
+            <Button onClick={handleCreate} disabled={addCategory.isPending || uploading} className="w-full rounded-xl">
               {addCategory.isPending ? <Loader2 size={16} className="animate-spin" /> : "Criar Categoria"}
             </Button>
           </div>
@@ -269,7 +323,34 @@ const AdminCategories = () => {
                 onKeyDown={(e) => e.key === "Enter" && handleEdit()}
               />
             </div>
-            <Button onClick={handleEdit} disabled={updateCategory.isPending} className="w-full rounded-xl">
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-muted-foreground">Imagem da Categoria (Opcional)</label>
+              <div
+                className="border-2 border-dashed border-border rounded-xl p-4 text-center cursor-pointer hover:border-primary/50 transition-colors relative flex flex-col items-center justify-center min-h-[120px]"
+                onClick={() => fileRefEdit.current?.click()}
+              >
+                {uploading ? (
+                  <Loader2 size={24} className="animate-spin text-primary" />
+                ) : editIcon ? (
+                  <img src={editIcon} alt="Preview" className="h-20 w-auto rounded object-cover" />
+                ) : (
+                  <>
+                    <ImagePlus size={24} className="text-muted-foreground mb-2" />
+                    <span className="text-xs text-muted-foreground">Clique para enviar imagem</span>
+                  </>
+                )}
+              </div>
+              <input
+                ref={fileRefEdit}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleUpload(e.target.files?.[0] || null, true)}
+              />
+            </div>
+
+            <Button onClick={handleEdit} disabled={updateCategory.isPending || uploading} className="w-full rounded-xl">
               {updateCategory.isPending ? <Loader2 size={16} className="animate-spin" /> : "Salvar Alterações"}
             </Button>
           </div>

@@ -315,10 +315,7 @@ const AdminProductForm = () => {
                   <Textarea id="prod-desc" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
                 </div>
 
-                <div>
-                  <Label htmlFor="prod-dim">Dimensões</Label>
-                  <Input id="prod-dim" placeholder="Ex: 2.5m x 2.2m" value={dimensions} onChange={(e) => setDimensions(e.target.value)} />
-                </div>
+
 
                 <div className="flex items-end">
                   <div className="flex items-center gap-2 pb-2">
