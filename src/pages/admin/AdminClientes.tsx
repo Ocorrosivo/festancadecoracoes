@@ -163,12 +163,12 @@ const AdminClientes = () => {
               <h1 className="text-xl font-heading font-bold text-foreground">Gestão de Clientes</h1>
             </div>
             
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 bg-card rounded-xl px-3 py-1.5 border border-border">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-4 sm:mt-0">
+              <div className="flex items-center gap-2 bg-card rounded-xl px-3 py-1.5 border border-border flex-1 sm:flex-none">
                 <Search size={16} className="text-muted-foreground" />
                 <input 
                   placeholder="Buscar cliente..." 
-                  className="bg-transparent text-sm focus:outline-none w-32 lg:w-48"
+                  className="bg-transparent text-sm focus:outline-none w-full sm:w-32 lg:w-48"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -176,9 +176,10 @@ const AdminClientes = () => {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
+                  <Button variant="outline" size="sm" className="gap-2 shrink-0">
                     <Download size={16} />
                     <span className="hidden sm:inline">Exportar</span>
+                    <span className="sm:hidden">Exportar</span>
                     <ChevronDown size={14} />
                   </Button>
                 </DropdownMenuTrigger>
@@ -188,9 +189,9 @@ const AdminClientes = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <Button size="sm" className="gap-2" onClick={() => { setEditingClient(null); setIsDialogOpen(true); }}>
+              <Button size="sm" className="gap-2 shrink-0 w-full sm:w-auto mt-2 sm:mt-0" onClick={() => { setEditingClient(null); setIsDialogOpen(true); }}>
                 <Plus size={16} />
-                <span className="hidden sm:inline">Novo Cliente</span>
+                <span>Novo Cliente</span>
               </Button>
             </div>
           </div>
@@ -250,7 +251,8 @@ const AdminClientes = () => {
                   </Button>
                 </div>
               ) : (
-                <table className="w-full text-sm">
+                <div className="w-full">
+                <table className="w-full text-sm hidden md:table">
                   <thead>
                     <tr className="border-b border-border bg-accent/30 text-muted-foreground">
                       <th className="text-left py-3 px-4">Cliente</th>
@@ -327,6 +329,45 @@ const AdminClientes = () => {
                     ))}
                   </tbody>
                 </table>
+                <div className="md:hidden flex flex-col gap-4 p-4 bg-background">
+                  {filteredClientes.map((c) => (
+                    <div key={c.id} className="bg-card rounded-2xl border border-border p-4 shadow-sm flex flex-col gap-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm shrink-0">
+                            {c.nome.split(" ").map(n => n[0]).join("").substring(0,2)}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-foreground text-base">{c.nome}</h3>
+                            <Badge variant={c.status === "Ativo" ? "default" : "secondary"} className="mt-1">
+                              {c.status}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground bg-accent/50" onClick={(e) => { e.stopPropagation(); setEditingClient(c); setIsDialogOpen(true); }}>
+                            <Edit size={16} />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 bg-red-50" onClick={(e) => { e.stopPropagation(); setDeletingClient(c); setIsAlertOpen(true); }}>
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground bg-accent/30 p-3 rounded-xl mt-2">
+                        {c.email && <span className="flex items-center gap-2"><Mail size={14} className="text-primary/70"/> <span className="truncate">{c.email}</span></span>}
+                        {c.telefone && <span className="flex items-center gap-2"><Phone size={14} className="text-primary/70"/> <span>{c.telefone}</span></span>}
+                        {c.empresa && <span className="flex items-center gap-2"><MapPin size={14} className="text-primary/70"/> <span className="truncate">{c.empresa}</span></span>}
+                      </div>
+                      
+                      <div className="flex items-center justify-between border-t border-border pt-3 mt-1">
+                        <span className="text-xs text-muted-foreground">Total de Locações</span>
+                        <span className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-sm font-bold">{c.total_locacoes}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                </div>
               )}
             </div>
           </div>
@@ -341,7 +382,7 @@ const AdminClientes = () => {
       />
 
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[calc(100%-24px)] rounded-2xl mx-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>Tem certeza que deseja excluir este cliente?</AlertDialogTitle>
             <AlertDialogDescription>

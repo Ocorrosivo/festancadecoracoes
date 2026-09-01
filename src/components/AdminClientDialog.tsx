@@ -98,13 +98,13 @@ const AdminClientDialog = ({ open, onOpenChange, client, onSuccess }: AdminClien
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] w-[calc(100%-24px)] mx-auto max-h-[90vh] overflow-y-auto rounded-2xl">
         <DialogHeader>
           <DialogTitle>{client?.id ? "Editar Cliente" : "Novo Cliente"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2 space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="col-span-1 sm:col-span-2 space-y-2">
               <Label htmlFor="nome">Nome completo</Label>
               <Input
                 id="nome"
@@ -152,7 +152,7 @@ const AdminClientDialog = ({ open, onOpenChange, client, onSuccess }: AdminClien
                 placeholder="Ex: São Paulo"
               />
             </div>
-            <div className="col-span-2 space-y-2">
+            <div className="col-span-1 sm:col-span-2 space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
                 value={formData.status}

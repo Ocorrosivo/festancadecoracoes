@@ -192,7 +192,7 @@ const AdminCategories = () => {
               <p className="text-muted-foreground font-medium">Nenhuma categoria cadastrada</p>
             </div>
           ) : (
-            <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
+            <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm hidden md:block">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border bg-accent/50 text-muted-foreground">
@@ -289,12 +289,63 @@ const AdminCategories = () => {
               </table>
             </div>
           )}
+
+          {/* Versão Mobile (Cards) */}
+          {!isLoading && sortedCategories.length > 0 && (
+            <div className="md:hidden space-y-4 mt-4">
+              {sortedCategories.map((cat, idx) => (
+                <div key={cat.id} className="bg-card rounded-2xl border border-border p-4 shadow-sm flex flex-col gap-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      {cat.image_url || cat.icon ? (
+                        <img src={cat.image_url || cat.icon || ""} alt={cat.name} className="w-12 h-12 object-cover rounded-full border border-border shrink-0" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-muted-foreground shrink-0"><Tags size={20}/></div>
+                      )}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold text-muted-foreground shrink-0">#{idx + 1}</span>
+                          <h3 className="font-bold text-foreground truncate">{cat.name}</h3>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground font-mono truncate">{cat.slug}</p>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className={`shrink-0 ${cat.is_active ? "bg-green-500/15 text-green-700 border-green-300" : "bg-red-500/15 text-red-700 border-red-300"}`}>
+                      {cat.is_active ? "Ativa" : "Inativa"}
+                    </Badge>
+                  </div>
+
+                  <div className="flex items-center justify-between border-t border-border pt-3">
+                    <div className="flex gap-1.5">
+                      <button type="button" disabled={idx === 0} onClick={() => handleMoveOrder(cat, "up")} className="p-2 hover:bg-accent rounded-lg border border-border disabled:opacity-30 flex items-center justify-center" title="Subir">
+                        <ArrowUp size={16} />
+                      </button>
+                      <button type="button" disabled={idx === sortedCategories.length - 1} onClick={() => handleMoveOrder(cat, "down")} className="p-2 hover:bg-accent rounded-lg border border-border disabled:opacity-30 flex items-center justify-center" title="Descer">
+                        <ArrowDown size={16} />
+                      </button>
+                    </div>
+                    <div className="flex gap-1.5">
+                      <Button variant="outline" size="sm" onClick={() => { setEditingCategory(cat); setEditName(cat.name); setEditDesc(cat.description || ""); setEditImage(cat.image_url || cat.icon || ""); setEditAlt(cat.image_alt || ""); }} className="h-9 px-3 gap-1.5 rounded-lg">
+                        <Pencil size={14} /> Editar
+                      </Button>
+                      <Button variant="outline" size="icon" onClick={() => handleToggleStatus(cat)} className={`h-9 w-9 rounded-lg border-border ${cat.is_active ? "text-red-500 hover:text-red-600 hover:bg-red-500/10" : "text-green-600 hover:text-green-700 hover:bg-green-500/10"}`}>
+                        {cat.is_active ? <XCircle size={14} /> : <CheckCircle size={14} />}
+                      </Button>
+                      <Button variant="outline" size="icon" onClick={() => setDeleteId(cat.id)} className="h-9 w-9 rounded-lg border-border text-destructive hover:text-destructive hover:bg-destructive/10">
+                        <Trash2 size={14} />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </main>
       </div>
 
       {/* Dialog: Criar Categoria */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-md w-[calc(100%-24px)] mx-auto max-h-[90vh] overflow-y-auto rounded-2xl">
           <DialogHeader>
             <DialogTitle>Nova Categoria</DialogTitle>
           </DialogHeader>
@@ -363,7 +414,7 @@ const AdminCategories = () => {
 
       {/* Dialog: Editar Categoria */}
       <Dialog open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-md w-[calc(100%-24px)] mx-auto max-h-[90vh] overflow-y-auto rounded-2xl">
           <DialogHeader>
             <DialogTitle>Editar Categoria</DialogTitle>
           </DialogHeader>
@@ -428,7 +479,7 @@ const AdminCategories = () => {
 
       {/* Dialog: Excluir Categoria */}
       <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm w-[calc(100%-24px)] mx-auto rounded-2xl">
           <DialogHeader>
             <DialogTitle>Excluir Categoria?</DialogTitle>
           </DialogHeader>

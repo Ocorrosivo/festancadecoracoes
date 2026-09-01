@@ -89,7 +89,7 @@ const AdminMobileHeader = () => {
             </div>
 
             {/* Nav */}
-            <nav className="flex-1 flex flex-col gap-1 px-4 py-4">
+            <nav className="flex-1 flex flex-col gap-1 px-4 py-4 overflow-y-auto">
               {getFilteredLinks().map((link) => (
                 <NavLink
                   key={link.to}

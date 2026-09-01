@@ -175,7 +175,7 @@ const AdminProducts = () => {
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <h1 className="text-2xl font-heading font-bold text-foreground">Gestão de Produtos</h1>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -183,13 +183,13 @@ const AdminProducts = () => {
                 className="hidden"
                 onChange={handleImportFile}
               />
-              <Button variant="outline" onClick={handleImportClick} disabled={importing} className="gap-2">
+              <Button variant="outline" onClick={handleImportClick} disabled={importing} className="gap-2 flex-1 sm:flex-none">
                 <Upload size={16} /> <span className="hidden sm:inline">{importing ? "Importando..." : "Importar CSV"}</span>
               </Button>
-              <Button variant="outline" onClick={handleExport} className="gap-2">
+              <Button variant="outline" onClick={handleExport} className="gap-2 flex-1 sm:flex-none">
                 <Download size={16} /> <span className="hidden sm:inline">Exportar CSV</span>
               </Button>
-              <Button onClick={() => navigate("/admin/produtos/novo")} className="gap-2">
+              <Button onClick={() => navigate("/admin/produtos/novo")} className="gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                 <Plus size={16} /> Novo Produto
               </Button>
             </div>
@@ -294,7 +294,7 @@ const AdminProducts = () => {
       </div>
 
       <AlertDialog open={!!deleteSlug} onOpenChange={() => setDeleteSlug(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[calc(100%-24px)] rounded-2xl mx-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir produto?</AlertDialogTitle>
             <AlertDialogDescription>

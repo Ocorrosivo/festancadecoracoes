@@ -491,7 +491,7 @@ const AdminSettings = () => {
 
                   <div className="space-y-3 pt-4 border-t border-border">
                     <label className="text-sm font-medium text-muted-foreground block">Imagens da Galeria</label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                       {[0, 1, 2, 3].map((idx) => {
                         const img = galleryImages[idx];
                         const isUploading = uploadingGalleryIdx === idx;
