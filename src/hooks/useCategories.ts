@@ -7,6 +7,9 @@ export interface CategoryItem {
   name: string;
   slug: string;
   icon?: string | null;
+  description?: string | null;
+  image_url?: string | null;
+  image_alt?: string | null;
   display_order: number;
   is_active: boolean;
   created_at?: string;

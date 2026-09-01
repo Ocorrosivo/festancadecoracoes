@@ -13,6 +13,7 @@ import { uploadStorageFile } from "@/utils/supabaseStorage";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -29,14 +30,20 @@ const AdminCategories = () => {
 
   const [createOpen, setCreateOpen] = useState(false);
   const [newCatName, setNewCatName] = useState("");
+  const [newCatDesc, setNewCatDesc] = useState("");
+  const [newCatAlt, setNewCatAlt] = useState("");
+  const [newCatImage, setNewCatImage] = useState("");
+  
   const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(null);
   const [editName, setEditName] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [editAlt, setEditAlt] = useState("");
+  const [editImage, setEditImage] = useState("");
+  
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const fileRefNew = useRef<HTMLInputElement>(null);
   const fileRefEdit = useRef<HTMLInputElement>(null);
-  const [newCatIcon, setNewCatIcon] = useState("");
-  const [editIcon, setEditIcon] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const handleUpload = async (file: File | null, isEdit: boolean) => {
@@ -44,8 +51,8 @@ const AdminCategories = () => {
     setUploading(true);
     try {
       const url = await uploadStorageFile(file, "categorias");
-      if (isEdit) setEditIcon(url);
-      else setNewCatIcon(url);
+      if (isEdit) setEditImage(url);
+      else setNewCatImage(url);
       toast.success("Imagem enviada!");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Tente novamente";
@@ -60,13 +67,20 @@ const AdminCategories = () => {
   const handleCreate = () => {
     if (!newCatName.trim()) return;
     addCategory.mutate(
-      { name: newCatName.trim(), icon: newCatIcon },
+      { 
+        name: newCatName.trim(), 
+        description: newCatDesc.trim(),
+        image_url: newCatImage,
+        image_alt: newCatAlt.trim()
+      } as any,
       {
         onSuccess: () => {
-          toast.success("Categoria criada no Supabase!");
+          toast.success("Categoria criada no banco!");
           setCreateOpen(false);
           setNewCatName("");
-          setNewCatIcon("");
+          setNewCatDesc("");
+          setNewCatAlt("");
+          setNewCatImage("");
         },
         onError: (err: Error) => {
           toast.error(err?.message || "Erro ao criar categoria.");
@@ -78,12 +92,19 @@ const AdminCategories = () => {
   const handleEdit = () => {
     if (!editingCategory || !editName.trim()) return;
     updateCategory.mutate(
-      { id: editingCategory.id, data: { name: editName.trim(), icon: editIcon } },
+      { 
+        id: editingCategory.id, 
+        data: { 
+          name: editName.trim(), 
+          description: editDesc.trim(),
+          image_url: editImage,
+          image_alt: editAlt.trim()
+        } 
+      },
       {
         onSuccess: () => {
           toast.success("Categoria atualizada!");
           setEditingCategory(null);
-          setEditIcon("");
         },
         onError: () => {
           toast.error("Erro ao atualizar.");
@@ -176,6 +197,7 @@ const AdminCategories = () => {
                 <thead>
                   <tr className="border-b border-border bg-accent/50 text-muted-foreground">
                     <th className="text-left py-3 px-4">Ordem</th>
+                    <th className="text-left py-3 px-4">Imagem</th>
                     <th className="text-left py-3 px-4">Nome da Categoria</th>
                     <th className="text-left py-3 px-4">Slug</th>
                     <th className="text-left py-3 px-4">Status</th>
@@ -208,6 +230,13 @@ const AdminCategories = () => {
                           </button>
                         </div>
                       </td>
+                      <td className="py-3 px-4">
+                        {cat.image_url || cat.icon ? (
+                          <img src={cat.image_url || cat.icon || ""} alt={cat.name} className="w-10 h-10 object-cover rounded-full border border-border" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-muted-foreground"><Tags size={16}/></div>
+                        )}
+                      </td>
                       <td className="py-3 px-4 font-bold text-foreground">{cat.name}</td>
                       <td className="py-3 px-4 text-muted-foreground text-xs font-mono">{cat.slug}</td>
                       <td className="py-3 px-4">
@@ -223,7 +252,13 @@ const AdminCategories = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => { setEditingCategory(cat); setEditName(cat.name); setEditIcon(cat.icon || ""); }}
+                            onClick={() => { 
+                              setEditingCategory(cat); 
+                              setEditName(cat.name); 
+                              setEditDesc(cat.description || "");
+                              setEditImage(cat.image_url || cat.icon || ""); 
+                              setEditAlt(cat.image_alt || "");
+                            }}
                             title="Editar"
                           >
                             <Pencil size={15} />
@@ -259,7 +294,7 @@ const AdminCategories = () => {
 
       {/* Dialog: Criar Categoria */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Nova Categoria</DialogTitle>
           </DialogHeader>
@@ -270,8 +305,17 @@ const AdminCategories = () => {
                 value={newCatName}
                 onChange={(e) => setNewCatName(e.target.value)}
                 placeholder="Ex: Infantil Menina"
-                onKeyDown={(e) => e.key === "Enter" && handleCreate()}
                 autoFocus
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-muted-foreground">Descrição (Opcional)</label>
+              <Textarea
+                value={newCatDesc}
+                onChange={(e) => setNewCatDesc(e.target.value)}
+                placeholder="Breve descrição da categoria"
+                rows={3}
               />
             </div>
             
@@ -283,8 +327,8 @@ const AdminCategories = () => {
               >
                 {uploading ? (
                   <Loader2 size={24} className="animate-spin text-primary" />
-                ) : newCatIcon ? (
-                  <img src={newCatIcon} alt="Preview" className="h-20 w-auto rounded object-cover" />
+                ) : newCatImage ? (
+                  <img src={newCatImage} alt="Preview" className="h-20 w-auto rounded object-cover" />
                 ) : (
                   <>
                     <ImagePlus size={24} className="text-muted-foreground mb-2" />
@@ -301,7 +345,16 @@ const AdminCategories = () => {
               />
             </div>
 
-            <Button onClick={handleCreate} disabled={addCategory.isPending || uploading} className="w-full rounded-xl">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-muted-foreground">Texto Alternativo (Acessibilidade)</label>
+              <Input
+                value={newCatAlt}
+                onChange={(e) => setNewCatAlt(e.target.value)}
+                placeholder="Ex: Decoração infantil feminina com balões rosa"
+              />
+            </div>
+
+            <Button onClick={handleCreate} disabled={addCategory.isPending || uploading} className="w-full rounded-xl mt-4">
               {addCategory.isPending ? <Loader2 size={16} className="animate-spin" /> : "Criar Categoria"}
             </Button>
           </div>
@@ -309,8 +362,8 @@ const AdminCategories = () => {
       </Dialog>
 
       {/* Dialog: Editar Categoria */}
-      <Dialog open={!!editingCategory} onOpenChange={() => setEditingCategory(null)}>
-        <DialogContent className="sm:max-w-md">
+      <Dialog open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Editar Categoria</DialogTitle>
           </DialogHeader>
@@ -320,7 +373,15 @@ const AdminCategories = () => {
               <Input
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleEdit()}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-muted-foreground">Descrição (Opcional)</label>
+              <Textarea
+                value={editDesc}
+                onChange={(e) => setEditDesc(e.target.value)}
+                rows={3}
               />
             </div>
 
@@ -332,8 +393,8 @@ const AdminCategories = () => {
               >
                 {uploading ? (
                   <Loader2 size={24} className="animate-spin text-primary" />
-                ) : editIcon ? (
-                  <img src={editIcon} alt="Preview" className="h-20 w-auto rounded object-cover" />
+                ) : editImage ? (
+                  <img src={editImage} alt="Preview" className="h-20 w-auto rounded object-cover" />
                 ) : (
                   <>
                     <ImagePlus size={24} className="text-muted-foreground mb-2" />
@@ -350,7 +411,15 @@ const AdminCategories = () => {
               />
             </div>
 
-            <Button onClick={handleEdit} disabled={updateCategory.isPending || uploading} className="w-full rounded-xl">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-muted-foreground">Texto Alternativo (Acessibilidade)</label>
+              <Input
+                value={editAlt}
+                onChange={(e) => setEditAlt(e.target.value)}
+              />
+            </div>
+
+            <Button onClick={handleEdit} disabled={updateCategory.isPending || uploading} className="w-full rounded-xl mt-4">
               {updateCategory.isPending ? <Loader2 size={16} className="animate-spin" /> : "Salvar Alterações"}
             </Button>
           </div>

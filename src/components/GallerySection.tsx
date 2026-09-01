@@ -1,15 +1,17 @@
 import { useState } from "react";
 import LazyImage from "./LazyImage";
 import ImageModal from "./ImageModal";
-import { useGallery } from "@/hooks/useGallery";
+import { useGallerySettings, useGalleryImages } from "@/hooks/useGallery";
 
 const GallerySection = () => {
   const [modalIndex, setModalIndex] = useState<number | null>(null);
-  const { data: galleryData } = useGallery();
+  const { data: gallerySettings } = useGallerySettings();
+  const { data: images = [] } = useGalleryImages(true);
 
-  const titleParts = galleryData?.title.split('*') || ["Nossa ", "Arte em Detalhes", ""];
-  const images = galleryData?.images || [];
-  const imageSources = images.map((img) => img.src);
+  const titleParts = gallerySettings?.title.split('*') || ["Nossa ", "Arte em Detalhes", ""];
+  const imageSources = images.map((img) => img.image_url);
+
+  if (images.length === 0) return null;
 
   return (
     <section className="py-12 md:py-24 overflow-hidden">
@@ -19,23 +21,23 @@ const GallerySection = () => {
             {titleParts[0]}<span className="text-primary italic">{titleParts[1]}</span>{titleParts[2]}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto italic font-medium text-base md:text-lg leading-relaxed px-4 md:px-0">
-            {galleryData?.quote}
+            {gallerySettings?.quote}
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           {images.map((img, i) => (
             <div
-              key={i}
+              key={img.id || i}
               onClick={() => setModalIndex(i)}
               className={`aspect-square rounded-2xl overflow-hidden group shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer ${
                 i % 2 !== 0 ? "md:translate-y-8" : ""
               }`}
-              title="Clique para expandir em tela cheia"
+              title={img.title || "Clique para expandir em tela cheia"}
             >
               <LazyImage
-                alt={img.alt}
+                alt={img.image_alt || img.title || "Imagem da galeria"}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                src={img.src}
+                src={img.image_url}
               />
             </div>
           ))}
@@ -47,7 +49,7 @@ const GallerySection = () => {
           isOpen={modalIndex !== null}
           onClose={() => setModalIndex(null)}
           src={imageSources[modalIndex]}
-          alt={images[modalIndex]?.alt}
+          alt={images[modalIndex]?.image_alt || images[modalIndex]?.title}
           images={imageSources}
           currentIndex={modalIndex}
           onNavigate={(index) => setModalIndex(index)}

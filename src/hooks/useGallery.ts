@@ -1,59 +1,50 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { uploadStorageFile } from "@/utils/supabaseStorage";
 import { supabase } from "@/integrations/supabase/client";
+import { invokeAdminData } from "@/utils/adminApi";
 import { toast } from "sonner";
-import gallery1 from "@/assets/gallery-1.webp";
-import gallery2 from "@/assets/gallery-2.webp";
-import gallery3 from "@/assets/gallery-3.webp";
-import gallery4 from "@/assets/gallery-4.webp";
 
 export interface GalleryImage {
-  src: string;
-  alt: string;
+  id?: string;
+  image_url: string;
+  image_alt?: string;
+  title?: string;
+  display_order?: number;
+  is_active?: boolean;
 }
 
 export interface GallerySettings {
   title: string;
   quote: string;
-  images: GalleryImage[];
 }
 
-export const DEFAULT_GALLERY: GallerySettings = {
+export const DEFAULT_GALLERY_SETTINGS: GallerySettings = {
   title: "Nossa *Arte em Detalhes*",
   quote: "\"Transformamos espaços em experiências inesquecíveis, cuidando de cada detalhe com amor e dedicação.\"",
-  images: [
-    { src: gallery1, alt: "Flores de casamento" },
-    { src: gallery2, alt: "Festa de aniversário" },
-    { src: gallery3, alt: "Jantar elegante" },
-    { src: gallery4, alt: "Bolo de festa" },
-  ]
 };
 
-export const useGallery = () => {
+export const useGallerySettings = () => {
   return useQuery({
-    queryKey: ["site_gallery"],
+    queryKey: ["site_gallery_settings"],
     queryFn: async (): Promise<GallerySettings> => {
       try {
         const { data } = supabase.storage.from("festanca-storage").getPublicUrl("configuracoes/gallery.json");
         const res = await fetch(`${data.publicUrl}?t=${Date.now()}`);
-        if (!res.ok) {
-          return DEFAULT_GALLERY;
-        }
+        if (!res.ok) return DEFAULT_GALLERY_SETTINGS;
         const json = await res.json();
         return {
-          title: json.title || DEFAULT_GALLERY.title,
-          quote: json.quote || DEFAULT_GALLERY.quote,
-          images: Array.isArray(json.images) && json.images.length > 0 ? json.images : DEFAULT_GALLERY.images
+          title: json.title || DEFAULT_GALLERY_SETTINGS.title,
+          quote: json.quote || DEFAULT_GALLERY_SETTINGS.quote,
         };
       } catch (err) {
-        return DEFAULT_GALLERY;
+        return DEFAULT_GALLERY_SETTINGS;
       }
     },
     staleTime: 1000 * 60 * 5,
   });
 };
 
-export const useUpdateGallery = () => {
+export const useUpdateGallerySettings = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (gallery: GallerySettings) => {
@@ -61,11 +52,66 @@ export const useUpdateGallery = () => {
       await uploadStorageFile(file, "configuracoes");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["site_gallery"] });
-      toast.success("Galeria atualizada!");
+      queryClient.invalidateQueries({ queryKey: ["site_gallery_settings"] });
+      toast.success("Textos da galeria atualizados!");
     },
     onError: (err: any) => {
       toast.error("Erro ao atualizar Galeria: " + (err.message || "Erro desconhecido"));
     }
+  });
+};
+
+export const useGalleryImages = (onlyActive: boolean = true) => {
+  return useQuery({
+    queryKey: ["site_gallery_images", onlyActive],
+    queryFn: async (): Promise<GalleryImage[]> => {
+      try {
+        let query = supabase.from("art_details_images").select("*").order("display_order", { ascending: true });
+        if (onlyActive) {
+          query = query.eq("is_active", true);
+        }
+        const { data, error } = await query;
+        if (error || !data) return [];
+        return data as GalleryImage[];
+      } catch {
+        return [];
+      }
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+const callAdminData = async (body: Record<string, unknown>) =>
+  invokeAdminData<{ data?: unknown }>({ ...body, resource: "art_details_images" });
+
+export const useAddGalleryImage = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: GalleryImage) => {
+      const res = await callAdminData({ action: "create", payload: data });
+      return res?.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["site_gallery_images"] }),
+  });
+};
+
+export const useUpdateGalleryImage = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<GalleryImage> }) => {
+      const res = await callAdminData({ action: "update", id, payload: data });
+      return res?.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["site_gallery_images"] }),
+  });
+};
+
+export const useDeleteGalleryImage = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await callAdminData({ action: "delete", id });
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["site_gallery_images"] }),
   });
 };

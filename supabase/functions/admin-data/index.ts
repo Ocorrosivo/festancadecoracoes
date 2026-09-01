@@ -351,6 +351,85 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ── FREQUENTLY ASKED QUESTIONS ──
+    if (resource === "frequently_asked_questions") {
+      if (action === "create") {
+        const { data, error } = await supabase.from("frequently_asked_questions").insert(payload).select().single();
+        if (error) throw error;
+        return json({ data });
+      }
+      if (action === "update") {
+        if (!id) return json({ error: "ID obrigatório" }, 400);
+        const { data, error } = await supabase.from("frequently_asked_questions").update(payload).eq("id", id).select().single();
+        if (error) throw error;
+        return json({ data });
+      }
+      if (action === "delete") {
+        if (!id) return json({ error: "ID obrigatório" }, 400);
+        const { error } = await supabase.from("frequently_asked_questions").delete().eq("id", id);
+        if (error) throw error;
+        return json({ success: true });
+      }
+      if (action === "upsert_all") {
+        if (!Array.isArray(payload)) return json({ error: "payload deve ser array" }, 400);
+        
+        // Excluir todos e reinserir
+        await supabase.from("frequently_asked_questions").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+        
+        if (payload.length > 0) {
+          const items = payload.map((item, idx) => ({
+            question: item.question,
+            answer: item.answer,
+            display_order: idx,
+            is_active: true
+          }));
+          const { error } = await supabase.from("frequently_asked_questions").insert(items);
+          if (error) throw error;
+        }
+        return json({ success: true });
+      }
+    }
+
+    // ── ART DETAILS IMAGES ──
+    if (resource === "art_details_images") {
+      if (action === "create") {
+        const { data, error } = await supabase.from("art_details_images").insert(payload).select().single();
+        if (error) throw error;
+        return json({ data });
+      }
+      if (action === "update") {
+        if (!id) return json({ error: "ID obrigatório" }, 400);
+        const { data, error } = await supabase.from("art_details_images").update(payload).eq("id", id).select().single();
+        if (error) throw error;
+        return json({ data });
+      }
+      if (action === "delete") {
+        if (!id) return json({ error: "ID obrigatório" }, 400);
+        const { error } = await supabase.from("art_details_images").delete().eq("id", id);
+        if (error) throw error;
+        return json({ success: true });
+      }
+      if (action === "upsert_all") {
+        if (!Array.isArray(payload)) return json({ error: "payload deve ser array" }, 400);
+        
+        // Excluir todos e reinserir
+        await supabase.from("art_details_images").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+        
+        if (payload.length > 0) {
+          const items = payload.map((item, idx) => ({
+            image_url: item.image_url || item.src,
+            image_alt: item.image_alt || item.alt,
+            title: item.title,
+            display_order: idx,
+            is_active: true
+          }));
+          const { error } = await supabase.from("art_details_images").insert(items);
+          if (error) throw error;
+        }
+        return json({ success: true });
+      }
+    }
+
     return json({ error: "Ação inválida" }, 400);
   } catch (err) {
     // Log estruturado para diagnóstico via Management API (function_logs).

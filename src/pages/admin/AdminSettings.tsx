@@ -4,21 +4,35 @@ import AdminSidebar from "@/components/AdminSidebar";
 import AdminMobileHeader from "@/components/AdminMobileHeader";
 import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/useSiteSettings";
 import { useFaqs, useUpdateFaqs, type FaqItem } from "@/hooks/useFaqs";
-import { useGallery, useUpdateGallery, type GallerySettings } from "@/hooks/useGallery";
+import { useGallerySettings, useUpdateGallerySettings, useGalleryImages, useAddGalleryImage, useDeleteGalleryImage, type GalleryImage, type GallerySettings } from "@/hooks/useGallery";
 import { uploadStorageFile } from "@/utils/supabaseStorage";
+import { invokeAdminData } from "@/utils/adminApi";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MaskedInput } from "@/components/ui/MaskedInput";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const AdminSettings = () => {
+  const queryClient = useQueryClient();
   const { data: settings, isLoading } = useSiteSettings();
   const updateSettings = useUpdateSiteSettings();
-  const { data: faqsData, isLoading: isLoadingFaqs } = useFaqs();
+  
+  const { data: faqsData, isLoading: isLoadingFaqs } = useFaqs(false);
   const updateFaqs = useUpdateFaqs();
-  const { data: galleryData, isLoading: isLoadingGallery } = useGallery();
-  const updateGallery = useUpdateGallery();
+  
+  const { data: gallerySettingsData, isLoading: isLoadingGallerySettings } = useGallerySettings();
+  const updateGallerySettings = useUpdateGallerySettings();
+  
+  const { data: galleryImagesData, isLoading: isLoadingGalleryImages } = useGalleryImages(false);
+  
+  const updateGalleryImages = useMutation({
+    mutationFn: async (images: any[]) => {
+      await invokeAdminData({ action: "upsert_all", payload: images, resource: "art_details_images" });
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["site_gallery_images"] }),
+  });
 
   const logoInputRef = useRef<HTMLInputElement>(null);
   const faviconInputRef = useRef<HTMLInputElement>(null);
@@ -40,7 +54,8 @@ const AdminSettings = () => {
   });
   
   const [faqList, setFaqList] = useState<FaqItem[]>([]);
-  const [galleryForm, setGalleryForm] = useState<GallerySettings>({ title: "", quote: "", images: [] });
+  const [galleryForm, setGalleryForm] = useState<GallerySettings>({ title: "", quote: "" });
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [uploadingGalleryIdx, setUploadingGalleryIdx] = useState<number | null>(null);
 
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -67,10 +82,13 @@ const AdminSettings = () => {
     if (faqsData) {
       setFaqList(faqsData);
     }
-    if (galleryData) {
-      setGalleryForm(galleryData);
+    if (gallerySettingsData) {
+      setGalleryForm(gallerySettingsData);
     }
-  }, [settings, faqsData, galleryData]);
+    if (galleryImagesData) {
+      setGalleryImages(galleryImagesData);
+    }
+  }, [settings, faqsData, gallerySettingsData, galleryImagesData]);
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -109,9 +127,6 @@ const AdminSettings = () => {
         toast.success("Configurações salvas no Supabase!");
       },
       onError: (error) => {
-        // Toast amigável para o usuário, causa real no console: a mensagem
-        // genérica escondia erros de schema (ex.: coluna inexistente) e o
-        // diagnóstico exigia ler os logs da Edge Function.
         const err = error as { message?: string; status?: number; context?: { status?: number } };
         console.error("[site_settings.upsert] falha ao salvar", {
           resource: "site_settings",
@@ -126,8 +141,10 @@ const AdminSettings = () => {
     
     // Salva FAQs
     updateFaqs.mutate(faqList);
-    // Salva Galeria
-    updateGallery.mutate(galleryForm);
+    // Salva Textos da Galeria
+    updateGallerySettings.mutate(galleryForm);
+    // Salva Imagens da Galeria
+    updateGalleryImages.mutate(galleryImages);
   };
   
   const handleGalleryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -136,13 +153,13 @@ const AdminSettings = () => {
     setUploadingGalleryIdx(index);
     try {
       const url = await uploadStorageFile(file, "banners");
-      const newImages = [...galleryForm.images];
+      const newImages = [...galleryImages];
       if (newImages[index]) {
-        newImages[index].src = url;
+        newImages[index].image_url = url;
       } else {
-        newImages[index] = { src: url, alt: "Imagem da galeria" };
+        newImages[index] = { image_url: url, image_alt: "Imagem da galeria", title: "", display_order: index, is_active: true };
       }
-      setGalleryForm({ ...galleryForm, images: newImages });
+      setGalleryImages(newImages);
       toast.success("Imagem enviada com sucesso!");
     } catch {
       toast.error("Erro ao enviar imagem da galeria.");
@@ -476,13 +493,13 @@ const AdminSettings = () => {
                     <label className="text-sm font-medium text-muted-foreground block">Imagens da Galeria</label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {[0, 1, 2, 3].map((idx) => {
-                        const img = galleryForm.images[idx];
+                        const img = galleryImages[idx];
                         const isUploading = uploadingGalleryIdx === idx;
                         return (
                           <div key={idx} className="space-y-2">
                             <div className="aspect-square border-2 border-dashed border-border rounded-xl p-2 flex flex-col items-center justify-center bg-background relative overflow-hidden group">
-                              {img?.src ? (
-                                <img src={img.src} alt={img.alt} className="w-full h-full object-cover rounded-lg" />
+                              {img?.image_url ? (
+                                <img src={img.image_url} alt={img.image_alt || ""} className="w-full h-full object-cover rounded-lg" />
                               ) : (
                                 <p className="text-xs text-muted-foreground text-center px-2">Nenhuma imagem</p>
                               )}
@@ -502,12 +519,23 @@ const AdminSettings = () => {
                             <Input 
                               placeholder="Texto Alternativo (Alt)" 
                               className="text-xs h-8"
-                              value={img?.alt || ""}
+                              value={img?.image_alt || ""}
                               onChange={(e) => {
-                                const newImages = [...galleryForm.images];
-                                if (!newImages[idx]) newImages[idx] = { src: "", alt: "" };
-                                newImages[idx].alt = e.target.value;
-                                setGalleryForm({ ...galleryForm, images: newImages });
+                                const newImages = [...galleryImages];
+                                if (!newImages[idx]) newImages[idx] = { image_url: "", image_alt: "", title: "", display_order: idx, is_active: true };
+                                newImages[idx].image_alt = e.target.value;
+                                setGalleryImages(newImages);
+                              }}
+                            />
+                            <Input 
+                              placeholder="Título (Opcional)" 
+                              className="text-xs h-8 mt-1"
+                              value={img?.title || ""}
+                              onChange={(e) => {
+                                const newImages = [...galleryImages];
+                                if (!newImages[idx]) newImages[idx] = { image_url: "", image_alt: "", title: "", display_order: idx, is_active: true };
+                                newImages[idx].title = e.target.value;
+                                setGalleryImages(newImages);
                               }}
                             />
                           </div>

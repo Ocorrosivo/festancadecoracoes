@@ -1,63 +1,68 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { uploadStorageFile } from "@/utils/supabaseStorage";
 import { supabase } from "@/integrations/supabase/client";
+import { invokeAdminData } from "@/utils/adminApi";
 import { toast } from "sonner";
 
 export interface FaqItem {
+  id?: string;
   question: string;
   answer: string;
+  display_order?: number;
+  is_active?: boolean;
 }
 
-export const DEFAULT_FAQS: FaqItem[] = [
-  {
-    question: "Como funciona o aluguel de decoração?",
-    answer:
-      "Você escolhe o kit de decoração no nosso catálogo, reserva a data desejada e nós cuidamos de toda a montagem e desmontagem no local do evento. Simples e prático!",
-  },
-  {
-    question: "Vocês entregam e montam no local?",
-    answer:
-      "Sim! Nossa equipe faz a entrega, montagem completa e retirada após o evento. Você não precisa se preocupar com nada.",
-  },
-  {
-    question: "Com quanto tempo de antecedência devo reservar?",
-    answer:
-      "Recomendamos reservar com pelo menos 7 dias de antecedência para garantir a disponibilidade do kit desejado. Em datas comemorativas, sugerimos reservar com ainda mais antecedência.",
-  },
-  {
-    question: "Quais formas de pagamento vocês aceitam?",
-    answer:
-      "Aceitamos cartões de crédito e débito, Pix e dinheiro. Consulte condições de parcelamento pelo WhatsApp.",
-  },
-  {
-    question: "Posso personalizar a decoração?",
-    answer:
-      "Sim! Oferecemos opções de personalização como cores, temas e elementos adicionais. Entre em contato pelo WhatsApp para conversarmos sobre o seu evento.",
-  },
-  {
-    question: "Qual a área de atendimento?",
-    answer:
-      "Atendemos Alvorada e toda a região metropolitana de Porto Alegre. Para outras localidades, consulte a disponibilidade pelo WhatsApp.",
-  },
-];
-
-export const useFaqs = () => {
+export const useFaqs = (onlyActive: boolean = true) => {
   return useQuery({
-    queryKey: ["site_faqs"],
+    queryKey: ["faqs", onlyActive],
     queryFn: async (): Promise<FaqItem[]> => {
       try {
-        const { data } = supabase.storage.from("festanca-storage").getPublicUrl("configuracoes/faqs.json");
-        const res = await fetch(`${data.publicUrl}?t=${Date.now()}`);
-        if (!res.ok) {
-          return DEFAULT_FAQS;
+        let query = supabase.from("frequently_asked_questions").select("*").order("display_order", { ascending: true });
+        if (onlyActive) {
+          query = query.eq("is_active", true);
         }
-        const json = await res.json();
-        return Array.isArray(json) ? json : DEFAULT_FAQS;
-      } catch (err) {
-        return DEFAULT_FAQS;
+        const { data, error } = await query;
+        if (error || !data) return [];
+        return data as FaqItem[];
+      } catch {
+        return [];
       }
     },
     staleTime: 1000 * 60 * 5,
+  });
+};
+
+const callAdminData = async (body: Record<string, unknown>) =>
+  invokeAdminData<{ data?: unknown }>({ ...body, resource: "frequently_asked_questions" });
+
+export const useAddFaq = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: FaqItem) => {
+      const res = await callAdminData({ action: "create", payload: data });
+      return res?.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["faqs"] }),
+  });
+};
+
+export const useUpdateFaq = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<FaqItem> }) => {
+      const res = await callAdminData({ action: "update", id, payload: data });
+      return res?.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["faqs"] }),
+  });
+};
+
+export const useDeleteFaq = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await callAdminData({ action: "delete", id });
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["faqs"] }),
   });
 };
 
@@ -65,11 +70,11 @@ export const useUpdateFaqs = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (faqs: FaqItem[]) => {
-      const file = new File([JSON.stringify(faqs)], "faqs.json", { type: "application/json" });
-      await uploadStorageFile(file, "configuracoes");
+      const res = await callAdminData({ action: "upsert_all", payload: faqs });
+      return res?.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["site_faqs"] });
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
       toast.success("Perguntas frequentes atualizadas!");
     },
     onError: (err: any) => {
@@ -77,3 +82,4 @@ export const useUpdateFaqs = () => {
     }
   });
 };
+

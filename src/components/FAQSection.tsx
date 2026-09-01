@@ -1,43 +1,13 @@
-import { useState } from "react";
-import { Send, Loader2, CheckCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
 import { useFaqs } from "@/hooks/useFaqs";
 
 const FAQSection = () => {
   const { data: faqs = [] } = useFaqs();
-  const [nlEmail, setNlEmail] = useState("");
-  const [nlLoading, setNlLoading] = useState(false);
-  const [nlSuccess, setNlSuccess] = useState(false);
-  const { toast } = useToast();
-
-  const handleSubscribe = async () => {
-    const trimmed = nlEmail.trim();
-    if (!trimmed || !trimmed.includes("@")) {
-      toast({ title: "Digite um email válido", variant: "destructive" });
-      return;
-    }
-    setNlLoading(true);
-    try {
-      const { error } = await supabase.functions.invoke("newsletter-subscribe", {
-        body: { email: trimmed },
-      });
-      if (error) throw error;
-      setNlSuccess(true);
-      setNlEmail("");
-      toast({ title: "Inscrição realizada com sucesso!" });
-    } catch {
-      toast({ title: "Erro ao se inscrever. Tente novamente.", variant: "destructive" });
-    }
-    setNlLoading(false);
-  };
 
   return (
     <section>
