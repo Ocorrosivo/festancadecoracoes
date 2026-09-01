@@ -4,6 +4,7 @@ import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import logoFestanca from "@/assets/logo-festanca.png";
 import { getAdminProfile, adminLogout } from "@/utils/adminSession";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const getFilteredLinks = () => {
   const profile = getAdminProfile();
@@ -34,6 +35,9 @@ const AdminMobileHeader = () => {
   const [open, setOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
+  const { data: siteSettings } = useSiteSettings();
+  const logo = siteSettings?.logo_url || logoFestanca;
+  const siteName = siteSettings?.site_name || "Festança";
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -54,7 +58,7 @@ const AdminMobileHeader = () => {
             <Menu size={20} className="text-foreground" />
           </button>
           <div className="flex flex-col">
-            <img src={logoFestanca} alt="Festança" className="h-[28px] md:h-[34px] w-auto object-contain" />
+            <img src={logo} alt={siteName} className="h-[28px] md:h-[34px] w-auto object-contain" />
             <p className="text-[8px] text-muted-foreground leading-tight mt-0.5">
               {currentTime.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })} | {currentTime.toLocaleDateString("pt-BR")}
             </p>
@@ -78,7 +82,7 @@ const AdminMobileHeader = () => {
           <aside className="relative w-72 bg-card h-full flex flex-col shadow-xl animate-in slide-in-from-left duration-300">
             {/* Header */}
             <div className="px-5 py-4 flex items-center justify-between border-b border-border">
-              <img src={logoFestanca} alt="Festança" className="h-9 w-auto object-contain" />
+              <img src={logo} alt={siteName} className="h-9 w-auto object-contain" />
               <button onClick={() => setOpen(false)} className="p-2 rounded-xl hover:bg-accent transition-colors">
                 <X size={20} className="text-muted-foreground" />
               </button>

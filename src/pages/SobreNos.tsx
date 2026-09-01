@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import logoFestanca from "@/assets/logo-festanca.webp";
 import SEO from "@/components/SEO";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 
 const features = [
@@ -60,6 +61,10 @@ const fadeUp = {
 };
 
 const SobreNos = () => {
+  const { data: siteSettings } = useSiteSettings();
+  const logo = siteSettings?.logo_url || logoFestanca;
+  const siteName = siteSettings?.site_name || "Festança Decorações";
+
   return (
     <div className="min-h-screen bg-background font-display">
       <SEO 
@@ -75,7 +80,7 @@ const SobreNos = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-16"
         >
-          <img src={logoFestanca} alt="Festança Decorações" className="h-24 w-auto mx-auto mb-6 object-contain" />
+          <img src={logo} alt={siteName} className="h-24 w-auto mx-auto mb-6 object-contain" />
           <span className="inline-block py-1 px-3 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest mb-4">
             Nossa História
           </span>

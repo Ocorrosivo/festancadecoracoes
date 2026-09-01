@@ -66,8 +66,8 @@ const callAdminData = async (body: Record<string, unknown>) =>
 export const useAddCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ name, icon }: { name: string; icon?: string }) => {
-      const res = await callAdminData({ action: "create", payload: { name, icon: icon || null } });
+    mutationFn: async (data: Partial<CategoryItem>) => {
+      const res = await callAdminData({ action: "create", payload: data });
       return res?.data;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"] }),

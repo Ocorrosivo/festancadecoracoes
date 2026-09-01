@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +23,9 @@ const AdminLogin = () => {
   const [forgotOpen, setForgotOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { data: siteSettings } = useSiteSettings();
+  const logo = siteSettings?.logo_url || logoFestanca;
+  const siteName = siteSettings?.site_name || "Festança Decorações";
 
   useEffect(() => {
     let active = true;
@@ -121,7 +125,7 @@ const AdminLogin = () => {
             transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
             className="flex items-center justify-center mx-auto mb-4"
           >
-            <img src={logoFestanca} alt="Festança Decorações" className="h-16 w-auto object-contain" />
+            <img src={logo} alt={siteName} className="h-16 w-auto object-contain" />
           </motion.div>
           <h1 className="text-2xl font-bold">Painel Administrativo</h1>
           <p className="text-sm text-muted-foreground mt-1">Faça login para acessar o painel</p>

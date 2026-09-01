@@ -72,7 +72,7 @@ const AdminCategories = () => {
         description: newCatDesc.trim(),
         image_url: newCatImage,
         image_alt: newCatAlt.trim()
-      } as any,
+      },
       {
         onSuccess: () => {
           toast.success("Categoria criada no banco!");
@@ -153,7 +153,7 @@ const AdminCategories = () => {
     });
   };
 
-  const sortedCategories = [...categories].sort((a, b) => a.display_order - b.display_order);
+  const sortedCategories = [...(categories || [])].sort((a, b) => a.display_order - b.display_order);
 
   return (
     <div className="min-h-screen bg-background font-body flex">

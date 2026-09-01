@@ -4,6 +4,7 @@ import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import logoFestanca from "@/assets/logo-festanca.png";
 import { getAdminProfile, adminLogout } from "@/utils/adminSession";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const getFilteredLinks = () => {
   const profile = getAdminProfile();
@@ -33,6 +34,9 @@ const getFilteredLinks = () => {
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { data: siteSettings } = useSiteSettings();
+  const logo = siteSettings?.logo_url || logoFestanca;
+  const siteName = siteSettings?.site_name || "Festança";
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -47,7 +51,7 @@ const AdminSidebar = () => {
   return (
     <aside className="w-72 bg-card border-r border-border min-h-screen hidden md:flex flex-col fixed top-0 left-0 z-40">
       <div className="px-6 py-6">
-        <img src={logoFestanca} alt="Festança" className="h-[42px] w-auto object-contain mb-2" />
+        <img src={logo} alt={siteName} className="h-[42px] w-auto object-contain mb-2" />
         <p className="text-[11px] text-muted-foreground leading-tight">
           Hora: {currentTime.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
         </p>

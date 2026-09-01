@@ -547,8 +547,8 @@ const AdminSettings = () => {
               </div>
 
               <div className="pt-4 pb-12">
-                <Button type="submit" disabled={updateSettings.isPending || updateFaqs.isPending || updateGallery.isPending} className="w-full sm:w-auto px-8 rounded-xl gap-2 py-6 text-base font-bold shadow-lg">
-                  {updateSettings.isPending || updateFaqs.isPending || updateGallery.isPending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+                <Button type="submit" disabled={updateSettings.isPending || updateFaqs.isPending || updateGallerySettings.isPending || updateGalleryImages.isPending} className="w-full sm:w-auto px-8 rounded-xl gap-2 py-6 text-base font-bold shadow-lg">
+                  {updateSettings.isPending || updateFaqs.isPending || updateGallerySettings.isPending || updateGalleryImages.isPending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                   Salvar Configurações
                 </Button>
               </div>
