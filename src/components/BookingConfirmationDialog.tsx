@@ -101,9 +101,6 @@ const BookingConfirmationDialog = ({
 🔗 Ver produto:
 ${urlProduto}
 
-🖼️ Imagem:
-${imgAbsoluta}
-
 Podemos confirmar a disponibilidade?`;
 
           window.open(buildWhatsAppUrl(message), "_blank");
