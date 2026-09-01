@@ -15,6 +15,9 @@ interface BookingConfirmationDialogProps {
   onOpenChange: (open: boolean) => void;
   productName: string;
   variationName?: string | null;
+  productCode?: string;
+  productSlug?: string;
+  productImage?: string;
   date: string;
   price: string;
   clientName?: string;
@@ -30,6 +33,9 @@ const BookingConfirmationDialog = ({
   onOpenChange,
   productName,
   variationName,
+  productCode,
+  productSlug,
+  productImage,
   date,
   price,
   clientName,
@@ -79,7 +85,27 @@ const BookingConfirmationDialog = ({
         if (prev <= 1) {
           clearInterval(timer);
           const productLabel = variationName ? `${productName} — ${variationName}` : productName;
-          const message = `Olá! Gostaria de reservar:\n\n👤 Cliente: ${clientName || ""}\n📦 Produto: ${productLabel}\n📅 Data: ${date}\n💰 Valor: ${price}\n\nPodemos confirmar a disponibilidade?`;
+          
+          const baseUrl = window.location.origin;
+          const urlProduto = productSlug ? `${baseUrl}/produto/${productSlug}` : baseUrl;
+          const imgAbsoluta = productImage?.startsWith("http") ? productImage : (productImage ? `${baseUrl}${productImage}` : "");
+          
+          const message = `Olá! Gostaria de fazer uma reserva.
+
+👤 Cliente: ${clientName || ""}
+📦 Produto: ${productLabel}
+🔢 Código: ${productCode || "N/A"}
+📅 Data: ${date}
+💰 Valor: ${price}
+
+🔗 Ver produto:
+${urlProduto}
+
+🖼️ Imagem:
+${imgAbsoluta}
+
+Podemos confirmar a disponibilidade?`;
+
           window.open(buildWhatsAppUrl(message), "_blank");
           onOpenChange(false);
           return 0;
@@ -89,7 +115,7 @@ const BookingConfirmationDialog = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [open, productName, variationName, date, price, clientName, onOpenChange]);
+  }, [open, productName, variationName, productCode, productSlug, productImage, date, price, clientName, onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

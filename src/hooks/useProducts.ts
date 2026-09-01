@@ -18,6 +18,7 @@ interface DbProduct {
   image: string | null;
   created_at: string;
   updated_at: string;
+  codigo?: string | null;
 }
 
 const toProduct = (row: DbProduct): Product => ({
@@ -30,6 +31,7 @@ const toProduct = (row: DbProduct): Product => ({
   dimensions: row.dimensions ?? undefined,
   trending: row.trending ?? false,
   image: row.image || "",
+  codigo: row.codigo || row.dimensions || "",
 });
 
 // ─── READ: public query via Supabase directly ──────────────────────────────

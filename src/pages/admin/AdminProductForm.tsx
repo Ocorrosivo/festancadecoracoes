@@ -34,6 +34,7 @@ const AdminProductForm = () => {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [dimensions, setDimensions] = useState("");
+  const [codigo, setCodigo] = useState("");
   const [trending, setTrending] = useState(false);
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [newCategory, setNewCategory] = useState("");
@@ -58,6 +59,7 @@ const AdminProductForm = () => {
       setPrice(product.price);
       setDescription(product.description || "");
       setDimensions(product.dimensions || "");
+      setCodigo(product.codigo || "");
       setTrending(product.trending || false);
 
       // Load images from product_images table
@@ -184,7 +186,9 @@ const AdminProductForm = () => {
     setSaving(true);
     try {
       const primaryImage = images.find((img) => img.is_primary)?.image_url || images[0].image_url;
-      const productData = { name, category, price, description, dimensions, trending, image: primaryImage };
+      // Se não houver código, pode ser interessante usar um fallback, mas deixaremos salvar vazio se quiser, 
+      // ou gerar baseado no ID se for criado, porém o backend gera o ID. Vamos deixar como está ou pegar do nome.
+      const productData = { name, category, price, description, dimensions, codigo: codigo.trim() || undefined, trending, image: primaryImage };
 
       if (isEditing) {
         const product = products.find((p) => p.id === id);
@@ -313,6 +317,11 @@ const AdminProductForm = () => {
                 <div className="sm:col-span-2">
                   <Label htmlFor="prod-desc">Descrição</Label>
                   <Textarea id="prod-desc" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+                </div>
+                
+                <div>
+                  <Label htmlFor="prod-codigo">Código do Produto</Label>
+                  <Input id="prod-codigo" value={codigo} onChange={(e) => setCodigo(e.target.value)} placeholder="Ex: 0123" />
                 </div>
 
 

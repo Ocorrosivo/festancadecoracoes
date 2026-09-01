@@ -9,6 +9,7 @@ export interface Product {
   slug: string;
   description?: string;
   dimensions?: string;
+  codigo?: string;
 }
 
 export const products: Product[] = [
@@ -20,7 +21,8 @@ export const products: Product[] = [
     "trending": true,
     "slug": "decoracao-infantil-menina-001",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0001"
   },
   {
     "image": "/produtos/infantil-meninas/759743.webp",
@@ -30,7 +32,8 @@ export const products: Product[] = [
     "trending": true,
     "slug": "decoracao-infantil-menina-002",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0002"
   },
   {
     "image": "/produtos/infantil-meninas/759754.webp",
@@ -40,7 +43,8 @@ export const products: Product[] = [
     "trending": true,
     "slug": "decoracao-infantil-menina-003",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0003"
   },
   {
     "image": "/produtos/infantil-meninas/759755.webp",
@@ -50,7 +54,8 @@ export const products: Product[] = [
     "trending": true,
     "slug": "decoracao-infantil-menina-004",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0004"
   },
   {
     "image": "/produtos/infantil-meninas/759756.webp",
@@ -60,7 +65,8 @@ export const products: Product[] = [
     "trending": true,
     "slug": "decoracao-infantil-menina-005",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0005"
   },
   {
     "image": "/produtos/infantil-meninas/759757.webp",
@@ -70,7 +76,8 @@ export const products: Product[] = [
     "trending": true,
     "slug": "decoracao-infantil-menina-006",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0006"
   },
   {
     "image": "/produtos/infantil-meninas/759758.webp",
@@ -80,7 +87,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-007",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0007"
   },
   {
     "image": "/produtos/infantil-meninas/759759.webp",
@@ -90,7 +98,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-008",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0008"
   },
   {
     "image": "/produtos/infantil-meninas/759760.webp",
@@ -100,7 +109,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-009",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0009"
   },
   {
     "image": "/produtos/infantil-meninas/759761.webp",
@@ -110,7 +120,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-010",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0010"
   },
   {
     "image": "/produtos/infantil-meninas/759762.webp",
@@ -120,7 +131,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-011",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0011"
   },
   {
     "image": "/produtos/infantil-meninas/759763.webp",
@@ -130,7 +142,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-012",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0012"
   },
   {
     "image": "/produtos/infantil-meninas/759764.webp",
@@ -140,7 +153,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-013",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0013"
   },
   {
     "image": "/produtos/infantil-meninas/759765.webp",
@@ -150,7 +164,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-014",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0014"
   },
   {
     "image": "/produtos/infantil-meninas/759766.webp",
@@ -160,7 +175,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-015",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0015"
   },
   {
     "image": "/produtos/infantil-meninas/759767.webp",
@@ -170,7 +186,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-016",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0016"
   },
   {
     "image": "/produtos/infantil-meninas/759768.webp",
@@ -180,7 +197,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-017",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0017"
   },
   {
     "image": "/produtos/infantil-meninas/759769.webp",
@@ -190,7 +208,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-018",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0018"
   },
   {
     "image": "/produtos/infantil-meninas/759770.webp",
@@ -200,7 +219,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-019",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0019"
   },
   {
     "image": "/produtos/infantil-meninas/759771.webp",
@@ -210,7 +230,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-020",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0020"
   },
   {
     "image": "/produtos/infantil-meninas/759772.webp",
@@ -220,7 +241,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-021",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0021"
   },
   {
     "image": "/produtos/infantil-meninas/759773.webp",
@@ -230,7 +252,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-022",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0022"
   },
   {
     "image": "/produtos/infantil-meninas/759774.webp",
@@ -240,7 +263,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-023",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0023"
   },
   {
     "image": "/produtos/infantil-meninas/759775.webp",
@@ -250,7 +274,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-024",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0024"
   },
   {
     "image": "/produtos/infantil-meninas/759776.webp",
@@ -260,7 +285,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-025",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0025"
   },
   {
     "image": "/produtos/infantil-meninas/759777.webp",
@@ -270,7 +296,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-026",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0026"
   },
   {
     "image": "/produtos/infantil-meninas/759778.webp",
@@ -280,7 +307,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-027",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0027"
   },
   {
     "image": "/produtos/infantil-meninas/759779.webp",
@@ -290,7 +318,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-028",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0028"
   },
   {
     "image": "/produtos/infantil-meninas/759780.webp",
@@ -300,7 +329,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-029",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0029"
   },
   {
     "image": "/produtos/infantil-meninas/759781.webp",
@@ -310,7 +340,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-030",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0030"
   },
   {
     "image": "/produtos/infantil-meninas/759782.webp",
@@ -320,7 +351,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-031",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0031"
   },
   {
     "image": "/produtos/infantil-meninas/759783.webp",
@@ -330,7 +362,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-032",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0032"
   },
   {
     "image": "/produtos/infantil-meninas/759784.webp",
@@ -340,7 +373,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-033",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0033"
   },
   {
     "image": "/produtos/infantil-meninas/759785.webp",
@@ -350,7 +384,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-034",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0034"
   },
   {
     "image": "/produtos/infantil-meninas/759786.webp",
@@ -360,7 +395,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-035",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0035"
   },
   {
     "image": "/produtos/infantil-meninas/759787.webp",
@@ -370,7 +406,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-036",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0036"
   },
   {
     "image": "/produtos/infantil-meninas/759788.webp",
@@ -380,7 +417,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-037",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0037"
   },
   {
     "image": "/produtos/infantil-meninas/759789.webp",
@@ -390,7 +428,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-038",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0038"
   },
   {
     "image": "/produtos/infantil-meninas/759790.webp",
@@ -400,7 +439,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-039",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0039"
   },
   {
     "image": "/produtos/infantil-meninas/759791.webp",
@@ -410,7 +450,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-040",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0040"
   },
   {
     "image": "/produtos/infantil-meninas/759792.webp",
@@ -420,7 +461,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-041",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0041"
   },
   {
     "image": "/produtos/infantil-meninas/759793.webp",
@@ -430,7 +472,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-042",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0042"
   },
   {
     "image": "/produtos/infantil-meninas/759794.webp",
@@ -440,7 +483,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-043",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0043"
   },
   {
     "image": "/produtos/infantil-meninas/759795.webp",
@@ -450,7 +494,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-044",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0044"
   },
   {
     "image": "/produtos/infantil-meninas/759796.webp",
@@ -460,7 +505,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-045",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0045"
   },
   {
     "image": "/produtos/infantil-meninas/759797.webp",
@@ -470,7 +516,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-046",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0046"
   },
   {
     "image": "/produtos/infantil-meninas/759798.webp",
@@ -480,7 +527,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-047",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0047"
   },
   {
     "image": "/produtos/infantil-meninas/759799.webp",
@@ -490,7 +538,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-048",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0048"
   },
   {
     "image": "/produtos/infantil-meninas/759803.webp",
@@ -500,7 +549,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-049",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0049"
   },
   {
     "image": "/produtos/infantil-meninas/759804.webp",
@@ -510,7 +560,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-050",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0050"
   },
   {
     "image": "/produtos/infantil-meninas/759805.webp",
@@ -520,7 +571,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-051",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0051"
   },
   {
     "image": "/produtos/infantil-meninas/759806.webp",
@@ -530,7 +582,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-052",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0052"
   },
   {
     "image": "/produtos/infantil-meninas/759807.webp",
@@ -540,7 +593,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-053",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0053"
   },
   {
     "image": "/produtos/infantil-meninas/759808.webp",
@@ -550,7 +604,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-054",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0054"
   },
   {
     "image": "/produtos/infantil-meninas/759809.webp",
@@ -560,7 +615,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-055",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0055"
   },
   {
     "image": "/produtos/infantil-meninas/759810.webp",
@@ -570,7 +626,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-056",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0056"
   },
   {
     "image": "/produtos/infantil-meninas/759811.webp",
@@ -580,7 +637,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-057",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0057"
   },
   {
     "image": "/produtos/infantil-meninas/759816.webp",
@@ -590,7 +648,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-058",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0058"
   },
   {
     "image": "/produtos/infantil-meninas/759817.webp",
@@ -600,7 +659,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-059",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0059"
   },
   {
     "image": "/produtos/infantil-meninas/759818.webp",
@@ -610,7 +670,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-060",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0060"
   },
   {
     "image": "/produtos/infantil-meninas/759819.webp",
@@ -620,7 +681,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-061",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0061"
   },
   {
     "image": "/produtos/infantil-meninas/759820.webp",
@@ -630,7 +692,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-062",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0062"
   },
   {
     "image": "/produtos/infantil-meninas/759821.webp",
@@ -640,7 +703,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-063",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0063"
   },
   {
     "image": "/produtos/infantil-meninas/759822.webp",
@@ -650,7 +714,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-064",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0064"
   },
   {
     "image": "/produtos/infantil-meninas/759823.webp",
@@ -660,7 +725,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-065",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0065"
   },
   {
     "image": "/produtos/infantil-meninas/759824.webp",
@@ -670,7 +736,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-066",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0066"
   },
   {
     "image": "/produtos/infantil-meninas/759825.webp",
@@ -680,7 +747,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-067",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0067"
   },
   {
     "image": "/produtos/infantil-meninas/759826.webp",
@@ -690,7 +758,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-068",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0068"
   },
   {
     "image": "/produtos/infantil-meninas/759827.webp",
@@ -700,7 +769,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-069",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0069"
   },
   {
     "image": "/produtos/infantil-meninas/759828.webp",
@@ -710,7 +780,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-070",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0070"
   },
   {
     "image": "/produtos/infantil-meninas/759829.webp",
@@ -720,7 +791,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-071",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0071"
   },
   {
     "image": "/produtos/infantil-meninas/759830.webp",
@@ -730,7 +802,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-072",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0072"
   },
   {
     "image": "/produtos/infantil-meninas/759831.webp",
@@ -740,7 +813,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-073",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0073"
   },
   {
     "image": "/produtos/infantil-meninas/759833.webp",
@@ -750,7 +824,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-074",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0074"
   },
   {
     "image": "/produtos/infantil-meninas/759834.webp",
@@ -760,7 +835,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-075",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0075"
   },
   {
     "image": "/produtos/infantil-meninas/759835.webp",
@@ -770,7 +846,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-076",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0076"
   },
   {
     "image": "/produtos/infantil-meninas/759836.webp",
@@ -780,7 +857,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-077",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0077"
   },
   {
     "image": "/produtos/infantil-meninas/759837.webp",
@@ -790,7 +868,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-078",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0078"
   },
   {
     "image": "/produtos/infantil-meninas/759838.webp",
@@ -800,7 +879,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-079",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0079"
   },
   {
     "image": "/produtos/infantil-meninas/759839.webp",
@@ -810,7 +890,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-080",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0080"
   },
   {
     "image": "/produtos/infantil-meninas/759840.webp",
@@ -820,7 +901,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-081",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0081"
   },
   {
     "image": "/produtos/infantil-meninas/759841.webp",
@@ -830,7 +912,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-082",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0082"
   },
   {
     "image": "/produtos/infantil-meninas/759842.webp",
@@ -840,7 +923,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-083",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0083"
   },
   {
     "image": "/produtos/infantil-meninas/759843.webp",
@@ -850,7 +934,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-084",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0084"
   },
   {
     "image": "/produtos/infantil-meninas/759844.webp",
@@ -860,7 +945,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-085",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0085"
   },
   {
     "image": "/produtos/infantil-meninas/759845.webp",
@@ -870,7 +956,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-086",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0086"
   },
   {
     "image": "/produtos/infantil-meninas/759846.webp",
@@ -880,7 +967,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-087",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0087"
   },
   {
     "image": "/produtos/infantil-meninas/759847.webp",
@@ -890,7 +978,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-088",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0088"
   },
   {
     "image": "/produtos/infantil-meninas/759848.webp",
@@ -900,7 +989,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-089",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0089"
   },
   {
     "image": "/produtos/infantil-meninas/759849.webp",
@@ -910,7 +1000,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-090",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0090"
   },
   {
     "image": "/produtos/infantil-meninas/759850.webp",
@@ -920,7 +1011,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-091",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0091"
   },
   {
     "image": "/produtos/infantil-meninas/759851.webp",
@@ -930,7 +1022,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-092",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0092"
   },
   {
     "image": "/produtos/infantil-meninas/759852.webp",
@@ -940,7 +1033,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-093",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0093"
   },
   {
     "image": "/produtos/infantil-meninas/759853.webp",
@@ -950,7 +1044,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-094",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0094"
   },
   {
     "image": "/produtos/infantil-meninas/759854.webp",
@@ -960,7 +1055,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-095",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0095"
   },
   {
     "image": "/produtos/infantil-meninas/759855.webp",
@@ -970,7 +1066,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-096",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0096"
   },
   {
     "image": "/produtos/infantil-meninas/759856.webp",
@@ -980,7 +1077,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-097",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0097"
   },
   {
     "image": "/produtos/infantil-meninas/759857.webp",
@@ -990,7 +1088,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-098",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0098"
   },
   {
     "image": "/produtos/infantil-meninas/759858.webp",
@@ -1000,7 +1099,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-099",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0099"
   },
   {
     "image": "/produtos/infantil-meninas/759859.webp",
@@ -1010,7 +1110,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-100",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0100"
   },
   {
     "image": "/produtos/infantil-meninas/759860.webp",
@@ -1020,7 +1121,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-101",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0101"
   },
   {
     "image": "/produtos/infantil-meninas/759861.webp",
@@ -1030,7 +1132,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-102",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0102"
   },
   {
     "image": "/produtos/infantil-meninas/759862.webp",
@@ -1040,7 +1143,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-103",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0103"
   },
   {
     "image": "/produtos/infantil-meninas/759863.webp",
@@ -1050,7 +1154,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-104",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0104"
   },
   {
     "image": "/produtos/infantil-meninas/759864.webp",
@@ -1060,7 +1165,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-105",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0105"
   },
   {
     "image": "/produtos/infantil-meninas/759865.webp",
@@ -1070,7 +1176,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-106",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0106"
   },
   {
     "image": "/produtos/infantil-meninas/759866.webp",
@@ -1080,7 +1187,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-107",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0107"
   },
   {
     "image": "/produtos/infantil-meninas/759867.webp",
@@ -1090,7 +1198,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-108",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0108"
   },
   {
     "image": "/produtos/infantil-meninas/759868.webp",
@@ -1100,7 +1209,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-109",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0109"
   },
   {
     "image": "/produtos/infantil-meninas/759869.webp",
@@ -1110,7 +1220,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-110",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0110"
   },
   {
     "image": "/produtos/infantil-meninas/759870.webp",
@@ -1120,7 +1231,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-111",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0111"
   },
   {
     "image": "/produtos/infantil-meninas/759871.webp",
@@ -1130,7 +1242,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-112",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0112"
   },
   {
     "image": "/produtos/infantil-meninas/759872.webp",
@@ -1140,7 +1253,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-113",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0113"
   },
   {
     "image": "/produtos/infantil-meninas/759873.webp",
@@ -1150,7 +1264,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-114",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0114"
   },
   {
     "image": "/produtos/infantil-meninas/759874.webp",
@@ -1160,7 +1275,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-115",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0115"
   },
   {
     "image": "/produtos/infantil-meninas/759916.webp",
@@ -1170,7 +1286,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-116",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0116"
   },
   {
     "image": "/produtos/infantil-meninas/759917.webp",
@@ -1180,7 +1297,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-117",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0117"
   },
   {
     "image": "/produtos/infantil-meninas/759918.webp",
@@ -1190,7 +1308,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-118",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0118"
   },
   {
     "image": "/produtos/infantil-meninas/759919.webp",
@@ -1200,7 +1319,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-119",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0119"
   },
   {
     "image": "/produtos/infantil-meninas/759920.webp",
@@ -1210,7 +1330,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-120",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0120"
   },
   {
     "image": "/produtos/infantil-meninas/759921.webp",
@@ -1220,7 +1341,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-121",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0121"
   },
   {
     "image": "/produtos/infantil-meninas/759922.webp",
@@ -1230,7 +1352,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-122",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0122"
   },
   {
     "image": "/produtos/infantil-meninas/759923.webp",
@@ -1240,7 +1363,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-123",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0123"
   },
   {
     "image": "/produtos/infantil-meninas/759924.webp",
@@ -1250,7 +1374,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-124",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0124"
   },
   {
     "image": "/produtos/infantil-meninas/759925.webp",
@@ -1260,7 +1385,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-125",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0125"
   },
   {
     "image": "/produtos/infantil-meninas/759926.webp",
@@ -1270,7 +1396,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-126",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0126"
   },
   {
     "image": "/produtos/infantil-meninas/759927.webp",
@@ -1280,7 +1407,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-127",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0127"
   },
   {
     "image": "/produtos/infantil-meninas/759928.webp",
@@ -1290,7 +1418,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-128",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0128"
   },
   {
     "image": "/produtos/infantil-meninas/759929.webp",
@@ -1300,7 +1429,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-129",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0129"
   },
   {
     "image": "/produtos/infantil-meninas/759930.webp",
@@ -1310,7 +1440,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-130",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0130"
   },
   {
     "image": "/produtos/infantil-meninas/759931.webp",
@@ -1320,7 +1451,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-131",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0131"
   },
   {
     "image": "/produtos/infantil-meninas/759932.webp",
@@ -1330,7 +1462,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-132",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0132"
   },
   {
     "image": "/produtos/infantil-meninas/759933.webp",
@@ -1340,7 +1473,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-133",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0133"
   },
   {
     "image": "/produtos/infantil-meninas/759934.webp",
@@ -1350,7 +1484,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-134",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0134"
   },
   {
     "image": "/produtos/infantil-meninas/759935.webp",
@@ -1360,7 +1495,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-135",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0135"
   },
   {
     "image": "/produtos/infantil-meninas/759936.webp",
@@ -1370,7 +1506,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-136",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0136"
   },
   {
     "image": "/produtos/infantil-meninas/759937.webp",
@@ -1380,7 +1517,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-137",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0137"
   },
   {
     "image": "/produtos/infantil-meninas/759938.webp",
@@ -1390,7 +1528,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-138",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0138"
   },
   {
     "image": "/produtos/infantil-meninas/759939.webp",
@@ -1400,7 +1539,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-139",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0139"
   },
   {
     "image": "/produtos/infantil-meninas/759940.webp",
@@ -1410,7 +1550,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-140",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0140"
   },
   {
     "image": "/produtos/infantil-meninas/759941.webp",
@@ -1420,7 +1561,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-141",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0141"
   },
   {
     "image": "/produtos/infantil-meninas/759942.webp",
@@ -1430,7 +1572,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-142",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0142"
   },
   {
     "image": "/produtos/infantil-meninas/759943.webp",
@@ -1440,7 +1583,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-143",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0143"
   },
   {
     "image": "/produtos/infantil-meninas/759944.webp",
@@ -1450,7 +1594,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-144",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0144"
   },
   {
     "image": "/produtos/infantil-meninas/759945.webp",
@@ -1460,7 +1605,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-145",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0145"
   },
   {
     "image": "/produtos/infantil-meninas/759946.webp",
@@ -1470,7 +1616,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-146",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0146"
   },
   {
     "image": "/produtos/infantil-meninas/759947.webp",
@@ -1480,7 +1627,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-147",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0147"
   },
   {
     "image": "/produtos/infantil-meninas/759948.webp",
@@ -1490,7 +1638,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-148",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0148"
   },
   {
     "image": "/produtos/infantil-meninas/759949.webp",
@@ -1500,7 +1649,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-149",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0149"
   },
   {
     "image": "/produtos/infantil-meninas/759950.webp",
@@ -1510,7 +1660,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-150",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0150"
   },
   {
     "image": "/produtos/infantil-meninas/759951.webp",
@@ -1520,7 +1671,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-151",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0151"
   },
   {
     "image": "/produtos/infantil-meninas/759952.webp",
@@ -1530,7 +1682,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-152",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0152"
   },
   {
     "image": "/produtos/infantil-meninas/759953.webp",
@@ -1540,7 +1693,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-153",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0153"
   },
   {
     "image": "/produtos/infantil-meninas/759954.webp",
@@ -1550,7 +1704,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-154",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0154"
   },
   {
     "image": "/produtos/infantil-meninas/759955.webp",
@@ -1560,7 +1715,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-155",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0155"
   },
   {
     "image": "/produtos/infantil-meninas/759956.webp",
@@ -1570,7 +1726,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-156",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0156"
   },
   {
     "image": "/produtos/infantil-meninas/759957.webp",
@@ -1580,7 +1737,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-157",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0157"
   },
   {
     "image": "/produtos/infantil-meninas/759958.webp",
@@ -1590,7 +1748,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-158",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0158"
   },
   {
     "image": "/produtos/infantil-meninas/759959.webp",
@@ -1600,7 +1759,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-159",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0159"
   },
   {
     "image": "/produtos/infantil-meninas/759960.webp",
@@ -1610,7 +1770,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-160",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0160"
   },
   {
     "image": "/produtos/infantil-meninas/759961.webp",
@@ -1620,7 +1781,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-161",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0161"
   },
   {
     "image": "/produtos/infantil-meninas/759962.webp",
@@ -1630,7 +1792,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-162",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0162"
   },
   {
     "image": "/produtos/infantil-meninas/759963.webp",
@@ -1640,7 +1803,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-163",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0163"
   },
   {
     "image": "/produtos/infantil-meninas/759964.webp",
@@ -1650,7 +1814,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-164",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0164"
   },
   {
     "image": "/produtos/infantil-meninas/759965.webp",
@@ -1660,7 +1825,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-165",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0165"
   },
   {
     "image": "/produtos/infantil-meninas/759966.webp",
@@ -1670,7 +1836,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-166",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0166"
   },
   {
     "image": "/produtos/infantil-meninas/759967.webp",
@@ -1680,7 +1847,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-167",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0167"
   },
   {
     "image": "/produtos/infantil-meninas/759968.webp",
@@ -1690,7 +1858,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-168",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0168"
   },
   {
     "image": "/produtos/infantil-meninas/759969.webp",
@@ -1700,7 +1869,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-169",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0169"
   },
   {
     "image": "/produtos/infantil-meninas/759970.webp",
@@ -1710,7 +1880,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-170",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0170"
   },
   {
     "image": "/produtos/infantil-meninas/759971.webp",
@@ -1720,7 +1891,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-171",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0171"
   },
   {
     "image": "/produtos/infantil-meninas/759972.webp",
@@ -1730,7 +1902,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-172",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0172"
   },
   {
     "image": "/produtos/infantil-meninas/759973.webp",
@@ -1740,7 +1913,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-173",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0173"
   },
   {
     "image": "/produtos/infantil-meninas/759974.webp",
@@ -1750,7 +1924,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-174",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0174"
   },
   {
     "image": "/produtos/infantil-meninas/759975.webp",
@@ -1760,7 +1935,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-175",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0175"
   },
   {
     "image": "/produtos/infantil-meninas/759976.webp",
@@ -1770,7 +1946,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-176",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0176"
   },
   {
     "image": "/produtos/infantil-meninas/759977.webp",
@@ -1780,7 +1957,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-177",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0177"
   },
   {
     "image": "/produtos/infantil-meninas/759978.webp",
@@ -1790,7 +1968,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-178",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0178"
   },
   {
     "image": "/produtos/infantil-meninas/759979.webp",
@@ -1800,7 +1979,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-179",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0179"
   },
   {
     "image": "/produtos/infantil-meninas/759980.webp",
@@ -1810,7 +1990,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-180",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0180"
   },
   {
     "image": "/produtos/infantil-meninas/759981.webp",
@@ -1820,7 +2001,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-181",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0181"
   },
   {
     "image": "/produtos/infantil-meninas/759982.webp",
@@ -1830,7 +2012,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-182",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0182"
   },
   {
     "image": "/produtos/infantil-meninas/759983.webp",
@@ -1840,7 +2023,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-183",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0183"
   },
   {
     "image": "/produtos/infantil-meninas/759984.webp",
@@ -1850,7 +2034,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-184",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0184"
   },
   {
     "image": "/produtos/infantil-meninas/759985.webp",
@@ -1860,7 +2045,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-185",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0185"
   },
   {
     "image": "/produtos/infantil-meninas/759986.webp",
@@ -1870,7 +2056,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-186",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0186"
   },
   {
     "image": "/produtos/infantil-meninas/759987.webp",
@@ -1880,7 +2067,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-187",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0187"
   },
   {
     "image": "/produtos/infantil-meninas/759988.webp",
@@ -1890,7 +2078,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-188",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0188"
   },
   {
     "image": "/produtos/infantil-meninas/759989.webp",
@@ -1900,7 +2089,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-189",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0189"
   },
   {
     "image": "/produtos/infantil-meninas/759990.webp",
@@ -1910,7 +2100,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-190",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0190"
   },
   {
     "image": "/produtos/infantil-meninas/759991.webp",
@@ -1920,7 +2111,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-191",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0191"
   },
   {
     "image": "/produtos/infantil-meninas/759992.webp",
@@ -1930,7 +2122,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-192",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0192"
   },
   {
     "image": "/produtos/infantil-meninas/759993.webp",
@@ -1940,7 +2133,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-193",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0193"
   },
   {
     "image": "/produtos/infantil-meninas/759994.webp",
@@ -1950,7 +2144,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-194",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0194"
   },
   {
     "image": "/produtos/infantil-meninas/759995.webp",
@@ -1960,7 +2155,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-195",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0195"
   },
   {
     "image": "/produtos/infantil-meninas/759996.webp",
@@ -1970,7 +2166,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-196",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0196"
   },
   {
     "image": "/produtos/infantil-meninas/759997.webp",
@@ -1980,7 +2177,8 @@ export const products: Product[] = [
     "trending": false,
     "slug": "decoracao-infantil-menina-197",
     "description": "Linda decoração para festas infantis.\n\nConsulte disponibilidade, datas e demais informações entrando em contato pelo WhatsApp.\n\nAs imagens são ilustrativas e poderão sofrer pequenas variações conforme a montagem.",
-    "dimensions": "Sob consulta"
+    "dimensions": "Sob consulta",
+    "codigo": "0197"
   }
 ];
 

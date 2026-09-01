@@ -498,6 +498,9 @@ const ProductDetail = () => {
               date={`${selectedDate} de ${monthName}`}
               price={selectedPrice}
               variationName={selectedVariationName}
+              productCode={product?.codigo || ""}
+              productSlug={product?.slug || ""}
+              productImage={productImage || product?.image || ""}
               clientName={clientName.trim()}
               clientPhone={clientPhone.trim()}
               clientEmail={clientEmail.trim()}
