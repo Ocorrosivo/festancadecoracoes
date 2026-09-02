@@ -207,6 +207,9 @@ Deno.serve(async (req) => {
           name: payload.name,
           slug: slugify(payload.name),
           icon: payload.icon ?? null,
+          description: payload.description ?? null,
+          image_url: payload.image_url ?? null,
+          image_alt: payload.image_alt ?? null,
           display_order: payload.display_order ?? 99,
           is_active: payload.is_active ?? true,
         }).select().single();
@@ -216,7 +219,7 @@ Deno.serve(async (req) => {
       if (action === "update") {
         if (!id) return json({ error: "ID obrigatório" }, 400);
         const update: Record<string, unknown> = {};
-        ["name", "icon", "display_order", "is_active"].forEach((k) => {
+        ["name", "icon", "description", "image_url", "image_alt", "display_order", "is_active"].forEach((k) => {
           if (payload?.[k] !== undefined) update[k] = payload[k];
         });
         if (payload?.name) update.slug = slugify(payload.name);

@@ -89,9 +89,12 @@ export type Database = {
       categories: {
         Row: {
           created_at: string | null
+          description: string | null
           display_order: number | null
           icon: string | null
           id: string
+          image_alt: string | null
+          image_url: string | null
           is_active: boolean | null
           name: string
           slug: string
@@ -99,9 +102,12 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          description?: string | null
           display_order?: number | null
           icon?: string | null
           id?: string
+          image_alt?: string | null
+          image_url?: string | null
           is_active?: boolean | null
           name: string
           slug: string
@@ -109,9 +115,12 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           display_order?: number | null
           icon?: string | null
           id?: string
+          image_alt?: string | null
+          image_url?: string | null
           is_active?: boolean | null
           name?: string
           slug?: string
