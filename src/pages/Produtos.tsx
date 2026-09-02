@@ -26,10 +26,18 @@ const startsWithLetter = (name: string, letter: string): boolean => {
   return normalized.startsWith(letter.toUpperCase());
 };
 
+const generateSlug = (name: string): string =>
+  name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
 const Produtos = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string>("todos");
   const [selectedLetter, setSelectedLetter] = useState<string>("Todos");
   const [page, setPage] = useState(1);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -39,22 +47,46 @@ const Produtos = () => {
   const { data: products = [], isLoading: isLoadingProducts } = useProducts();
   const { data: dbCategories = [] } = useCategories(true);
 
-  // Sync category from URL param (e.g. ?cat=Infantil+menina)
+  // Sync category from URL param (e.g. ?cat=infantil-menina)
   useEffect(() => {
-    const cat = searchParams.get("cat");
-    if (cat) {
-      setSelectedCategory(cat);
+    const catSlug = searchParams.get("cat");
+    if (catSlug) {
+      setSelectedCategorySlug(catSlug);
       setPage(1);
+    } else {
+      setSelectedCategorySlug("todos");
     }
   }, [searchParams]);
 
   // Combine database categories with unique categories from products
   const categoriesList = useMemo(() => {
-    const fromCategoriesTable = dbCategories.map((c) => c.name);
-    const fromProducts = products.map((p) => p.category);
-    const set = new Set([...fromCategoriesTable, ...fromProducts]);
-    return Array.from(set);
+    const list: { name: string; slug: string; image_url: string | null }[] = [];
+    
+    dbCategories.forEach((c) => {
+      list.push({ name: c.name, slug: c.slug, image_url: c.image_url });
+    });
+    
+    const dbNames = new Set(dbCategories.map((c) => c.name.toLowerCase()));
+    
+    products.forEach((p) => {
+      if (p.category && !dbNames.has(p.category.toLowerCase())) {
+        dbNames.add(p.category.toLowerCase());
+        list.push({
+          name: p.category,
+          slug: generateSlug(p.category),
+          image_url: null,
+        });
+      }
+    });
+    
+    return list;
   }, [dbCategories, products]);
+
+  const activeCategoryName = useMemo(() => {
+    if (selectedCategorySlug === "todos") return "Todos";
+    const found = categoriesList.find((c) => c.slug === selectedCategorySlug);
+    return found ? found.name : "Todos";
+  }, [selectedCategorySlug, categoriesList]);
 
   const scrollToCatalogTop = () => {
     if (catalogTopRef.current) {
@@ -64,15 +96,15 @@ const Produtos = () => {
     }
   };
 
-  const handleSelectCategory = (cat: string) => {
-    setSelectedCategory(cat);
+  const handleSelectCategory = (slug: string) => {
+    setSelectedCategorySlug(slug);
     setSearch("");
     setSelectedLetter("Todos");
     setPage(1);
-    if (cat === "Todos") {
+    if (slug === "todos") {
       searchParams.delete("cat");
     } else {
-      searchParams.set("cat", cat);
+      searchParams.set("cat", slug);
     }
     setSearchParams(searchParams, { replace: true });
     scrollToCatalogTop();
@@ -93,32 +125,32 @@ const Produtos = () => {
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
       const matchCategory =
-        selectedCategory === "Todos" ||
-        p.category.toLowerCase() === selectedCategory.toLowerCase();
+        activeCategoryName === "Todos" ||
+        (p.category && p.category.toLowerCase() === activeCategoryName.toLowerCase());
 
       const matchSearch =
         !search.trim() ||
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.category.toLowerCase().includes(search.toLowerCase());
+        (p.name && p.name.toLowerCase().includes(search.toLowerCase())) ||
+        (p.category && p.category.toLowerCase().includes(search.toLowerCase()));
 
-      const matchLetter = startsWithLetter(p.name, selectedLetter);
+      const matchLetter = startsWithLetter(p.name || "", selectedLetter);
 
       return matchCategory && matchSearch && matchLetter;
     });
-  }, [search, selectedCategory, selectedLetter, products]);
+  }, [search, activeCategoryName, selectedLetter, products]);
 
   // Count available products per letter under current category & search for subtle UI hints
   const letterCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     products.forEach((p) => {
       const matchCategory =
-        selectedCategory === "Todos" ||
-        p.category.toLowerCase() === selectedCategory.toLowerCase();
+        activeCategoryName === "Todos" ||
+        (p.category && p.category.toLowerCase() === activeCategoryName.toLowerCase());
 
       const matchSearch =
         !search.trim() ||
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.category.toLowerCase().includes(search.toLowerCase());
+        (p.name && p.name.toLowerCase().includes(search.toLowerCase())) ||
+        (p.category && p.category.toLowerCase().includes(search.toLowerCase()));
 
       if (matchCategory && matchSearch) {
         const firstLetter = p.name
@@ -133,7 +165,7 @@ const Produtos = () => {
       }
     });
     return counts;
-  }, [products, selectedCategory, search]);
+  }, [products, activeCategoryName, search]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const paginatedProducts = filteredProducts.slice(
@@ -232,33 +264,43 @@ const Produtos = () => {
                 {/* Option: Todos */}
                 <button
                   type="button"
-                  onClick={() => handleSelectCategory("Todos")}
-                  aria-pressed={selectedCategory === "Todos"}
+                  onClick={() => handleSelectCategory("todos")}
+                  aria-pressed={selectedCategorySlug === "todos"}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                    selectedCategory === "Todos"
+                    selectedCategorySlug === "todos"
                       ? "bg-primary text-primary-foreground font-bold shadow-md"
                       : "hover:bg-accent text-foreground/80 hover:text-foreground"
                   }`}
                 >
+                  <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 border border-border">
+                    <span className="text-xs font-bold">T</span>
+                  </div>
                   <span>Todos os Produtos</span>
                 </button>
 
                 {/* Category List */}
                 {categoriesList.map((cat) => {
-                  const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+                  const isSelected = selectedCategorySlug === cat.slug;
                   return (
                     <button
-                      key={cat}
+                      key={cat.slug}
                       type="button"
                       aria-pressed={isSelected}
-                      onClick={() => handleSelectCategory(cat)}
+                      onClick={() => handleSelectCategory(cat.slug)}
                       className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${
                         isSelected
                           ? "bg-primary text-primary-foreground font-bold shadow-md"
                           : "hover:bg-accent text-foreground/80 hover:text-foreground"
                       }`}
                     >
-                      <span className="truncate">{cat}</span>
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden shrink-0 border border-border">
+                        {cat.image_url ? (
+                          <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-xs font-bold text-muted-foreground">{cat.name.charAt(0).toUpperCase()}</span>
+                        )}
+                      </div>
+                      <span className="truncate">{cat.name}</span>
                     </button>
                   );
                 })}
@@ -280,26 +322,36 @@ const Produtos = () => {
 
                 <div className="flex-1 overflow-y-auto space-y-1">
                   <button
-                    onClick={() => { handleSelectCategory("Todos"); setMobileFilterOpen(false); }}
-                    aria-pressed={selectedCategory === "Todos"}
+                    onClick={() => { handleSelectCategory("todos"); setMobileFilterOpen(false); }}
+                    aria-pressed={selectedCategorySlug === "todos"}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
-                      selectedCategory === "Todos" ? "bg-primary text-primary-foreground font-bold" : "hover:bg-accent"
+                      selectedCategorySlug === "todos" ? "bg-primary text-primary-foreground font-bold" : "hover:bg-accent"
                     }`}
                   >
+                    <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 border border-border">
+                      <span className="text-xs font-bold">T</span>
+                    </div>
                     <span>Todos os Produtos</span>
                   </button>
                   {categoriesList.map((cat) => {
-                    const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+                    const isSelected = selectedCategorySlug === cat.slug;
                     return (
                       <button
-                        key={cat}
+                        key={cat.slug}
                         aria-pressed={isSelected}
-                        onClick={() => { handleSelectCategory(cat); setMobileFilterOpen(false); }}
+                        onClick={() => { handleSelectCategory(cat.slug); setMobileFilterOpen(false); }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-left ${
                           isSelected ? "bg-primary text-primary-foreground font-bold" : "hover:bg-accent"
                         }`}
                       >
-                        <span className="truncate">{cat}</span>
+                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden shrink-0 border border-border">
+                          {cat.image_url ? (
+                            <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-xs font-bold text-muted-foreground">{cat.name.charAt(0).toUpperCase()}</span>
+                          )}
+                        </div>
+                        <span className="truncate">{cat.name}</span>
                       </button>
                     );
                   })}
@@ -325,8 +377,8 @@ const Produtos = () => {
 
               <div className="text-xs text-muted-foreground">
                 Exibindo <span className="font-bold text-foreground">{filteredProducts.length}</span> {filteredProducts.length === 1 ? "produto" : "produtos"}
-                {selectedCategory !== "Todos" && (
-                  <span className="ml-1 text-primary font-medium">em "{selectedCategory}"</span>
+                {activeCategoryName !== "Todos" && (
+                  <span className="ml-1 text-primary font-medium">em "{activeCategoryName}"</span>
                 )}
                 {selectedLetter !== "Todos" && (
                   <span className="ml-1 text-primary font-medium">(Letra {selectedLetter})</span>
@@ -388,9 +440,9 @@ const Produtos = () => {
                 <strong className="text-foreground">{filteredProducts.length}</strong> produtos encontrados
                 {selectedLetter !== "Todos" && ` (Letra ${selectedLetter})`}
               </span>
-              {(selectedCategory !== "Todos" || selectedLetter !== "Todos" || search) && (
+              {(activeCategoryName !== "Todos" || selectedLetter !== "Todos" || search) && (
                 <button
-                  onClick={() => handleSelectCategory("Todos")}
+                  onClick={() => handleSelectCategory("todos")}
                   className="text-primary font-bold hover:underline"
                 >
                   Limpar filtros
@@ -423,7 +475,7 @@ const Produtos = () => {
                 <p className="text-sm text-muted-foreground mb-5 max-w-md mx-auto">
                   {selectedLetter !== "Todos"
                     ? `Não encontramos decorações iniciando com a letra "${selectedLetter}" ${
-                        selectedCategory !== "Todos" ? `na categoria "${selectedCategory}"` : ""
+                        activeCategoryName !== "Todos" ? `na categoria "${activeCategoryName}"` : ""
                       }. Tente selecionar outra letra ou clique em "Todos".`
                     : "Tente buscar por outro termo ou selecione outra categoria."}
                 </p>
@@ -436,9 +488,9 @@ const Produtos = () => {
                       Ver Todos (A-Z)
                     </button>
                   )}
-                  {selectedCategory !== "Todos" && (
+                  {activeCategoryName !== "Todos" && (
                     <button
-                      onClick={() => handleSelectCategory("Todos")}
+                      onClick={() => handleSelectCategory("todos")}
                       className="bg-secondary text-secondary-foreground px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:bg-secondary/80 transition-all"
                     >
                       Todas as Categorias
