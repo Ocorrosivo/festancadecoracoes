@@ -184,10 +184,9 @@ Deno.serve(async (req) => {
         if (!slug) return json({ error: "Slug obrigatório" }, 400);
         const update: Record<string, unknown> = { ...(payload || {}) };
         delete update.slug;
-        if (payload?.name) update.slug = await uniqueSlug(supabase, payload.name, slug);
         const { error } = await supabase.from("products").update(update).eq("slug", slug);
         if (error) throw error;
-        return json({ success: true });
+        return json({ message: "Atualizado", success: true });
       }
       if (action === "delete") {
         if (!slug) return json({ error: "Slug obrigatório" }, 400);

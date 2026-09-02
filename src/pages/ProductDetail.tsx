@@ -49,12 +49,13 @@ const ProductDetail = () => {
     return (
       products.find((p) => {
         if (!p || !p.slug) return false;
+        if (p.id === slug) return true;
         const pSlug = p.slug.toLowerCase().trim();
         const pNameSlug = p.name ? p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") : "";
         return pSlug === decodedSlug || pNameSlug === decodedSlug;
       }) || null
     );
-  }, [products, decodedSlug]);
+  }, [products, decodedSlug, slug]);
 
   useEffect(() => {
     setSelectedDate(null);

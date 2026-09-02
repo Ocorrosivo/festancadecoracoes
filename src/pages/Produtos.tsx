@@ -66,6 +66,8 @@ const Produtos = () => {
 
   const handleSelectCategory = (cat: string) => {
     setSelectedCategory(cat);
+    setSearch("");
+    setSelectedLetter("Todos");
     setPage(1);
     if (cat === "Todos") {
       searchParams.delete("cat");
@@ -231,17 +233,13 @@ const Produtos = () => {
                 <button
                   type="button"
                   onClick={() => handleSelectCategory("Todos")}
+                  aria-pressed={selectedCategory === "Todos"}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     selectedCategory === "Todos"
                       ? "bg-primary text-primary-foreground font-bold shadow-md"
                       : "hover:bg-accent text-foreground/80 hover:text-foreground"
                   }`}
                 >
-                  <div className={`w-4 h-4 rounded border flex items-center justify-center ${
-                    selectedCategory === "Todos" ? "border-white bg-white/20" : "border-muted-foreground/40"
-                  }`}>
-                    {selectedCategory === "Todos" && <Check size={12} />}
-                  </div>
                   <span>Todos os Produtos</span>
                 </button>
 
@@ -252,6 +250,7 @@ const Produtos = () => {
                     <button
                       key={cat}
                       type="button"
+                      aria-pressed={isSelected}
                       onClick={() => handleSelectCategory(cat)}
                       className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${
                         isSelected
@@ -259,11 +258,6 @@ const Produtos = () => {
                           : "hover:bg-accent text-foreground/80 hover:text-foreground"
                       }`}
                     >
-                      <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                        isSelected ? "border-white bg-white/20" : "border-muted-foreground/40"
-                      }`}>
-                        {isSelected && <Check size={12} />}
-                      </div>
                       <span className="truncate">{cat}</span>
                     </button>
                   );
@@ -287,6 +281,7 @@ const Produtos = () => {
                 <div className="flex-1 overflow-y-auto space-y-1">
                   <button
                     onClick={() => { handleSelectCategory("Todos"); setMobileFilterOpen(false); }}
+                    aria-pressed={selectedCategory === "Todos"}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
                       selectedCategory === "Todos" ? "bg-primary text-primary-foreground font-bold" : "hover:bg-accent"
                     }`}
@@ -298,6 +293,7 @@ const Produtos = () => {
                     return (
                       <button
                         key={cat}
+                        aria-pressed={isSelected}
                         onClick={() => { handleSelectCategory(cat); setMobileFilterOpen(false); }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-left ${
                           isSelected ? "bg-primary text-primary-foreground font-bold" : "hover:bg-accent"
@@ -394,11 +390,7 @@ const Produtos = () => {
               </span>
               {(selectedCategory !== "Todos" || selectedLetter !== "Todos" || search) && (
                 <button
-                  onClick={() => {
-                    handleSelectCategory("Todos");
-                    setSelectedLetter("Todos");
-                    setSearch("");
-                  }}
+                  onClick={() => handleSelectCategory("Todos")}
                   className="text-primary font-bold hover:underline"
                 >
                   Limpar filtros
