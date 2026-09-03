@@ -50,6 +50,14 @@ const AdminSettings = () => {
     facebook: "",
     tiktok: "",
     about_text: "",
+    about_header_image: "",
+    about_header_badge: "",
+    about_header_title_1: "",
+    about_header_title_2: "",
+    about_mission: "",
+    about_vision: "",
+    about_features: [] as any[],
+    about_stats: [] as any[],
     address: "",
     footer_text: "",
   });
@@ -61,6 +69,8 @@ const AdminSettings = () => {
 
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingFavicon, setUploadingFavicon] = useState(false);
+  const [uploadingAboutHeader, setUploadingAboutHeader] = useState(false);
+  const aboutHeaderInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (settings) {
@@ -77,6 +87,14 @@ const AdminSettings = () => {
         facebook: settings.facebook || "",
         tiktok: settings.tiktok || "",
         about_text: settings.about_text || "",
+        about_header_image: settings.about_header_image || "",
+        about_header_badge: settings.about_header_badge || "",
+        about_header_title_1: settings.about_header_title_1 || "",
+        about_header_title_2: settings.about_header_title_2 || "",
+        about_mission: settings.about_mission || "",
+        about_vision: settings.about_vision || "",
+        about_features: settings.about_features || [],
+        about_stats: settings.about_stats || [],
         address: settings.address || "",
         footer_text: settings.footer_text || "",
       });
@@ -119,6 +137,21 @@ const AdminSettings = () => {
       toast.error("Erro ao enviar favicon.");
     } finally {
       setUploadingFavicon(false);
+    }
+  };
+
+  const handleAboutHeaderUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAboutHeader(true);
+    try {
+      const url = await uploadStorageFile(file, "banners");
+      setForm((prev) => ({ ...prev, about_header_image: url }));
+      toast.success("Imagem de cabeçalho enviada com sucesso!");
+    } catch {
+      toast.error("Erro ao enviar imagem de cabeçalho.");
+    } finally {
+      setUploadingAboutHeader(false);
     }
   };
 
@@ -417,7 +450,218 @@ const AdminSettings = () => {
                 </div>
               </div>
 
-              {/* Perguntas Frequentes (FAQs) */}
+              {/* Página Sobre Nós */}
+              <div className="bg-card rounded-2xl border border-border p-6 space-y-6 shadow-sm">
+                <div className="flex items-center gap-2 border-b border-border pb-3">
+                  <HelpCircle size={20} className="text-primary" />
+                  <h2 className="font-bold text-lg">Página "Sobre Nós"</h2>
+                </div>
+                
+                <div className="space-y-6">
+                  {/* Header */}
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-md border-b border-border pb-2">Cabeçalho (Hero)</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-muted-foreground">Selo / Badge</label>
+                        <Input
+                          value={form.about_header_badge}
+                          onChange={(e) => setForm({ ...form, about_header_badge: e.target.value })}
+                          placeholder="Ex: Nossa História"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-muted-foreground">Título Parte 1</label>
+                        <Input
+                          value={form.about_header_title_1}
+                          onChange={(e) => setForm({ ...form, about_header_title_1: e.target.value })}
+                          placeholder="Ex: Sobre a"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-muted-foreground">Título Parte 2 (Destaque Primário)</label>
+                        <Input
+                          value={form.about_header_title_2}
+                          onChange={(e) => setForm({ ...form, about_header_title_2: e.target.value })}
+                          placeholder="Ex: Festança"
+                        />
+                      </div>
+                      
+                      <div className="md:col-span-2">
+                        <label className="text-sm font-medium text-muted-foreground block mb-2">Imagem de Cabeçalho (Opcional, usa a logo se vazio)</label>
+                        <div className="border-2 border-dashed border-border rounded-xl p-4 flex flex-col items-center justify-center bg-background min-h-[140px]">
+                          {form.about_header_image ? (
+                            <img src={form.about_header_image} alt="Sobre" className="h-20 object-contain rounded-lg" />
+                          ) : (
+                            <p className="text-xs text-muted-foreground">Nenhuma imagem enviada</p>
+                          )}
+                          <input ref={aboutHeaderInputRef} type="file" accept="image/*" className="hidden" onChange={handleAboutHeaderUpload} />
+                          <Button
+                            type="button" variant="outline" size="sm" disabled={uploadingAboutHeader}
+                            onClick={() => aboutHeaderInputRef.current?.click()} className="mt-3 gap-2 text-xs rounded-lg"
+                          >
+                            {uploadingAboutHeader ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                            {form.about_header_image ? "Alterar Imagem" : "Enviar Imagem"}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Missão e Visão */}
+                  <div className="space-y-4 pt-4 border-t border-border">
+                    <h3 className="font-bold text-md border-b border-border pb-2">Missão e Visão</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-muted-foreground">Nossa Missão</label>
+                        <Textarea
+                          rows={4}
+                          value={form.about_mission}
+                          onChange={(e) => setForm({ ...form, about_mission: e.target.value })}
+                          placeholder="Democratizar o acesso a decorações..."
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-muted-foreground">Nossa Visão</label>
+                        <Textarea
+                          rows={4}
+                          value={form.about_vision}
+                          onChange={(e) => setForm({ ...form, about_vision: e.target.value })}
+                          placeholder="Ser a referência em locação..."
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Features */}
+                  <div className="space-y-4 pt-4 border-t border-border">
+                    <h3 className="font-bold text-md border-b border-border pb-2">Por Que Escolher a Festança? (Cards)</h3>
+                    <div className="space-y-4">
+                      {form.about_features.map((feat, index) => (
+                        <div key={index} className="flex flex-col md:flex-row gap-4 border border-border p-4 rounded-xl bg-background items-start">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1 w-full">
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground">Ícone (Nome Lucide)</label>
+                              <Input 
+                                value={feat.icon}
+                                onChange={(e) => {
+                                  const nf = [...form.about_features];
+                                  nf[index].icon = e.target.value;
+                                  setForm({ ...form, about_features: nf });
+                                }}
+                                placeholder="Ex: Heart, Award, Users, Sparkles"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground">Título</label>
+                              <Input 
+                                value={feat.title}
+                                onChange={(e) => {
+                                  const nf = [...form.about_features];
+                                  nf[index].title = e.target.value;
+                                  setForm({ ...form, about_features: nf });
+                                }}
+                                placeholder="Feito com Amor"
+                              />
+                            </div>
+                            <div className="md:col-span-2">
+                              <label className="text-xs font-medium text-muted-foreground">Descrição</label>
+                              <Textarea 
+                                rows={2}
+                                value={feat.desc}
+                                onChange={(e) => {
+                                  const nf = [...form.about_features];
+                                  nf[index].desc = e.target.value;
+                                  setForm({ ...form, about_features: nf });
+                                }}
+                                placeholder="Cada detalhe é pensado com carinho..."
+                              />
+                            </div>
+                          </div>
+                          <div className="flex justify-end pt-5">
+                            <Button type="button" variant="ghost" size="icon" className="text-destructive" onClick={() => {
+                              const nf = form.about_features.filter((_, i) => i !== index);
+                              setForm({ ...form, about_features: nf });
+                            }}>
+                              <Trash2 size={18} />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      <Button type="button" variant="outline" className="w-full gap-2 border-dashed border-2 rounded-xl" onClick={() => {
+                        setForm({
+                          ...form,
+                          about_features: [...form.about_features, { id: `feat${Date.now()}`, icon: "Star", title: "", desc: "", active: true, order: form.about_features.length + 1 }]
+                        });
+                      }}>
+                        <Plus size={16} /> Adicionar Card
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="space-y-4 pt-4 border-t border-border">
+                    <h3 className="font-bold text-md border-b border-border pb-2">Nossos Números (Indicadores)</h3>
+                    <div className="space-y-4">
+                      {form.about_stats.map((stat, index) => (
+                        <div key={index} className="flex flex-col md:flex-row gap-4 border border-border p-4 rounded-xl bg-background items-start">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-1 w-full">
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground">Valor (Ex: 5600)</label>
+                              <Input 
+                                value={stat.value}
+                                onChange={(e) => {
+                                  const ns = [...form.about_stats];
+                                  ns[index].value = e.target.value;
+                                  setForm({ ...form, about_stats: ns });
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground">Sufixo (Ex: +, %)</label>
+                              <Input 
+                                value={stat.suffix}
+                                onChange={(e) => {
+                                  const ns = [...form.about_stats];
+                                  ns[index].suffix = e.target.value;
+                                  setForm({ ...form, about_stats: ns });
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground">Rótulo (Ex: Eventos)</label>
+                              <Input 
+                                value={stat.label}
+                                onChange={(e) => {
+                                  const ns = [...form.about_stats];
+                                  ns[index].label = e.target.value;
+                                  setForm({ ...form, about_stats: ns });
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="flex justify-end pt-5">
+                            <Button type="button" variant="ghost" size="icon" className="text-destructive" onClick={() => {
+                              const ns = form.about_stats.filter((_, i) => i !== index);
+                              setForm({ ...form, about_stats: ns });
+                            }}>
+                              <Trash2 size={18} />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      <Button type="button" variant="outline" className="w-full gap-2 border-dashed border-2 rounded-xl" onClick={() => {
+                        setForm({
+                          ...form,
+                          about_stats: [...form.about_stats, { id: `stat${Date.now()}`, value: "0", suffix: "+", label: "", active: true, order: form.about_stats.length + 1 }]
+                        });
+                      }}>
+                        <Plus size={16} /> Adicionar Indicador
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div className="bg-card rounded-2xl border border-border p-6 space-y-6 shadow-sm">
                 <div className="flex items-center gap-2 border-b border-border pb-3">
                   <HelpCircle size={20} className="text-primary" />

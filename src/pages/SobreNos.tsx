@@ -1,4 +1,4 @@
-import { Heart, Award, Users, Sparkles } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import Navbar from "@/components/Navbar";
@@ -7,20 +7,10 @@ import logoFestanca from "@/assets/logo-festanca.webp";
 import SEO from "@/components/SEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-
-const features = [
-  { icon: Heart, title: "Feito com Amor", desc: "Cada detalhe é pensado com carinho para tornar seu evento único e inesquecível." },
-  { icon: Award, title: "Qualidade Premium", desc: "Trabalhamos apenas com materiais de alta qualidade para garantir elegância em cada peça." },
-  { icon: Users, title: "Atendimento Personalizado", desc: "Nossa equipe está pronta para entender suas necessidades e criar o cenário perfeito." },
-  { icon: Sparkles, title: "Criatividade Sem Limites", desc: "Transformamos ideias em realidade com temas exclusivos e decorações originais." },
-];
-
-const stats = [
-  { value: 5600, suffix: "+", label: "Eventos Realizados" },
-  { value: 200, suffix: "+", label: "Peças no Catálogo" },
-  { value: 98, suffix: "%", label: "Clientes Satisfeitos" },
-  { value: 4, suffix: "+", label: "Anos de Experiência" },
-];
+const DynamicIcon = ({ name, size = 28, className = "" }: { name: string, size?: number, className?: string }) => {
+  const Icon = (LucideIcons as any)[name] || LucideIcons.Heart;
+  return <Icon size={size} className={className} />;
+};
 
 const AnimatedCounter = ({ value, suffix }: { value: number; suffix: string }) => {
   const ref = useRef(null);
@@ -62,8 +52,16 @@ const fadeUp = {
 
 const SobreNos = () => {
   const { data: siteSettings } = useSiteSettings();
-  const logo = siteSettings?.logo_url || logoFestanca;
+  const logo = siteSettings?.about_header_image || siteSettings?.logo_url || logoFestanca;
   const siteName = siteSettings?.site_name || "Festança Decorações";
+
+  const features = (siteSettings?.about_features || [])
+    .filter(f => f.active)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  const stats = (siteSettings?.about_stats || [])
+    .filter(s => s.active)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
 
   return (
     <div className="min-h-screen bg-background font-display">
@@ -82,10 +80,10 @@ const SobreNos = () => {
         >
           <img src={logo} alt={siteName} className="h-24 w-auto mx-auto mb-6 object-contain" />
           <span className="inline-block py-1 px-3 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-            Nossa História
+            {siteSettings?.about_header_badge || "Nossa História"}
           </span>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Sobre a <span className="text-primary">Festança</span>
+            {siteSettings?.about_header_title_1 || "Sobre a"} <span className="text-primary">{siteSettings?.about_header_title_2 || "Festança"}</span>
           </h1>
           <div className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed text-justify md:text-center space-y-4">
             {siteSettings?.about_text ? (
@@ -104,8 +102,8 @@ const SobreNos = () => {
         {/* Mission */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
           {[
-            { title: "Nossa Missão", text: "Democratizar o acesso a decorações de eventos premium através do aluguel. Acreditamos que todos merecem celebrar com sofisticação, sem comprometer o orçamento." },
-            { title: "Nossa Visão", text: "Ser a referência em locação de decoração para eventos no Brasil, reconhecida pela qualidade, inovação e excelência no atendimento." },
+            { title: "Nossa Missão", text: siteSettings?.about_mission || "Democratizar o acesso a decorações de eventos premium através do aluguel. Acreditamos que todos merecem celebrar com sofisticação, sem comprometer o orçamento." },
+            { title: "Nossa Visão", text: siteSettings?.about_vision || "Ser a referência em locação de decoração para eventos no Brasil, reconhecida pela qualidade, inovação e excelência no atendimento." },
           ].map((item, i) => (
             <motion.div
               key={item.title}
@@ -146,7 +144,7 @@ const SobreNos = () => {
                 className="text-center bg-card rounded-2xl border border-primary/5 p-8 hover:shadow-lg transition-shadow"
               >
                 <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <f.icon className="text-primary" size={28} />
+                  <DynamicIcon name={f.icon} className="text-primary" size={28} />
                 </div>
                 <h3 className="font-bold text-lg mb-2">{f.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
@@ -165,10 +163,10 @@ const SobreNos = () => {
         >
           <h2 className="text-3xl font-bold mb-8">Nossos Números</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((s) => (
-              <div key={s.label}>
+            {stats.map((s, i) => (
+              <div key={s.id || i}>
                 <p className="text-3xl md:text-4xl font-bold text-primary">
-                  <AnimatedCounter value={s.value} suffix={s.suffix} />
+                  <AnimatedCounter value={Number(s.value.replace(/\D/g, '')) || 0} suffix={s.suffix} />
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">{s.label}</p>
               </div>

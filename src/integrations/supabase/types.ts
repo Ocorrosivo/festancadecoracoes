@@ -383,7 +383,15 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          about_features: Json | null
+          about_header_badge: string | null
+          about_header_image: string | null
+          about_header_title_1: string | null
+          about_header_title_2: string | null
+          about_mission: string | null
+          about_stats: Json | null
           about_text: string | null
+          about_vision: string | null
           address: string | null
           description: string | null
           facebook: string | null
@@ -401,7 +409,15 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+          about_features?: Json | null
+          about_header_badge?: string | null
+          about_header_image?: string | null
+          about_header_title_1?: string | null
+          about_header_title_2?: string | null
+          about_mission?: string | null
+          about_stats?: Json | null
           about_text?: string | null
+          about_vision?: string | null
           address?: string | null
           description?: string | null
           facebook?: string | null
@@ -419,7 +435,15 @@ export type Database = {
           whatsapp?: string | null
         }
         Update: {
+          about_features?: Json | null
+          about_header_badge?: string | null
+          about_header_image?: string | null
+          about_header_title_1?: string | null
+          about_header_title_2?: string | null
+          about_mission?: string | null
+          about_stats?: Json | null
           about_text?: string | null
+          about_vision?: string | null
           address?: string | null
           description?: string | null
           facebook?: string | null
