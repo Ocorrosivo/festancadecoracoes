@@ -32,7 +32,6 @@ const TABS = [
   { id: "home",       label: "Página Home",       icon: Home },
   { id: "sobre",      label: "Sobre Nós",         icon: Info },
   { id: "contato",    label: "Contato e Redes",   icon: Phone },
-  { id: "rodape",     label: "Rodapé",            icon: AlignJustify },
   { id: "seo",        label: "SEO e Técnico",     icon: Globe },
 ] as const;
 
@@ -905,30 +904,7 @@ const AdminSettings = () => {
                   </div>
                 )}
 
-                {/* ═══════════════════════════════════════════════════════
-                    TAB 5 — RODAPÉ
-                ═══════════════════════════════════════════════════════ */}
-                {activeTab === "rodape" && (
-                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <Block title="Rodapé do Site" icon={AlignJustify}>
-                      <div>
-                        <Label hint="O texto exibido na faixa inferior indicando os direitos de copyright do site.">
-                          Texto de Direitos Autorais (Copyright)
-                        </Label>
-                        <Textarea rows={2} value={form.footer_text}
-                          onChange={e => setField({ footer_text: e.target.value })}
-                          placeholder="Festança Decorações. Todos os direitos reservados." className="resize-none" />
-                      </div>
-                      <div className="mt-6 p-4 bg-accent/20 border border-border rounded-xl">
-                        <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Info size={16} className="text-primary"/> Informação</h4>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          Links padrão do rodapé como <strong>Política de Privacidade</strong>, <strong>Política de Reembolso</strong> e <strong>Fale Conosco</strong> já estão integrados ao layout fixo.
-                          As informações de endereço e redes sociais exibidas no rodapé são carregadas da aba <strong>Contato e Redes</strong>.
-                        </p>
-                      </div>
-                    </Block>
-                  </div>
-                )}
+
 
                 {/* ═══════════════════════════════════════════════════════
                     TAB 6 — SEO E TÉCNICO
