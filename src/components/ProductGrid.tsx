@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import ProductCard from "./ProductCard";
 import { useProducts } from "@/hooks/useProducts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -6,8 +6,30 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const ITEMS_PER_PAGE = 20;
 
 const ProductGrid = () => {
-  const { data: products = [], isLoading } = useProducts({ featuredFirst: true });
+  const { data: products = [], isLoading } = useProducts();
   const [page, setPage] = useState(1);
+  
+  const shuffledRef = useRef<any[]>([]);
+  const lastProductsRef = useRef<string>('');
+
+  const sortedProducts = useMemo(() => {
+    if (!products || products.length === 0) return [];
+    
+    // Stable sort check: only reshuffle if the actual product IDs change
+    const productsIds = products.map(p => p.id).join(',');
+    if (productsIds === lastProductsRef.current && shuffledRef.current.length > 0) {
+      return shuffledRef.current;
+    }
+
+    const trending = [...products].filter(p => p.trending).sort(() => Math.random() - 0.5);
+    const regular = [...products].filter(p => !p.trending).sort(() => Math.random() - 0.5);
+    const newSorted = [...trending, ...regular];
+    
+    shuffledRef.current = newSorted;
+    lastProductsRef.current = productsIds;
+    
+    return newSorted;
+  }, [products]);
 
   if (isLoading) {
     return (
@@ -17,8 +39,8 @@ const ProductGrid = () => {
     );
   }
 
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-  const paginatedProducts = products.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sortedProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = sortedProducts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   const goToPage = (p: number) => {
     setPage(p);
@@ -29,7 +51,7 @@ const ProductGrid = () => {
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <p className="text-muted-foreground text-sm">Mostrando {paginatedProducts.length} de {products.length} decorações</p>
+          <p className="text-muted-foreground text-sm">Mostrando {paginatedProducts.length} de {sortedProducts.length} decorações</p>
           <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start border-t border-border/50 sm:border-none pt-4 sm:pt-0">
             <span className="text-sm font-medium">Ordenar por:</span>
             <select className="text-sm bg-transparent border-none focus:ring-0 font-bold text-primary cursor-pointer">
