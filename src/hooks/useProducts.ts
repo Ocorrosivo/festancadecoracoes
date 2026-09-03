@@ -36,16 +36,20 @@ const toProduct = (row: DbProduct): Product => ({
 
 // ─── READ: public query via Supabase directly ──────────────────────────────
 
-export const useProducts = () => {
+export const useProducts = (options?: { featuredFirst?: boolean }) => {
   return useQuery({
-    queryKey: ["products"],
+    queryKey: ["products", options?.featuredFirst],
     queryFn: async (): Promise<Product[]> => {
       try {
-        const { data, error } = await supabase
-          .from("products")
-          .select("*")
-          .order("trending", { ascending: false, nullsFirst: false })
-          .order("created_at", { ascending: false });
+        let query = supabase.from("products").select("*");
+
+        if (options?.featuredFirst) {
+          query = query.order("trending", { ascending: false, nullsFirst: false });
+        }
+
+        query = query.order("created_at", { ascending: false });
+
+        const { data, error } = await query;
 
         let dbProducts: Product[] = [];
         if (!error && Array.isArray(data) && data.length > 0) {

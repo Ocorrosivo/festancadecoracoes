@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const ITEMS_PER_PAGE = 20;
 
 const ProductGrid = () => {
-  const { data: products = [], isLoading } = useProducts();
+  const { data: products = [], isLoading } = useProducts({ featuredFirst: true });
   const [page, setPage] = useState(1);
 
   if (isLoading) {
