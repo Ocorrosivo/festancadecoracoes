@@ -15,9 +15,9 @@ const ProductGrid = () => {
   const sortedProducts = useMemo(() => {
     if (!products || products.length === 0) return [];
     
-    // Stable sort check: only reshuffle if the actual product IDs change
-    const productsIds = products.map(p => p.id).join(',');
-    if (productsIds === lastProductsRef.current && shuffledRef.current.length > 0) {
+    // Stable sort check: only reshuffle if the actual product IDs or their trending status change
+    const productsStateHash = products.map(p => `${p.id}-${p.trending}`).join(',');
+    if (productsStateHash === lastProductsRef.current && shuffledRef.current.length > 0) {
       return shuffledRef.current;
     }
 
@@ -26,7 +26,7 @@ const ProductGrid = () => {
     const newSorted = [...trending, ...regular];
     
     shuffledRef.current = newSorted;
-    lastProductsRef.current = productsIds;
+    lastProductsRef.current = productsStateHash;
     
     return newSorted;
   }, [products]);
