@@ -102,8 +102,14 @@ const SobreNos = () => {
         {/* Mission */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
           {[
-            { title: "Nossa Missão", text: siteSettings?.about_mission || "Democratizar o acesso a decorações de eventos premium através do aluguel. Acreditamos que todos merecem celebrar com sofisticação, sem comprometer o orçamento." },
-            { title: "Nossa Visão", text: siteSettings?.about_vision || "Ser a referência em locação de decoração para eventos no Brasil, reconhecida pela qualidade, inovação e excelência no atendimento." },
+            {
+              title: siteSettings?.mission_title || "Nossa Missão",
+              text: siteSettings?.about_mission || "Democratizar o acesso a decorações de eventos premium através do aluguel. Acreditamos que todos merecem celebrar com sofisticação, sem comprometer o orçamento."
+            },
+            {
+              title: siteSettings?.vision_title || "Nossa Visão",
+              text: siteSettings?.about_vision || "Ser a referência em locação de decoração para eventos no Brasil, reconhecida pela qualidade, inovação e excelência no atendimento."
+            },
           ].map((item, i) => (
             <motion.div
               key={item.title}

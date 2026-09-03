@@ -56,11 +56,15 @@ const AdminSettings = () => {
     about_header_title_2: "",
     about_mission: "",
     about_vision: "",
+    mission_title: "",
+    vision_title: "",
     about_features: [] as any[],
     about_stats: [] as any[],
     address: "",
     footer_text: "",
   });
+  
+  const [isSaving, setIsSaving] = useState(false);
   
   const [faqList, setFaqList] = useState<FaqItem[]>([]);
   const [galleryForm, setGalleryForm] = useState<GallerySettings>({ title: "", quote: "" });
@@ -93,6 +97,8 @@ const AdminSettings = () => {
         about_header_title_2: settings.about_header_title_2 || "",
         about_mission: settings.about_mission || "",
         about_vision: settings.about_vision || "",
+        mission_title: settings.mission_title || "",
+        vision_title: settings.vision_title || "",
         about_features: settings.about_features || [],
         about_stats: settings.about_stats || [],
         address: settings.address || "",
@@ -155,31 +161,31 @@ const AdminSettings = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateSettings.mutate(form, {
-      onSuccess: () => {
-        toast.success("Configurações salvas no Supabase!");
-      },
-      onError: (error) => {
-        const err = error as { message?: string; status?: number; context?: { status?: number } };
-        console.error("[site_settings.upsert] falha ao salvar", {
-          resource: "site_settings",
-          action: "upsert",
-          status: err?.status ?? err?.context?.status,
-          message: err?.message,
-          campos: Object.keys(form),
-        });
-        toast.error(err?.message || "Erro ao salvar configurações.");
-      },
-    });
-    
-    // Salva FAQs
-    updateFaqs.mutate(faqList);
-    // Salva Textos da Galeria
-    updateGallerySettings.mutate(galleryForm);
-    // Salva Imagens da Galeria
-    updateGalleryImages.mutate(galleryImages);
+    // Previne envios simultâneos
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      // Executa todas as operações em paralelo e aguarda o resultado de todas
+      await Promise.all([
+        updateSettings.mutateAsync(form),
+        updateFaqs.mutateAsync(faqList),
+        updateGallerySettings.mutateAsync(galleryForm),
+        updateGalleryImages.mutateAsync(galleryImages),
+      ]);
+      // Invalida o cache após confirmação real de todas as operações
+      queryClient.invalidateQueries({ queryKey: ["site_settings"] });
+      // Uma única notificação de sucesso
+      toast.success("Configurações salvas com sucesso!");
+    } catch (err) {
+      // Log técnico no console, mensagem amigável ao usuário
+      const e = err as { message?: string };
+      console.error("[AdminSettings.handleSubmit] falha ao salvar", e?.message ?? err);
+      toast.error("Não foi possível salvar as configurações. Tente novamente.");
+    } finally {
+      setIsSaving(false);
+    }
   };
   
   const handleGalleryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -218,8 +224,8 @@ const AdminSettings = () => {
               Configurações Gerais
             </h1>
           </div>
-          <Button onClick={handleSubmit} disabled={updateSettings.isPending} className="rounded-xl gap-2 shadow-md">
-            {updateSettings.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+          <Button onClick={handleSubmit} disabled={isSaving} className="rounded-xl gap-2 shadow-md">
+            {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
             Salvar Alterações
           </Button>
         </header>
@@ -511,24 +517,46 @@ const AdminSettings = () => {
                   {/* Missão e Visão */}
                   <div className="space-y-4 pt-4 border-t border-border">
                     <h3 className="font-bold text-md border-b border-border pb-2">Missão e Visão</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="text-sm font-medium text-muted-foreground">Nossa Missão</label>
-                        <Textarea
-                          rows={4}
-                          value={form.about_mission}
-                          onChange={(e) => setForm({ ...form, about_mission: e.target.value })}
-                          placeholder="Democratizar o acesso a decorações..."
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Missão */}
+                      <div className="space-y-3">
+                        <div className="space-y-1.5">
+                          <label className="text-sm font-medium text-muted-foreground">Título da Missão</label>
+                          <Input
+                            value={form.mission_title}
+                            onChange={(e) => setForm({ ...form, mission_title: e.target.value })}
+                            placeholder="Ex: Nossa Missão"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-sm font-medium text-muted-foreground">Texto da Missão</label>
+                          <Textarea
+                            rows={4}
+                            value={form.about_mission}
+                            onChange={(e) => setForm({ ...form, about_mission: e.target.value })}
+                            placeholder="Democratizar o acesso a decorações..."
+                          />
+                        </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <label className="text-sm font-medium text-muted-foreground">Nossa Visão</label>
-                        <Textarea
-                          rows={4}
-                          value={form.about_vision}
-                          onChange={(e) => setForm({ ...form, about_vision: e.target.value })}
-                          placeholder="Ser a referência em locação..."
-                        />
+                      {/* Visão */}
+                      <div className="space-y-3">
+                        <div className="space-y-1.5">
+                          <label className="text-sm font-medium text-muted-foreground">Título da Visão</label>
+                          <Input
+                            value={form.vision_title}
+                            onChange={(e) => setForm({ ...form, vision_title: e.target.value })}
+                            placeholder="Ex: Nossa Visão"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-sm font-medium text-muted-foreground">Texto da Visão</label>
+                          <Textarea
+                            rows={4}
+                            value={form.about_vision}
+                            onChange={(e) => setForm({ ...form, about_vision: e.target.value })}
+                            placeholder="Ser a referência em locação..."
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -809,8 +837,8 @@ const AdminSettings = () => {
               </div>
 
               <div className="pt-4 pb-12">
-                <Button type="submit" disabled={updateSettings.isPending || updateFaqs.isPending || updateGallerySettings.isPending || updateGalleryImages.isPending} className="w-full sm:w-auto px-8 rounded-xl gap-2 py-6 text-base font-bold shadow-lg">
-                  {updateSettings.isPending || updateFaqs.isPending || updateGallerySettings.isPending || updateGalleryImages.isPending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+                <Button type="submit" disabled={isSaving} className="w-full sm:w-auto px-8 rounded-xl gap-2 py-6 text-base font-bold shadow-lg">
+                  {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                   Salvar Configurações
                 </Button>
               </div>

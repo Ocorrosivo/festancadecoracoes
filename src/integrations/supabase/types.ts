@@ -400,12 +400,14 @@ export type Database = {
           id: string
           instagram: string | null
           logo_url: string | null
+          mission_title: string | null
           phone: string | null
           primary_color: string | null
           secondary_color: string | null
           site_name: string | null
           tiktok: string | null
           updated_at: string | null
+          vision_title: string | null
           whatsapp: string | null
         }
         Insert: {
@@ -426,12 +428,14 @@ export type Database = {
           id?: string
           instagram?: string | null
           logo_url?: string | null
+          mission_title?: string | null
           phone?: string | null
           primary_color?: string | null
           secondary_color?: string | null
           site_name?: string | null
           tiktok?: string | null
           updated_at?: string | null
+          vision_title?: string | null
           whatsapp?: string | null
         }
         Update: {
@@ -452,12 +456,14 @@ export type Database = {
           id?: string
           instagram?: string | null
           logo_url?: string | null
+          mission_title?: string | null
           phone?: string | null
           primary_color?: string | null
           secondary_color?: string | null
           site_name?: string | null
           tiktok?: string | null
           updated_at?: string | null
+          vision_title?: string | null
           whatsapp?: string | null
         }
         Relationships: []

@@ -44,6 +44,8 @@ export interface SiteSettings {
   about_header_title_2?: string | null;
   about_mission?: string | null;
   about_vision?: string | null;
+  mission_title?: string | null;
+  vision_title?: string | null;
   about_features?: AboutFeature[];
   about_stats?: AboutStat[];
   updated_at?: string;
@@ -70,6 +72,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   about_header_title_2: "Festança",
   about_mission: "Democratizar o acesso a decorações de eventos premium através do aluguel. Acreditamos que todos merecem celebrar com sofisticação, sem comprometer o orçamento.",
   about_vision: "Ser a referência em locação de decoração para eventos no Brasil, reconhecida pela qualidade, inovação e excelência no atendimento.",
+  mission_title: "Nossa Missão",
+  vision_title: "Nossa Visão",
   about_features: [
     { id: "feat1", icon: "Heart", title: "Feito com Amor", desc: "Cada detalhe é pensado com carinho para tornar seu evento único e inesquecível.", active: true, order: 1 },
     { id: "feat2", icon: "Award", title: "Qualidade Premium", desc: "Trabalhamos apenas com materiais de alta qualidade para garantir elegância em cada peça.", active: true, order: 2 },
@@ -122,6 +126,8 @@ export const useSiteSettings = () => {
           about_header_title_2: data.about_header_title_2 || DEFAULT_SITE_SETTINGS.about_header_title_2,
           about_mission: data.about_mission || DEFAULT_SITE_SETTINGS.about_mission,
           about_vision: data.about_vision || DEFAULT_SITE_SETTINGS.about_vision,
+          mission_title: (data as Record<string, unknown>).mission_title as string | undefined || DEFAULT_SITE_SETTINGS.mission_title,
+          vision_title: (data as Record<string, unknown>).vision_title as string | undefined || DEFAULT_SITE_SETTINGS.vision_title,
           about_features: (data.about_features as unknown as AboutFeature[]) || DEFAULT_SITE_SETTINGS.about_features,
           about_stats: (data.about_stats as unknown as AboutStat[]) || DEFAULT_SITE_SETTINGS.about_stats,
           updated_at: data.updated_at,
