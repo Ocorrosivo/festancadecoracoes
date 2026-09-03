@@ -37,7 +37,7 @@ const ProductCard = ({ image, category, name, price, trending, slug }: ProductCa
           </div>
           {trending && (
             <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-primary text-primary-foreground text-[8px] md:text-[10px] font-bold px-1.5 py-0.5 md:px-2.5 md:py-1 rounded uppercase tracking-widest z-10">
-              Tendência
+              Em alta
             </span>
           )}
         </div>

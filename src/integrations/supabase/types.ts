@@ -383,6 +383,7 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          about_text: string | null
           address: string | null
           description: string | null
           facebook: string | null
@@ -400,6 +401,7 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+          about_text?: string | null
           address?: string | null
           description?: string | null
           facebook?: string | null
@@ -412,10 +414,12 @@ export type Database = {
           primary_color?: string | null
           secondary_color?: string | null
           site_name?: string | null
+          tiktok?: string | null
           updated_at?: string | null
           whatsapp?: string | null
         }
         Update: {
+          about_text?: string | null
           address?: string | null
           description?: string | null
           facebook?: string | null
@@ -428,6 +432,7 @@ export type Database = {
           primary_color?: string | null
           secondary_color?: string | null
           site_name?: string | null
+          tiktok?: string | null
           updated_at?: string | null
           whatsapp?: string | null
         }

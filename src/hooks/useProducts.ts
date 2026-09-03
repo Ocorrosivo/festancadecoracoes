@@ -44,6 +44,7 @@ export const useProducts = () => {
         const { data, error } = await supabase
           .from("products")
           .select("*")
+          .order("trending", { ascending: false, nullsFirst: false })
           .order("created_at", { ascending: false });
 
         let dbProducts: Product[] = [];

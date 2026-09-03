@@ -87,10 +87,18 @@ const SobreNos = () => {
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Sobre a <span className="text-primary">Festança</span>
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
-            Nascemos do desejo de transformar momentos especiais em memórias inesquecíveis.
-            Desde 2020, ajudamos centenas de famílias a celebrar com elegância, criatividade e muito carinho.
-          </p>
+          <div className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed text-justify md:text-center space-y-4">
+            {siteSettings?.about_text ? (
+              siteSettings.about_text.split("\n").filter(p => p.trim() !== "").map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))
+            ) : (
+              <p>
+                Nascemos do desejo de transformar momentos especiais em memórias inesquecíveis.
+                Desde 2020, ajudamos centenas de famílias a celebrar com elegância, criatividade e muito carinho.
+              </p>
+            )}
+          </div>
         </motion.div>
 
         {/* Mission */}

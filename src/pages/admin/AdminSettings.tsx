@@ -49,6 +49,7 @@ const AdminSettings = () => {
     instagram: "",
     facebook: "",
     tiktok: "",
+    about_text: "",
     address: "",
     footer_text: "",
   });
@@ -75,6 +76,7 @@ const AdminSettings = () => {
         instagram: settings.instagram || "",
         facebook: settings.facebook || "",
         tiktok: settings.tiktok || "",
+        about_text: settings.about_text || "",
         address: settings.address || "",
         footer_text: settings.footer_text || "",
       });
@@ -320,6 +322,22 @@ const AdminSettings = () => {
                       onChange={(e) => setForm({ ...form, description: e.target.value })}
                       placeholder="Descrição detalhada sobre a empresa..."
                     />
+                  </div>
+
+                  <div className="space-y-1.5 pt-4 border-t border-border">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-bold text-base">Seção "Quem Somos"</h3>
+                    </div>
+                    <label className="text-sm font-medium text-muted-foreground">Texto Institucional (Exibido na Home e Sobre Nós)</label>
+                    <Textarea
+                      rows={6}
+                      value={form.about_text}
+                      onChange={(e) => setForm({ ...form, about_text: e.target.value })}
+                      placeholder="Nascemos do desejo de transformar momentos especiais em memórias inesquecíveis..."
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Você pode usar quebras de linha. Cada parágrafo será formatado automaticamente.
+                    </p>
                   </div>
                 </div>
               </div>
