@@ -124,20 +124,6 @@ export default function SettingsHome() {
           </div>
         </div>
 
-        <Block title="Atalhos" icon={Home}>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button type="button" variant="outline" asChild className="flex-1 bg-card hover:bg-accent border-border shadow-sm">
-              <Link to="/admin/banner"><ImageIcon size={16} className="mr-2 text-primary" /> Gerenciar Banner Home</Link>
-            </Button>
-            <Button type="button" variant="outline" asChild className="flex-1 bg-card hover:bg-accent border-border shadow-sm">
-              <Link to="/admin/categorias"><FileText size={16} className="mr-2 text-primary" /> Gerenciar Categorias</Link>
-            </Button>
-            <Button type="button" variant="outline" asChild className="flex-1 bg-card hover:bg-accent border-border shadow-sm">
-              <Link to="/admin/produtos"><Home size={16} className="mr-2 text-primary" /> Gerenciar Produtos</Link>
-            </Button>
-          </div>
-        </Block>
-
         <Block title="Texto Institucional Curto" icon={FileText}>
           <Label hint="Resumo exibido logo abaixo do banner na Home.">
             Quem Somos (Resumo)
