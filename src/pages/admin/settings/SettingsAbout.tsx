@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Save, Loader2, Info, Upload, ImageIcon, Target, Star, Check, Plus, AlertCircle } from "lucide-react";
+import { Save, Loader2, Info, ImageIcon, Target, Star, Check, Plus, AlertCircle } from "lucide-react";
 import { useSiteSettings, useUpdateSiteSettings } from "@/hooks/useSiteSettings";
 import { uploadStorageFile } from "@/utils/supabaseStorage";
 import { toast } from "sonner";
@@ -15,11 +15,11 @@ export default function SettingsAbout() {
   const { data: settings } = useSiteSettings();
   const updateSettings = useUpdateSiteSettings();
 
-  const aboutHeaderInputRef = useRef<HTMLInputElement>(null);
+
 
   const [form, setForm] = useState({
     about_text: "",
-    about_header_image: "",
+
     about_header_badge: "",
     about_header_title_1: "",
     about_header_title_2: "",
@@ -33,7 +33,7 @@ export default function SettingsAbout() {
 
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [uploadingAboutHeader, setUploadingAboutHeader] = useState(false);
+
 
   const [expandedFeature, setExpandedFeature] = useState<number | null>(null);
   const [expandedStat, setExpandedStat] = useState<number | null>(null);
@@ -42,7 +42,7 @@ export default function SettingsAbout() {
     if (settings && !isDirty) {
       setForm({
         about_text: settings.about_text || "",
-        about_header_image: settings.about_header_image || "",
+
         about_header_badge: settings.about_header_badge || "",
         about_header_title_1: settings.about_header_title_1 || "",
         about_header_title_2: settings.about_header_title_2 || "",
@@ -69,17 +69,7 @@ export default function SettingsAbout() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [isDirty]);
 
-  const handleAboutHeaderUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingAboutHeader(true);
-    try {
-      const url = await uploadStorageFile(file, "banners");
-      setField({ about_header_image: url });
-      toast.success("Imagem enviada!");
-    } catch { toast.error("Erro ao enviar imagem."); }
-    finally { setUploadingAboutHeader(false); }
-  };
+
 
   const moveItem = <T,>(array: T[], index: number, direction: 1 | -1, setter: (val: T[]) => void) => {
     if (index + direction < 0 || index + direction >= array.length) return;
@@ -132,35 +122,21 @@ export default function SettingsAbout() {
         </div>
 
         <Block title="Cabeçalho e História" icon={ImageIcon}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
             <div>
-              <Label>Imagem do Cabeçalho (Hero)</Label>
-              <div className="border-2 border-dashed border-border rounded-xl p-4 flex flex-col items-center justify-center min-h-[140px] bg-background">
-                {form.about_header_image
-                  ? <img src={form.about_header_image} alt="Cabeçalho Sobre" className="h-20 object-cover rounded-lg mb-3 w-full" />
-                  : <p className="text-xs text-muted-foreground mb-3 text-center">Nenhuma imagem definida.<br/>(Usará a logo do site como fallback)</p>
-                }
-                <input ref={aboutHeaderInputRef} type="file" accept="image/*" className="hidden" onChange={handleAboutHeaderUpload} />
-                <Button type="button" variant="outline" size="sm" disabled={uploadingAboutHeader} onClick={() => aboutHeaderInputRef.current?.click()} className="gap-2">
-                  {uploadingAboutHeader ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />} {form.about_header_image ? "Trocar Imagem" : "Enviar Imagem"}
-                </Button>
-              </div>
+              <Label hint="Selo pequeno exibido acima do título.">Badge / Selo</Label>
+              <Input value={form.about_header_badge} onChange={e => setField({ about_header_badge: e.target.value })} placeholder="Ex: Nossa História" />
             </div>
-            <div className="space-y-4">
-              <div>
-                <Label hint="Selo pequeno exibido acima do título.">Badge / Selo</Label>
-                <Input value={form.about_header_badge} onChange={e => setField({ about_header_badge: e.target.value })} placeholder="Ex: Nossa História" />
-              </div>
-              <div>
-                <Label>Título - Parte 1 (Normal)</Label>
-                <Input value={form.about_header_title_1} onChange={e => setField({ about_header_title_1: e.target.value })} placeholder="Ex: Sobre a" />
-              </div>
-              <div>
-                <Label hint="Ficará com a cor primária do site.">Título - Parte 2 (Destacada)</Label>
-                <Input value={form.about_header_title_2} onChange={e => setField({ about_header_title_2: e.target.value })} placeholder="Ex: Festança" />
-              </div>
+            <div>
+              <Label>Título - Parte 1 (Normal)</Label>
+              <Input value={form.about_header_title_1} onChange={e => setField({ about_header_title_1: e.target.value })} placeholder="Ex: Sobre a" />
+            </div>
+            <div>
+              <Label hint="Ficará com a cor primária do site.">Título - Parte 2 (Destacada)</Label>
+              <Input value={form.about_header_title_2} onChange={e => setField({ about_header_title_2: e.target.value })} placeholder="Ex: Festança" />
             </div>
           </div>
+
           
           <div className="mt-6 pt-6 border-t border-border">
             <Label hint="O texto da história completa exibido na página (parágrafos e quebras de linha são respeitados).">

@@ -52,7 +52,6 @@ const fadeUp = {
 
 const SobreNos = () => {
   const { data: siteSettings } = useSiteSettings();
-  const logo = siteSettings?.about_header_image || siteSettings?.logo_url || logoFestanca;
   const siteName = siteSettings?.site_name || "Festança Decorações";
 
   const features = (siteSettings?.about_features || [])
@@ -78,7 +77,7 @@ const SobreNos = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-16"
         >
-          <img src={logo} alt={siteName} className="h-24 w-auto mx-auto mb-6 object-contain" />
+
           <span className="inline-block py-1 px-3 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest mb-4">
             {siteSettings?.about_header_badge || "Nossa História"}
           </span>

@@ -30,9 +30,7 @@ export default function SettingsHome() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["site_gallery_images"] }),
   });
 
-  const [form, setForm] = useState({
-    about_text: "",
-  });
+  const [form, setForm] = useState({});
 
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -43,9 +41,7 @@ export default function SettingsHome() {
 
   useEffect(() => {
     if (settings && !isDirty) {
-      setForm({
-        about_text: settings.about_text || "",
-      });
+      setForm({});
     }
   }, [settings]);
 
@@ -124,15 +120,7 @@ export default function SettingsHome() {
           </div>
         </div>
 
-        <Block title="Texto Institucional Curto" icon={FileText}>
-          <Label hint="Resumo exibido logo abaixo do banner na Home.">
-            Quem Somos (Resumo)
-          </Label>
-          <Textarea rows={4} value={form.about_text}
-            onChange={e => setField({ about_text: e.target.value })}
-            className="resize-none"
-            placeholder="Nascemos do desejo de transformar momentos especiais..." />
-        </Block>
+
 
         <Block title="Seção Galeria - Nossa Arte em Detalhes" icon={ImageIcon}>
           <div className="space-y-5">
