@@ -24,7 +24,13 @@ const AdminRelatorios = lazy(() => import("./pages/admin/AdminRelatorios"));
 const AdminClienteDetalhe = lazy(() => import("./pages/admin/AdminClienteDetalhe"));
 const AdminMarketing = lazy(() => import("./pages/admin/AdminMarketing"));
 const AdminGerenciar = lazy(() => import("./pages/admin/AdminGerenciar"));
-const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
+const SettingsIdentity = lazy(() => import("./pages/admin/settings/SettingsIdentity"));
+const SettingsHome = lazy(() => import("./pages/admin/settings/SettingsHome"));
+const SettingsAbout = lazy(() => import("./pages/admin/settings/SettingsAbout"));
+const SettingsContact = lazy(() => import("./pages/admin/settings/SettingsContact"));
+const SettingsFooter = lazy(() => import("./pages/admin/settings/SettingsFooter"));
+const SettingsSeo = lazy(() => import("./pages/admin/settings/SettingsSeo"));
+const SettingsFaq = lazy(() => import("./pages/admin/settings/SettingsFaq"));
 const AdminBanner = lazy(() => import("./pages/admin/AdminBanner"));
 const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
 const PoliticaPrivacidade = lazy(() => import("./pages/PoliticaPrivacidade"));
@@ -75,7 +81,17 @@ const App = () => (
               <Route path="/admin/produtos/:id/editar" element={<ProtectedRoute><AdminProductForm /></ProtectedRoute>} />
               <Route path="/admin/categorias" element={<ProtectedRoute><AdminCategories /></ProtectedRoute>} />
               <Route path="/admin/banner" element={<ProtectedRoute><AdminBanner /></ProtectedRoute>} />
-              <Route path="/admin/configuracoes" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
+              
+              {/* Split Settings Routes */}
+              <Route path="/admin/configuracoes" element={<ProtectedRoute><SettingsIdentity /></ProtectedRoute>} />
+              <Route path="/admin/configuracoes/identidade" element={<ProtectedRoute><SettingsIdentity /></ProtectedRoute>} />
+              <Route path="/admin/configuracoes/home" element={<ProtectedRoute><SettingsHome /></ProtectedRoute>} />
+              <Route path="/admin/configuracoes/sobre" element={<ProtectedRoute><SettingsAbout /></ProtectedRoute>} />
+              <Route path="/admin/configuracoes/contato" element={<ProtectedRoute><SettingsContact /></ProtectedRoute>} />
+              <Route path="/admin/configuracoes/rodape" element={<ProtectedRoute><SettingsFooter /></ProtectedRoute>} />
+              <Route path="/admin/configuracoes/seo" element={<ProtectedRoute><SettingsSeo /></ProtectedRoute>} />
+              <Route path="/admin/configuracoes/faq" element={<ProtectedRoute><SettingsFaq /></ProtectedRoute>} />
+
               <Route path="/admin/clientes" element={<ProtectedRoute><AdminClientes /></ProtectedRoute>} />
               <Route path="/admin/clientes/:id" element={<ProtectedRoute><AdminClienteDetalhe /></ProtectedRoute>} />
               <Route path="/admin/relatorios" element={<ProtectedRoute><AdminRelatorios /></ProtectedRoute>} />

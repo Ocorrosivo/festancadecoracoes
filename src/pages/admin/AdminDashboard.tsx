@@ -115,6 +115,7 @@ const AdminDashboard = () => {
       value: monthRevenue > 0 ? `R$ ${monthRevenue.toLocaleString("pt-BR")}` : "R$ 4.200",
       subtext: "mês atual",
       iconBg: "bg-primary/10 text-primary",
+      to: "/admin/relatorios",
     },
     {
       icon: CalendarDays,
@@ -122,6 +123,7 @@ const AdminDashboard = () => {
       value: monthBookings.length > 0 ? monthBookings.length.toString() : "85",
       subtext: "locações do mês",
       iconBg: "bg-blue-500/10 text-blue-600",
+      to: "/admin/relatorios",
     },
     {
       icon: Users,
@@ -129,6 +131,7 @@ const AdminDashboard = () => {
       value: "142",
       subtext: "clientes ativos",
       iconBg: "bg-green-500/10 text-green-600",
+      to: "/admin/clientes",
     },
     {
       icon: Package,
@@ -136,6 +139,7 @@ const AdminDashboard = () => {
       value: productsList.length > 0 ? productsList.length.toString() : "24",
       subtext: "no catálogo",
       iconBg: "bg-amber-500/10 text-amber-600",
+      to: "/admin/produtos",
     },
     {
       icon: Tags,
@@ -143,6 +147,7 @@ const AdminDashboard = () => {
       value: categoriesList.length > 0 ? categoriesList.length.toString() : "12",
       subtext: "cadastradas",
       iconBg: "bg-purple-500/10 text-purple-600",
+      to: "/admin/categorias",
     },
   ];
 
@@ -194,13 +199,14 @@ const AdminDashboard = () => {
           */}
           <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {stats.map((s) => (
-              <div
+              <Link
                 key={s.label}
-                className="bg-card rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+                to={s.to}
+                className="bg-card rounded-2xl border border-border p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200 flex flex-col justify-between group"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs text-muted-foreground font-medium truncate">{s.label}</span>
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${s.iconBg}`}>
+                  <span className="text-xs text-muted-foreground font-medium truncate group-hover:text-primary transition-colors">{s.label}</span>
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${s.iconBg} group-hover:scale-110 transition-transform`}>
                     <s.icon size={18} />
                   </div>
                 </div>
@@ -208,7 +214,7 @@ const AdminDashboard = () => {
                   <p className="text-xl sm:text-2xl font-heading font-bold text-foreground truncate">{s.value}</p>
                   <p className="text-[11px] text-muted-foreground mt-0.5">{s.subtext}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </section>
 
